@@ -1,0 +1,8 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@drawable/widget_background" android:padding="16dp" android:orientation="vertical" android:gravity="center" android:layoutDirection="rtl">
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ورد — Wird" android:textColor="#FFFFFF" android:textSize="22sp" android:textStyle="bold" />
+    <TextView android:id="@+id/widget_subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="متابعتك اليوم" android:textColor="#FFFFFF" android:textSize="14sp" />
+    <TextView android:id="@+id/progress" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="25sp" />
+    <TextView android:id="@+id/date" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="11sp" />
+</LinearLayout>
