@@ -17,8 +17,8 @@ jobs:
         run: |
           from pathlib import Path, PurePosixPath
           import hashlib, stat, zipfile
-          archive = Path('Wird_Ready_For_GitHub.zip')
-          expected = 'bc8d0e6baf108f5935c14f3479f23458fe1415a5336ee844e9356e3f0632a845'
+          archive = Path('Wird_Source_Validated.zip')
+          expected = '8351e8bf7116284884e0b2fe4338ca44710d25faa2e9b7941ebe947d696e9a10'
           assert hashlib.sha256(archive.read_bytes()).hexdigest() == expected, 'Source archive hash mismatch'
           with zipfile.ZipFile(archive) as z:
               for item in z.infolist():
@@ -35,6 +35,7 @@ jobs:
                   target.write_bytes(z.read(item))
           Path('android/gradlew').chmod(0o755)
           archive.unlink()
+          Path('Wird_Ready_For_GitHub.zip').unlink(missing_ok=True)
       - name: Commit imported source
         run: |
           git config user.name 'github-actions[bot]'
