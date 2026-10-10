@@ -1,0 +1,96 @@
+name: Wird verification
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      build_ios:
+        description: Also validate unsigned iOS on macOS
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: wird-verify-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  android:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Block cloud metadata before tool startup
+        run: bash tool/ci/block_metadata.sh
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Verify and build in a clean environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/wird-home" verification
+          env -i HOME="$RUNNER_TEMP/wird-home" PATH="$PATH" \
+            ANDROID_HOME="$ANDROID_HOME" ANDROID_SDK_ROOT="$ANDROID_HOME" \
+            JAVA_HOME="$JAVA_HOME" CI=true LANG=C.UTF-8 \
+            FLUTTER_SUPPRESS_ANALYTICS=true \
+            bash tool/ci/verify.sh debug 2>&1 | tee verification/android.log
+      - name: Upload installable debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: wird-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
+      - name: Preserve actual logs and dependency lockfile
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wird-android-verification
+          path: |
+            verification/
+            pubspec.lock
+          if-no-files-found: warn
+          retention-days: 14
+  ios:
+    if: github.event_name == 'workflow_dispatch' && inputs.build_ios
+    runs-on: macos-14
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Block cloud metadata before tool startup
+        run: bash tool/ci/block_metadata.sh
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+      - name: Verify unsigned iOS in a clean environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/wird-home" verification
+          env -i HOME="$RUNNER_TEMP/wird-home" PATH="$PATH" \
+            CI=true LANG=en_US.UTF-8 FLUTTER_SUPPRESS_ANALYTICS=true \
+            COCOAPODS_DISABLE_STATS=true \
+            bash tool/ci/verify.sh ios 2>&1 | tee verification/ios.log
+      - name: Preserve iOS verification logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wird-ios-verification
+          path: |
+            verification/
+            pubspec.lock
+            ios/Podfile.lock
+          if-no-files-found: warn
+          retention-days: 14
