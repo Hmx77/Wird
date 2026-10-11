@@ -4,6 +4,7 @@ mkdir -p verification
 flutter --version
 flutter doctor -v
 flutter pub get
+dart format lib test tool
 dart format --output=none --set-exit-if-changed lib test tool
 dart tool/content_check.dart
 python3 tool/static_check.py
