@@ -10,46 +10,55 @@ void main() {
     tester,
   ) async {
     SharedPreferences.setMockInitialValues({'haptics': false});
+
     final store = WirdState();
     await store.initialize();
+
     await tester.pumpWidget(
       MaterialApp(
         locale: const Locale('ar'),
         supportedLocales: const [Locale('ar')],
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        home: ReaderPage(store: store, section: DhikrSection.morning),
+        home: ReaderPage(
+          store: store,
+          section: DhikrSection.morning,
         ),
-  );
-  await tester.pumpAndSettle();
-  final firstEntry = inSection(DhikrSection.morning).first;
+      ),
+    );
 
-final initialCounter = find.text('0 / ${firstEntry.count}');
+    await tester.pumpAndSettle();
 
-await tester.scrollUntilVisible(
-  initialCounter,
-  200,
-  scrollable: find.byType(Scrollable).last,
-);
+    final firstEntry = inSection(DhikrSection.morning).first;
+    final initialCounter = find.text('0 / ${firstEntry.count}');
 
-expect(initialCounter, findsOneWidget);
+    // Scroll to the counter before checking it.
+    await tester.scrollUntilVisible(
+      initialCounter,
+      200,
+      scrollable: find.byType(Scrollable).last,
+    );
 
-final countButton = find.text('اضغط للعدّ');
+    expect(initialCounter, findsOneWidget);
 
-await tester.ensureVisible(countButton);
-await tester.tap(countButton);
-await tester.pump();
+    // Tap the repetition counter once.
+    final countButton = find.text('اضغط للعدّ');
 
-expect(
-  find.text('1 / ${firstEntry.count}'),
-  findsOneWidget,
-);
-    await tester.ensureVisible(find.text('اضغط للعدّ'));
-    await tester.tap(find.text('اضغط للعدّ'));
+    await tester.ensureVisible(countButton);
+    await tester.tap(countButton);
     await tester.pump();
-    expect(find.text('1 / 1'), findsOneWidget);
+
+    expect(store.count(firstEntry), 1);
+    expect(
+      find.text('1 / ${firstEntry.count}'),
+      findsOneWidget,
+    );
+
+    // Verify the favorite button updates state.
     await tester.tap(find.byTooltip('المفضلة'));
     await tester.pump();
-    expect(store.favorites, contains(inSection(DhikrSection.morning).first.id));
+
+    expect(store.favorites, contains(firstEntry.id));
+
     await store.pendingWrites;
     await tester.pumpWidget(const SizedBox());
     store.dispose();
