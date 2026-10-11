@@ -43,7 +43,12 @@ void main() {
     // Tap the repetition counter once.
     final countButton = find.text('اضغط للعدّ');
 
-    await tester.ensureVisible(countButton);
+    await tester.scrollUntilVisible(
+      countButton,
+      200,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.pumpAndSettle();
     await tester.tap(countButton);
     await tester.pump();
 
