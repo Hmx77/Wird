@@ -18,9 +18,10 @@ void main() {
         supportedLocales: const [Locale('ar')],
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         home: ReaderPage(store: store, section: DhikrSection.morning),
-      ),
-    );
-    expect(find.text('0 / 1'), findsOneWidget);
+        ),
+  );
+  await tester.pumpAndSettle();
+  expect(find.text('0 / 1'), findsOneWidget);
     await tester.ensureVisible(find.text('اضغط للعدّ'));
     await tester.tap(find.text('اضغط للعدّ'));
     await tester.pump();
