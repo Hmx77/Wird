@@ -1,45 +1,33 @@
-name: Import prepared Wird source
+name: Restore supplied Gradle wrapper
 on:
   workflow_dispatch:
 permissions:
   contents: write
-concurrency:
-  group: wird-source-import
-  cancel-in-progress: false
 jobs:
-  import:
+  restore:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Verify and restore source tree
+        with:
+          fetch-depth: 0
+      - name: Restore original wrapper files from validated source
         shell: python
         run: |
-          from pathlib import Path, PurePosixPath
-          import hashlib, stat, zipfile
-          archive = Path('Wird_Source_Validated.zip')
-          expected = '8351e8bf7116284884e0b2fe4338ca44710d25faa2e9b7941ebe947d696e9a10'
-          assert hashlib.sha256(archive.read_bytes()).hexdigest() == expected, 'Source archive hash mismatch'
-          with zipfile.ZipFile(archive) as z:
-              for item in z.infolist():
-                  path = PurePosixPath(item.filename)
-                  assert path.parts[0] == 'wird_flutter_starter'
-                  relative = PurePosixPath(*path.parts[1:])
-                  assert not relative.is_absolute() and '..' not in relative.parts
-                  assert not stat.S_ISLNK(item.external_attr >> 16)
-                  if item.is_dir() or not relative.parts or relative.parts[0] == '.github':
-                      continue
-                  assert '.git' not in relative.parts
-                  target = Path(str(relative))
-                  target.parent.mkdir(parents=True, exist_ok=True)
-                  target.write_bytes(z.read(item))
+          import hashlib, io, subprocess, zipfile
+          from pathlib import Path
+          data = subprocess.check_output(['git', 'show', '753b1ef896d7e57aa00630630a33bc3ca59c4fc3:Wird_Source_Validated.zip'])
+          assert hashlib.sha256(data).hexdigest() == '8351e8bf7116284884e0b2fe4338ca44710d25faa2e9b7941ebe947d696e9a10'
+          with zipfile.ZipFile(io.BytesIO(data)) as archive:
+              for name in ['android/gradlew', 'android/gradlew.bat', 'android/gradle/wrapper/gradle-wrapper.jar']:
+                  Path(name).write_bytes(archive.read('wird_flutter_starter/' + name))
           Path('android/gradlew').chmod(0o755)
-          archive.unlink()
-          Path('Wird_Ready_For_GitHub.zip').unlink(missing_ok=True)
-      - name: Commit imported source
+          ignore = Path('android/.gitignore')
+          ignore.write_text('\n'.join(line for line in ignore.read_text().splitlines() if line not in ['gradle-wrapper.jar', '/gradlew', '/gradlew.bat']) + '\n')
+      - name: Commit restored wrapper
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add --all
-          git commit -m 'Import complete Wird Flutter source, assets and tests'
+          git add android/.gitignore android/gradlew android/gradlew.bat android/gradle/wrapper/gradle-wrapper.jar
+          git commit -m 'Track supplied Gradle wrapper and correct starter ignore rules'
           git push origin HEAD:main
