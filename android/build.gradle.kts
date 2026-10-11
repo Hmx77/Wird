@@ -1,4 +1,17 @@
 allprojects {
+    // home_widget uses a dynamic Glance dependency; keep every module on
+    // the compatible stable release, including its protobuf security fix.
+    configurations.configureEach {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "androidx.glance" && requested.name in setOf(
+                "glance", "glance-appwidget", "glance-appwidget-proto",
+                "glance-appwidget-external-protobuf"
+            )) {
+                useVersion("1.1.1")
+                because("Avoid preview SDK and AGP requirements from dynamic Glance versions")
+            }
+        }
+    }
     repositories {
         google()
         mavenCentral()
