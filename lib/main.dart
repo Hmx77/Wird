@@ -875,7 +875,7 @@ class _ReaderPageState extends State<ReaderPage> {
     super.initState();
     index = widget.initialIndex.clamp(
       0,
-      inSection(widget.section).length > 0
+     inSection(widget.section).isNotEmpty
           ? inSection(widget.section).length - 1
           : 0,
     );
