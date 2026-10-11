@@ -21,7 +21,8 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
+      - name: Use preinstalled Android SDK
+        run: test -d "$ANDROID_HOME/platforms/android-35"
       - name: Require existing signing material
         env:
           WIRD_KEYSTORE_BASE64: ${{ secrets.WIRD_KEYSTORE_BASE64 }}
