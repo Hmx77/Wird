@@ -21,7 +21,28 @@ void main() {
         ),
   );
   await tester.pumpAndSettle();
-  expect(find.text('0 / 1'), findsOneWidget);
+  final firstEntry = inSection(DhikrSection.morning).first;
+
+final initialCounter = find.text('0 / ${firstEntry.count}');
+
+await tester.scrollUntilVisible(
+  initialCounter,
+  200,
+  scrollable: find.byType(Scrollable).last,
+);
+
+expect(initialCounter, findsOneWidget);
+
+final countButton = find.text('اضغط للعدّ');
+
+await tester.ensureVisible(countButton);
+await tester.tap(countButton);
+await tester.pump();
+
+expect(
+  find.text('1 / ${firstEntry.count}'),
+  findsOneWidget,
+);
     await tester.ensureVisible(find.text('اضغط للعدّ'));
     await tester.tap(find.text('اضغط للعدّ'));
     await tester.pump();
