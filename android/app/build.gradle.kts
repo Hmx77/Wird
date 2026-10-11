@@ -21,7 +21,7 @@ android {
         }
     }
     namespace = "ae.wird.app"
-    compileSdk = 35
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
