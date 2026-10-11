@@ -2,7 +2,7 @@
 
 Arabic-first, private, offline Flutter application for Android and iOS, expanded from the supplied starter.
 
-**Status: development implementation, not a tested store release.** See [the current evidence and blockers](docs/BUILD_STATUS_2026-10-10.md) and [GitHub automation](docs/GITHUB_ACTIONS.md). Dart parsing/formatting, the executable content check and native structural checks passed. Full Flutter dependency resolution, analysis/tests, device QA and release compilation were blocked. No APK, AAB or IPA is included or claimed.
+**Status: Android debug APK built successfully; unsigned iOS device build passed.** [Verification run #20](https://github.com/Hmx77/Wird/actions/runs/38159340833) passed Flutter analysis, all 12 automated tests on Linux and macOS, and Android/iOS native builds. [Download the debug APK artifact](https://github.com/Hmx77/Wird/actions/runs/38159340833/artifacts/11710045349), unzip it and install `app-debug.apk` on Android. See [the actual results and release blockers](docs/BUILD_STATUS_2026-10-11.md) and [GitHub automation](docs/GITHUB_ACTIONS.md). This debug APK is for testing; production signing, physical-device QA and qualified religious proofreading remain pending. No app store publication occurred.
 
 ## Implemented source
 
@@ -24,7 +24,7 @@ Arabic-first, private, offline Flutter application for Android and iOS, expanded
 
 **Windows:** follow [the setup and build guide](docs/WINDOWS_BUILD.md), then run `./tool/build-windows.ps1 -Mode Debug` in PowerShell. It stops on validation, analysis, test or build failure. See [the startup security record](docs/STARTUP_SECURITY.md) for the blocked command and isolation result.
 
-Baseline: Flutter 3.35.7 / Dart 3.9, Java 17, Android SDK 35, minSdk 23, iOS 14+, Xcode on macOS, CocoaPods. Direct dependency versions are pinned. **pubspec.lock was not fabricated**; retain the real generated lockfile after resolving on a permitted build host.
+Baseline: Flutter 3.35.7 / Dart 3.9, Java 17, Android compile SDK 36 (target 35), minSdk 23, iOS 14+, Xcode on macOS, CocoaPods. Direct dependency versions are pinned. **pubspec.lock was not fabricated**; retain the real generated lockfile after resolving on a permitted build host.
 
 Native project files are included. Do not overwrite them with `flutter create .`.
 
