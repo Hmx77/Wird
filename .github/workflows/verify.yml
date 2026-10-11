@@ -32,7 +32,8 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
+      - name: Use preinstalled Android SDK
+        run: test -d "$ANDROID_HOME/platforms/android-35"
       - name: Verify and build in a clean environment
         shell: bash
         run: |
