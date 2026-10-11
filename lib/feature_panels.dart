@@ -87,7 +87,7 @@ class _ReminderPanelState extends State<ReminderPanel> {
           SnackBar(
             content: UiText(
               e is StateError
-                  ? '${e.message}'
+                  ? e.message
                   : 'تعذر ضبط التذكير. حاول مجددًا.',
             ),
           ),
