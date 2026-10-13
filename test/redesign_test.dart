@@ -106,14 +106,16 @@ void main() {
           final render =
               boundary.currentContext!.findRenderObject()!
                   as RenderRepaintBoundary;
-          final image = await render.toImage(pixelRatio: 1.5);
-          final data = await image.toByteData(format: ui.ImageByteFormat.png);
-          final dir = Directory('verification/screenshots')
-            ..createSync(recursive: true);
-          File(
-            '${dir.path}/home-$language-${size.width.toInt()}.png',
-          ).writeAsBytesSync(data!.buffer.asUint8List());
-          image.dispose();
+          await tester.runAsync(() async {
+            final image = await render.toImage(pixelRatio: 1.5);
+            final data = await image.toByteData(format: ui.ImageByteFormat.png);
+            final dir = Directory('verification/screenshots')
+              ..createSync(recursive: true);
+            File(
+              '${dir.path}/home-$language-${size.width.toInt()}.png',
+            ).writeAsBytesSync(data!.buffer.asUint8List());
+            image.dispose();
+          });
         }
         await store.pendingWrites;
         await tester.pumpWidget(const SizedBox.shrink());
@@ -157,13 +159,15 @@ void main() {
         if (Platform.environment['WIRD_REVIEW_IMAGES'] != '1') return;
         final render =
             key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
-        final image = await render.toImage(pixelRatio: 2);
-        final data = await image.toByteData(format: ui.ImageByteFormat.png);
-        Directory('verification/screenshots').createSync(recursive: true);
-        File(
-          'verification/screenshots/$name-$language.png',
-        ).writeAsBytesSync(data!.buffer.asUint8List());
-        image.dispose();
+        await tester.runAsync(() async {
+          final image = await render.toImage(pixelRatio: 2);
+          final data = await image.toByteData(format: ui.ImageByteFormat.png);
+          Directory('verification/screenshots').createSync(recursive: true);
+          File(
+            'verification/screenshots/$name-$language.png',
+          ).writeAsBytesSync(data!.buffer.asUint8List());
+          image.dispose();
+        });
       }
 
       await tester.tap(find.byKey(const Key('home-morning')));
