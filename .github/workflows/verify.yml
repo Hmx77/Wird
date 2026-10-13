@@ -1,7 +1,7 @@
 name: Wird verification
 on:
   push:
-    branches: [main]
+    branches: [main, "redesign/**"]
   pull_request:
   workflow_dispatch:
     inputs:
@@ -22,18 +22,23 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Free unused hosted-runner toolchains for Android packaging
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /usr/local/.ghcup
+          df -h /
       - name: Block cloud metadata before tool startup
         run: bash tool/ci/block_metadata.sh
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.35.7'
           channel: stable
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
       - name: Use preinstalled Android SDK
-        run: test -d "$ANDROID_HOME/platforms/android-35"
+        run: test -d "$ANDROID_HOME/platforms/android-36"
       - name: Verify and build in a clean environment
         shell: bash
         run: |
@@ -58,6 +63,9 @@ jobs:
           name: wird-android-verification
           path: |
             verification/
+            android/app/src/main/res/mipmap-*/
+            android/app/src/main/res/drawable-nodpi/
+            ios/Runner/Assets.xcassets/
             pubspec.lock
           if-no-files-found: warn
           retention-days: 14
@@ -91,7 +99,35 @@ jobs:
           name: wird-ios-verification
           path: |
             verification/
+            android/app/src/main/res/mipmap-*/
+            android/app/src/main/res/drawable-nodpi/
+            ios/Runner/Assets.xcassets/
             pubspec.lock
             ios/Podfile.lock
           if-no-files-found: warn
           retention-days: 14
+  android-device:
+    needs: android
+    if: github.event_name == 'workflow_dispatch' && startsWith(github.ref, 'refs/heads/redesign/')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Block cloud metadata
+        run: bash tool/ci/block_metadata.sh
+      - uses: actions/download-artifact@v4
+        with:
+          name: wird-debug-apk
+          path: build/app/outputs/flutter-apk
+      - name: Android emulator offline native smoke test
+        run: bash tool/ci/android_device_smoke.sh
+      - name: Preserve actual native screenshots and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wird-android-device-review
+          path: verification/device/
+          retention-days: 14
+          if-no-files-found: warn
