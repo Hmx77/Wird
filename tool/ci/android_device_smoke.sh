@@ -4,8 +4,8 @@ mkdir -p verification/device
 sdkmanager="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
 avdmanager="$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager"
 # Existing runner licenses only. No --licenses, automatic acceptance or account.
-"$sdkmanager" --install 'system-images;android-35;google_apis;x86_64' </dev/null
-printf 'no\n' | "$avdmanager" create avd --name wird-review --package 'system-images;android-35;google_apis;x86_64' --device pixel_7 --force
+"$sdkmanager" --install 'system-images;android-36;google_apis;x86_64' </dev/null
+printf 'no\n' | "$avdmanager" create avd --name wird-review --package 'system-images;android-36;google_apis;x86_64' --device pixel_7 --force
 accel=off
 if [ -e /dev/kvm ]; then
   # Narrow ephemeral runner-user access, never a world-writable device rule.
@@ -51,4 +51,4 @@ if rg -q 'FATAL EXCEPTION|Unhandled Exception' verification/device/runtime-error
 fi
 adb shell dumpsys package ae.wird.app > verification/device/package.txt
 adb emu kill
-printf '%s\n' 'PASS: Android 35 emulator offline startup, large-font/small/tablet captures; no fatal runtime errors.'
+printf '%s\n' 'PASS: Android 36 emulator offline startup, large-font/small/tablet captures; no fatal runtime errors.'
