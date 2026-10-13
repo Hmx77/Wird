@@ -14,9 +14,11 @@ void main() {
   testWidgets('render owned brand assets, safe-zone icons and opening', (
     tester,
   ) async {
-    final font = FontLoader('NotoSansArabic');
-    font.addFont(rootBundle.load('assets/fonts/NotoSansArabic.ttf'));
-    await font.load();
+    await tester.runAsync(() async {
+      final font = FontLoader('NotoSansArabic');
+      font.addFont(rootBundle.load('assets/fonts/NotoSansArabic.ttf'));
+      await font.load();
+    });
     Future<void> render(
       String path,
       Size size,
@@ -45,12 +47,15 @@ void main() {
       expect(tester.takeException(), isNull);
       final boundary =
           key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
-      final image = await boundary.toImage(pixelRatio: ratio);
-      final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-      final file = File(path);
-      file.parent.createSync(recursive: true);
-      file.writeAsBytesSync(bytes!.buffer.asUint8List());
-      image.dispose();
+      await tester.runAsync(() async {
+        final image = await boundary.toImage(pixelRatio: ratio);
+        final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
+        final file = File(path);
+        file.parent.createSync(recursive: true);
+        file.writeAsBytesSync(bytes!.buffer.asUint8List());
+        image.dispose();
+      });
+      debugPrint('Rendered $path');
     }
 
     addTearDown(tester.view.resetPhysicalSize);
