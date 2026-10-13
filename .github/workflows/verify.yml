@@ -5,6 +5,10 @@ on:
   pull_request:
   workflow_dispatch:
     inputs:
+      build_android:
+        description: Validate and build Android debug APK
+        type: boolean
+        default: true
       build_ios:
         description: Also validate unsigned iOS on macOS
         type: boolean
@@ -12,10 +16,11 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: wird-verify-${{ github.ref }}
+  group: wird-verify-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && !inputs.build_android && 'ios' || 'all' }}
   cancel-in-progress: true
 jobs:
   android:
+    if: github.event_name != 'workflow_dispatch' || inputs.build_android
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     steps:
@@ -71,7 +76,7 @@ jobs:
           retention-days: 14
   ios:
     if: github.event_name == 'workflow_dispatch' && inputs.build_ios
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
@@ -79,6 +84,12 @@ jobs:
           persist-credentials: false
       - name: Block cloud metadata before tool startup
         run: bash tool/ci/block_metadata.sh
+      - name: Select installed Xcode 26.3 for current App Store SDK requirements
+        run: |
+          test -d /Applications/Xcode_26.3.app
+          sudo xcode-select -s /Applications/Xcode_26.3.app/Contents/Developer
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.35.7'
@@ -92,6 +103,15 @@ jobs:
             CI=true LANG=en_US.UTF-8 FLUTTER_SUPPRESS_ANALYTICS=true \
             COCOAPODS_DISABLE_STATS=true \
             bash tool/ci/verify.sh ios 2>&1 | tee verification/ios.log
+      - name: Build and launch iOS simulator in a clean environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          env -i HOME="$RUNNER_TEMP/wird-home" PATH="$PATH" \
+            CI=true LANG=en_US.UTF-8 FLUTTER_SUPPRESS_ANALYTICS=true \
+            COCOAPODS_DISABLE_STATS=true \
+            flutter build ios --simulator --debug --no-codesign 2>&1 | tee verification/ios-simulator-build.log
+          bash tool/ci/ios_simulator_smoke.sh
       - name: Preserve iOS verification logs
         if: always()
         uses: actions/upload-artifact@v4
@@ -115,6 +135,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Free unused hosted-runner toolchains for emulator storage
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /usr/local/.ghcup
+          df -h /
       - name: Block cloud metadata
         run: bash tool/ci/block_metadata.sh
       - uses: actions/download-artifact@v4
@@ -132,8 +157,8 @@ jobs:
           retention-days: 14
           if-no-files-found: warn
   review-assets:
-    needs: android
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/redesign/premium-20261013'
+    needs: [android, android-device, ios]
+    if: always() && github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/redesign/premium-20261013' && needs.android.result == 'success' && needs['android-device'].result == 'success'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
@@ -147,6 +172,16 @@ jobs:
         with:
           name: wird-android-verification
           path: reviewed-output
+      - uses: actions/download-artifact@v4
+        with:
+          name: wird-android-device-review
+          path: reviewed-native
+      - uses: actions/download-artifact@v4
+        if: inputs.build_ios
+        continue-on-error: true
+        with:
+          name: wird-ios-verification
+          path: reviewed-ios
       - name: Preserve verified native artwork and visual review images
         shell: python
         run: |
@@ -170,12 +205,19 @@ jobs:
               target.parent.mkdir(parents=True, exist_ok=True)
               shutil.copyfile(source, target)
           assert pathlib.Path('docs/review-images/home-ar-430.png').is_file()
+          for folder, label in [('reviewed-native', 'android-native'),
+                                ('reviewed-ios/verification/ios-device', 'ios-native')]:
+              for source in pathlib.Path(folder).glob('*.png'):
+                  assert source.is_file() and not source.is_symlink()
+                  target = pathlib.Path('docs/review-images') / label / source.name
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  shutil.copyfile(source, target)
       - name: Commit reviewed outputs only on the unchanged review branch
         run: |
           test "$(git ls-remote origin refs/heads/redesign/premium-20261013 | cut -f1)" = "$GITHUB_SHA"
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- android/app/src/main/res/mipmap-*/ic_launcher.png android/app/src/main/res/drawable-nodpi/wird*.png ios/Runner/Assets.xcassets/AppIcon.appiconset/*.png ios/Runner/Assets.xcassets/LaunchImage.imageset/*.png docs/review-images/*.png
+          git add -- android/app/src/main/res/mipmap-*/ic_launcher.png android/app/src/main/res/drawable-nodpi/wird*.png ios/Runner/Assets.xcassets/AppIcon.appiconset/*.png ios/Runner/Assets.xcassets/LaunchImage.imageset/*.png docs/review-images/
           if ! git diff --cached --quiet; then
             git commit -m 'Preserve verified native branding and rendered review images'
             git push origin HEAD:redesign/premium-20261013
