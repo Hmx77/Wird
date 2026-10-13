@@ -1,11 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
 mkdir -p verification/device
+wird_sdk_user_root="${RUNNER_TEMP:?}/wird-emulator"
+export ANDROID_SDK_HOME="$wird_sdk_user_root"
+export ANDROID_USER_HOME="$wird_sdk_user_root/.android"
+export ANDROID_EMULATOR_HOME="$ANDROID_USER_HOME"
+export ANDROID_AVD_HOME="$ANDROID_USER_HOME/avd"
+mkdir -p "$ANDROID_AVD_HOME"
 sdkmanager="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
 avdmanager="$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager"
 # Existing runner licenses only. No --licenses, automatic acceptance or account.
 "$sdkmanager" --install 'system-images;android-36;google_apis;x86_64' </dev/null
-printf 'no\n' | "$avdmanager" create avd --name wird-review --package 'system-images;android-36;google_apis;x86_64' --device pixel_7 --force
+printf 'no\n' | "$avdmanager" create avd --name wird-review --package 'system-images;android-36;google_apis;x86_64' --device pixel_7 --force --path "$ANDROID_AVD_HOME/wird-review.avd"
+test -s "$ANDROID_AVD_HOME/wird-review.avd/config.ini"
+if [ ! -s "$ANDROID_AVD_HOME/wird-review.ini" ]; then
+  printf 'avd.ini.encoding=UTF-8\npath=%s\ntarget=android-36\n' "$ANDROID_AVD_HOME/wird-review.avd" > "$ANDROID_AVD_HOME/wird-review.ini"
+fi
+test -s "$ANDROID_AVD_HOME/wird-review.ini"
+"$ANDROID_HOME/emulator/emulator" -list-avds | tee verification/device/avds.txt
+rg -qx 'wird-review' verification/device/avds.txt
 accel=off
 if [ -e /dev/kvm ]; then
   # Narrow ephemeral runner-user access, never a world-writable device rule.
@@ -13,12 +26,31 @@ if [ -e /dev/kvm ]; then
   accel=on
 fi
 "$ANDROID_HOME/emulator/emulator" -avd wird-review -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -accel "$accel" >verification/device/emulator.log 2>&1 &
+wird_emulator_pid=$!
+trap 'kill "$wird_emulator_pid" 2>/dev/null || true' EXIT
 export PATH="$ANDROID_HOME/platform-tools:$PATH"
-timeout 600 bash -c 'until [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d "\r")" = 1 ]; do sleep 5; done'
+wird_boot_deadline=$((SECONDS + 600))
+until [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = 1 ]; do
+  if ! kill -0 "$wird_emulator_pid" 2>/dev/null || [ "$SECONDS" -ge "$wird_boot_deadline" ]; then
+    python3 - <<'PYLOG'
+import pathlib,re
+for line in pathlib.Path('verification/device/emulator.log').read_text(errors='replace').splitlines()[-100:]:
+    if not re.search(r'(?i)(token|password|secret|authorization|jwt)',line):
+        print(line)
+PYLOG
+    echo 'Emulator exited or did not boot before its deadline.' >&2
+    exit 1
+  fi
+  sleep 5
+done
 adb shell input keyevent 82
 adb install -r build/app/outputs/flutter-apk/app-debug.apk
 adb shell svc wifi disable
 adb shell svc data disable
+adb shell input keyevent KEYCODE_HOME
+adb shell input swipe 540 1900 540 350 600
+sleep 2
+adb exec-out screencap -p > verification/device/android-launcher.png
 adb shell am start -W -n ae.wird.app/.MainActivity
 sleep 4
 adb exec-out screencap -p > verification/device/android-home-offline.png
