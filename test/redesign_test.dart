@@ -55,6 +55,12 @@ void main() {
       expect(store.favorites, contains('morning_sayyid'));
       await tester.tap(find.text('الإعدادات'));
       await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('زيتوني وكريمي'),
+        200,
+        scrollable: find.byType(Scrollable).last,
+      );
+      await tester.pumpAndSettle();
       expect(find.text('زيتوني وكريمي'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await store.pendingWrites;
@@ -186,7 +192,7 @@ void main() {
       await tester.tap(find.byTooltip(uiString('المفضلة', language)));
       await tester.pump();
       expect(store.favorites, contains('morning_sayyid'));
-      await tester.pageBack();
+      await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
       await tester.tap(find.text(uiString('النوافل', language)));
       await tester.pumpAndSettle();
