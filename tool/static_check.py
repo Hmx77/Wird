@@ -29,6 +29,10 @@ for file in ROOT.rglob('*.xml'):
     ET.parse(file)
 for file in ROOT.rglob('*.plist'):
     plistlib.loads(file.read_bytes())
+widget_info = plistlib.loads((ROOT / 'ios/WirdWidget/Info.plist').read_bytes())
+require(bool(widget_info.get('CFBundleName')), 'Widget bundle name missing')
+app_version = re.search(r'^version: (.+)$', (ROOT / 'pubspec.yaml').read_text(), re.M).group(1).split('+')
+require(widget_info['CFBundleShortVersionString'] == app_version[0] and widget_info['CFBundleVersion'] == app_version[1], 'Widget version must match app version')
 for file in ROOT.rglob('*.entitlements'):
     plistlib.loads(file.read_bytes())
 for file in ROOT.rglob('*.storyboard'):
