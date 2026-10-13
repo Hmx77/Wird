@@ -1,33 +1,50 @@
-name: Restore supplied Gradle wrapper
+name: Apply reviewed premium redesign patch
 on:
   workflow_dispatch:
 permissions:
   contents: write
 jobs:
-  restore:
+  apply:
+    if: github.repository == 'Hmx77/Wird' && github.ref == 'refs/heads/redesign/premium-20261013'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Restore original wrapper files from validated source
-        shell: python
+      - name: Block cloud metadata
+        run: bash tool/ci/block_metadata.sh
+      - name: Apply exact reviewed source patch
+        shell: bash
         run: |
-          import hashlib, io, subprocess, zipfile
-          from pathlib import Path
-          data = subprocess.check_output(['git', 'show', '753b1ef896d7e57aa00630630a33bc3ca59c4fc3:Wird_Source_Validated.zip'])
-          assert hashlib.sha256(data).hexdigest() == '8351e8bf7116284884e0b2fe4338ca44710d25faa2e9b7941ebe947d696e9a10'
-          with zipfile.ZipFile(io.BytesIO(data)) as archive:
-              for name in ['android/gradlew', 'android/gradlew.bat', 'android/gradle/wrapper/gradle-wrapper.jar']:
-                  Path(name).write_bytes(archive.read('wird_flutter_starter/' + name))
-          Path('android/gradlew').chmod(0o755)
-          ignore = Path('android/.gitignore')
-          ignore.write_text('\n'.join(line for line in ignore.read_text().splitlines() if line not in ['gradle-wrapper.jar', '/gradlew', '/gradlew.bat']) + '\n')
-      - name: Commit restored wrapper
+          python3 - <<'PYIMPORT'
+          import hashlib,json,pathlib,zipfile,subprocess,stat
+          archive=pathlib.Path('Wird_Redesign_Patch.zip')
+          assert hashlib.sha256(archive.read_bytes()).hexdigest()=='b98e39e98b7b8425c35072d788bb4942166c37763374dc96b3407b9807392556'
+          with zipfile.ZipFile(archive) as z:
+              assert z.testzip() is None
+              m=json.loads(z.read('_manifest.json'))
+              assert m['base_commit']=='8656ab8f0d0341acb1e1f05071713b5da1b1f80e'
+              allowed=['.github/workflows/release-android.yml', '.github/workflows/verify.yml', 'android/app/src/main/res/drawable-v21/launch_background.xml', 'android/app/src/main/res/drawable/launch_background.xml', 'android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml', 'android/app/src/main/res/values-night-v31/styles.xml', 'android/app/src/main/res/values-night/styles.xml', 'android/app/src/main/res/values-v31/styles.xml', 'android/app/src/main/res/values/brand_colors.xml', 'android/app/src/main/res/values/styles.xml', 'assets/fonts/NotoSansArabic.ttf', 'assets/fonts/OFL.txt', 'docs/REDESIGN_TRACEABILITY.md', 'docs/redesign-content-manifest.csv', 'ios/Runner/Base.lproj/LaunchScreen.storyboard', 'lib/feature_panels.dart', 'lib/main.dart', 'lib/premium_ui.dart', 'lib/ui_strings.dart', 'pubspec.yaml', 'test/reader_test.dart', 'test/redesign_test.dart', 'tool/brand_assets_test.dart', 'tool/build-windows.ps1', 'tool/ci/android_device_smoke.sh', 'tool/ci/verify.sh', 'tool/content_check.dart', 'tool/export_catalog.dart', 'tool/release.sh']
+              assert set(z.namelist())==set(allowed)|{'_manifest.json'}
+              assert {f['path'] for f in m['files']}==set(allowed)
+              for f in m['files']:
+                  name=f['path']; p=pathlib.Path(name)
+                  assert not p.is_absolute() and '..' not in p.parts
+                  assert not stat.S_ISLNK(z.getinfo(name).external_attr>>16)
+                  if f['base_sha256'] is None:
+                      assert not p.exists(), 'Unexpected existing file: '+name
+                  else:
+                      assert p.is_file(), 'Missing baseline file: '+name
+                      assert hashlib.sha256(p.read_bytes().rstrip(b'\r\n')).hexdigest()==f['base_sha256'], 'Baseline changed: '+name
+                  data=z.read(name)
+                  assert hashlib.sha256(data).hexdigest()==f['sha256']
+                  p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(data)
+          print('Applied reviewed patch with baseline/hash/path checks.')
+          PYIMPORT
+      - name: Commit only reviewed changes and remove one-time importer
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add android/.gitignore android/gradlew android/gradlew.bat android/gradle/wrapper/gradle-wrapper.jar
-          git commit -m 'Track supplied Gradle wrapper and correct starter ignore rules'
-          git push origin HEAD:main
+          git add -- .github/workflows/release-android.yml .github/workflows/verify.yml android/app/src/main/res/drawable-v21/launch_background.xml android/app/src/main/res/drawable/launch_background.xml android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml android/app/src/main/res/values-night-v31/styles.xml android/app/src/main/res/values-night/styles.xml android/app/src/main/res/values-v31/styles.xml android/app/src/main/res/values/brand_colors.xml android/app/src/main/res/values/styles.xml assets/fonts/NotoSansArabic.ttf assets/fonts/OFL.txt docs/REDESIGN_TRACEABILITY.md docs/redesign-content-manifest.csv ios/Runner/Base.lproj/LaunchScreen.storyboard lib/feature_panels.dart lib/main.dart lib/premium_ui.dart lib/ui_strings.dart pubspec.yaml test/reader_test.dart test/redesign_test.dart tool/brand_assets_test.dart tool/build-windows.ps1 tool/ci/android_device_smoke.sh tool/ci/verify.sh tool/content_check.dart tool/export_catalog.dart tool/release.sh
+          git rm -- Wird_Redesign_Patch.zip .github/workflows/import-source.yml
+          git commit -m 'Implement premium Wird redesign with preserved content and data'
+          git push origin HEAD:redesign/premium-20261013
