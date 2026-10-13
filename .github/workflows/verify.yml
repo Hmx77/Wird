@@ -24,7 +24,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: wird-verify-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && !inputs.build_android && 'ios' || 'all' }}
+  group: wird-verify-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && !inputs.build_android && !inputs.build_ios && inputs.reuse_android_run != '' && 'native' || github.event_name == 'workflow_dispatch' && !inputs.build_android && 'ios' || 'all' }}
   cancel-in-progress: true
 jobs:
   android:
