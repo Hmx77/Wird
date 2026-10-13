@@ -25,7 +25,7 @@ if [ -e /dev/kvm ]; then
   sudo setfacl -m "u:$(id -un):rw" /dev/kvm
   accel=on
 fi
-"$ANDROID_HOME/emulator/emulator" -avd wird-review -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -accel "$accel" >verification/device/emulator.log 2>&1 &
+"$ANDROID_HOME/emulator/emulator" -avd wird-review -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -memory 3072 -cores 2 -accel "$accel" >verification/device/emulator.log 2>&1 &
 wird_emulator_pid=$!
 trap 'kill "$wird_emulator_pid" 2>/dev/null || true' EXIT
 export PATH="$ANDROID_HOME/platform-tools:$PATH"
@@ -44,7 +44,19 @@ PYLOG
   sleep 5
 done
 adb shell input keyevent 82
-adb install -r build/app/outputs/flutter-apk/app-debug.apk
+wird_package_deadline=$((SECONDS + 120))
+until timeout 10 adb shell cmd package list packages >/dev/null 2>&1; do
+  if [ "$SECONDS" -ge "$wird_package_deadline" ]; then
+    echo 'Android package service did not become ready.' >&2; exit 1
+  fi
+  sleep 5
+done
+sleep 5
+if ! adb install --no-streaming -r build/app/outputs/flutter-apk/app-debug.apk; then
+  adb shell df -h /data || true
+  adb logcat -d -s AndroidRuntime:E PackageManager:E > verification/device/install-errors.log
+  exit 1
+fi
 adb shell svc wifi disable
 adb shell svc data disable
 adb shell input keyevent KEYCODE_HOME
