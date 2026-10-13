@@ -22,7 +22,7 @@ xcrun simctl launch --terminate-running-process "$wird_sim_id" ae.wird.app
 sleep 5
 xcrun simctl io "$wird_sim_id" screenshot verification/ios-device/ios-home.png
 xcrun simctl spawn "$wird_sim_id" log show --last 1m --style compact --predicate 'process == "Runner" AND messageType == error' > verification/ios-device/runtime-errors.log
-if rg -q 'Unhandled Exception|Fatal error|EXC_BAD_ACCESS' verification/ios-device/runtime-errors.log; then
+if grep -Eq 'Unhandled Exception|Fatal error|EXC_BAD_ACCESS' verification/ios-device/runtime-errors.log; then
   echo 'iOS runtime error captured.' >&2; exit 1
 fi
 printf '%s\n' 'PASS: iOS 26 simulator installation, native launch and actual home-screen capture.'
