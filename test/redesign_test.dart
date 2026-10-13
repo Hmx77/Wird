@@ -41,6 +41,7 @@ void main() {
       await store.initialize();
       await tester.pumpWidget(
         MaterialApp(
+          debugShowCheckedModeBanner: false,
           locale: const Locale('ar'),
           supportedLocales: const [Locale('ar'), Locale('en')],
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
@@ -92,6 +93,7 @@ void main() {
           RepaintBoundary(
             key: boundary,
             child: MaterialApp(
+              debugShowCheckedModeBanner: false,
               locale: Locale(language),
               supportedLocales: const [Locale('ar'), Locale('en')],
               localizationsDelegates: GlobalMaterialLocalizations.delegates,
@@ -148,6 +150,7 @@ void main() {
         RepaintBoundary(
           key: key,
           child: MaterialApp(
+            debugShowCheckedModeBanner: false,
             locale: Locale(language),
             supportedLocales: const [Locale('ar'), Locale('en')],
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
