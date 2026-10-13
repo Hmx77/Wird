@@ -32,6 +32,7 @@ void main() {
         RepaintBoundary(
           key: key,
           child: MaterialApp(
+            debugShowCheckedModeBanner: false,
             locale: const Locale('ar'),
             supportedLocales: const [Locale('ar'), Locale('en')],
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
@@ -49,6 +50,21 @@ void main() {
           key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
       await tester.runAsync(() async {
         final image = await boundary.toImage(pixelRatio: ratio);
+        final rgba = (await image.toByteData(
+          format: ui.ImageByteFormat.rawRgba,
+        ))!.buffer.asUint8List();
+        var unexpectedRed = false;
+        for (var i = 0; i < rgba.length; i += 4) {
+          if (rgba[i] > 150 && rgba[i + 1] < 60 && rgba[i + 2] < 90) {
+            unexpectedRed = true;
+            break;
+          }
+        }
+        expect(
+          unexpectedRed,
+          isFalse,
+          reason: 'Unexpected red/debug ribbon in brand asset: $path',
+        );
         final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
         final file = File(path);
         file.parent.createSync(recursive: true);
@@ -83,9 +99,35 @@ void main() {
     await render(
       'android/app/src/main/res/drawable-nodpi/wird_adaptive_foreground.png',
       const Size(108, 108),
-      const Center(child: WirdMark(size: 94)),
+      const Center(child: WirdMark(size: 66)),
       ratio: 4,
     );
+    // Android reserves the outer 18 dp of each 108 dp layer for masks.
+    // Keep the original lettering, leaf and separate kasra inside its 66 dp
+    // circular safe zone, and preserve actual circular/squircle previews.
+    for (final round in [true, false]) {
+      final preview = OverflowBox(
+        minWidth: 108,
+        maxWidth: 108,
+        minHeight: 108,
+        maxHeight: 108,
+        child: const ColoredBox(
+          color: Color(0xFF0B3437),
+          child: Center(child: WirdMark(size: 66)),
+        ),
+      );
+      await render(
+        'verification/screenshots/adaptive-${round ? "circle" : "squircle"}.png',
+        const Size(72, 72),
+        round
+            ? ClipOval(child: preview)
+            : ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: preview,
+              ),
+        ratio: 6,
+      );
+    }
     final icons = Directory('ios/Runner/Assets.xcassets/AppIcon.appiconset');
     final manifest =
         jsonDecode(File('${icons.path}/Contents.json').readAsStringSync())
