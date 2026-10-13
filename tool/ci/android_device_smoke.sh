@@ -18,7 +18,7 @@ if [ ! -s "$ANDROID_AVD_HOME/wird-review.ini" ]; then
 fi
 test -s "$ANDROID_AVD_HOME/wird-review.ini"
 "$ANDROID_HOME/emulator/emulator" -list-avds | tee verification/device/avds.txt
-rg -qx 'wird-review' verification/device/avds.txt
+grep -qx 'wird-review' verification/device/avds.txt
 accel=off
 if [ -e /dev/kvm ]; then
   # Narrow ephemeral runner-user access, never a world-writable device rule.
@@ -78,7 +78,7 @@ adb shell am start -W -n ae.wird.app/.MainActivity
 sleep 3
 adb exec-out screencap -p > verification/device/android-tablet.png
 adb logcat -d -s AndroidRuntime:E flutter:E > verification/device/runtime-errors.log
-if rg -q 'FATAL EXCEPTION|Unhandled Exception' verification/device/runtime-errors.log; then
+if grep -Eq 'FATAL EXCEPTION|Unhandled Exception' verification/device/runtime-errors.log; then
   echo 'Native runtime error captured.' >&2; exit 1
 fi
 adb shell dumpsys package ae.wird.app > verification/device/package.txt
