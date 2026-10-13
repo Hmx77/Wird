@@ -26,6 +26,7 @@ try {
     Invoke-Checked 'flutter' @('--version')
     Invoke-Checked 'flutter' @('pub', 'get')
     Invoke-Checked 'dart' @('tool/content_check.dart')
+    Invoke-Checked 'flutter' @('test', 'tool/brand_assets_test.dart')
     Invoke-Checked 'python' @('tool/static_check.py')
     Invoke-Checked 'flutter' @('analyze')
     Invoke-Checked 'flutter' @('test')

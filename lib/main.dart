@@ -1,4 +1,5 @@
 import 'ui_strings.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/services.dart';
@@ -12,12 +13,17 @@ import 'share_card.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'content.dart';
+part 'premium_ui.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Reminders.instance.initialize();
   await AudioLibrary.instance.load();
   runApp(const WirdApp());
+  LicenseRegistry.addLicense(() async* {
+    final license = await rootBundle.loadString('assets/fonts/OFL.txt');
+    yield LicenseEntryWithLineBreaks(['Noto Sans Arabic'], license);
+  });
 }
 
 class WirdPalette {
@@ -32,6 +38,8 @@ class WirdPalette {
   final String name;
   final Color background, card, primary, ink;
   final bool dark;
+  Color get homeBackground => Color.lerp(ink, const Color(0xFF071D22), .55)!;
+  Color get homeSurface => Color.lerp(homeBackground, primary, .12)!;
 }
 
 const themes = <WirdPalette>[
@@ -350,6 +358,16 @@ class _WirdAppState extends State<WirdApp> with WidgetsBindingObserver {
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         theme: ThemeData(
           useMaterial3: true,
+          fontFamily: 'NotoSansArabic',
+          navigationBarTheme: NavigationBarThemeData(
+            backgroundColor: p.homeBackground,
+            labelTextStyle: const WidgetStatePropertyAll(
+              TextStyle(color: Color(0xFFF3EEDF), fontSize: 12),
+            ),
+            iconTheme: const WidgetStatePropertyAll(
+              IconThemeData(color: Color(0xFFF3EEDF)),
+            ),
+          ),
           brightness: p.dark ? Brightness.dark : Brightness.light,
           scaffoldBackgroundColor: p.background,
           colorScheme: ColorScheme.fromSeed(
@@ -364,7 +382,7 @@ class _WirdAppState extends State<WirdApp> with WidgetsBindingObserver {
         ),
         home: store.ready
             ? WirdShell(store: store)
-            : const Scaffold(body: Center(child: CircularProgressIndicator())),
+            : const Scaffold(body: Center(child: WirdOpening())),
       );
     },
   );
@@ -416,7 +434,6 @@ class _WirdShellState extends State<WirdShell> {
       HomePage(store: store),
       LibraryPage(store: store),
       NawafilPage(store: store),
-      ProgressPage(store: store),
       SettingsPage(store: store),
     ];
     return Scaffold(
@@ -426,7 +443,7 @@ class _WirdShellState extends State<WirdShell> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: page,
         onDestinationSelected: (index) => setState(() => page = index),
-        backgroundColor: p.card,
+        backgroundColor: p.homeBackground,
         indicatorColor: p.primary.withOpacity(.17),
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         destinations: [
@@ -441,14 +458,9 @@ class _WirdShellState extends State<WirdShell> {
             label: tr(context, 'الأذكار'),
           ),
           NavigationDestination(
-            icon: const Icon(Icons.self_improvement_outlined),
-            selectedIcon: const Icon(Icons.self_improvement),
+            icon: const SujoodIcon(),
+            selectedIcon: const SujoodIcon(selected: true),
             label: tr(context, 'النوافل'),
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.calendar_today_outlined),
-            selectedIcon: const Icon(Icons.calendar_month),
-            label: tr(context, 'متابعتي'),
           ),
           NavigationDestination(
             icon: const Icon(Icons.tune_outlined),
@@ -515,6 +527,8 @@ class ThemeColors {
   static WirdPalette of(BuildContext context) {
     final root = context.findAncestorWidgetOfExactType<WirdShell>();
     if (root != null) return root.store.palette;
+    final library = context.findAncestorWidgetOfExactType<LibraryPage>();
+    if (library != null) return library.store.palette;
     final reader = context.findAncestorWidgetOfExactType<ReaderPage>();
     return reader?.store.palette ?? themes[8];
   }
@@ -541,180 +555,13 @@ class Surface extends StatelessWidget {
   );
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key, required this.store});
-  final WirdState store;
-  @override
-  Widget build(BuildContext context) {
-    final p = store.palette;
-    final daily = entries[DateTime.now().day % entries.length];
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(19, 14, 19, 28),
-      children: [
-        Row(
-          children: [
-            Image.asset(
-              'assets/brand/wird_logo.png',
-              width: 76,
-              height: 76,
-              fit: BoxFit.contain,
-              semanticLabel: tr(context, 'شعار ورد'),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  UiText(
-                    'ورد | Wird',
-                    style: TextStyle(
-                      color: p.ink,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  UiText(
-                    'ذِكْرٌ يُرَافِقُ يَوْمَكَ',
-                    style: TextStyle(
-                      color: p.ink.withOpacity(.65),
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 27),
-        UiText(
-          'السلام عليكم ورحمة الله',
-          style: TextStyle(
-            color: p.ink,
-            fontWeight: FontWeight.w700,
-            fontSize: 21,
-          ),
-        ),
-        const SizedBox(height: 20),
-        ...DhikrSection.values.map((section) {
-          final sectionEntries = inSection(section);
-          final completed = store.completed(section);
-          final icon = switch (section) {
-            DhikrSection.morning => Icons.wb_sunny_outlined,
-            DhikrSection.evening => Icons.nightlight_round,
-            DhikrSection.sleep => Icons.bedtime_outlined,
-          };
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(22),
-              onTap: () => openReader(context, store, section),
-              child: Surface(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(icon, color: p.primary, size: 29),
-                        const Spacer(),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            UiText(
-                              sectionLabel(section),
-                              style: TextStyle(
-                                color: p.ink,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 19,
-                              ),
-                            ),
-                            UiText(
-                              '$completed / ${sectionEntries.length} مكتمل',
-                              style: TextStyle(
-                                color: p.ink.withOpacity(.7),
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    LinearProgressIndicator(
-                      value: sectionEntries.isEmpty
-                          ? 0
-                          : completed / sectionEntries.length,
-                      backgroundColor: p.background,
-                      color: p.primary,
-                      minHeight: 6,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        UiText(
-                          'ابدأ القراءة',
-                          style: TextStyle(
-                            color: p.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Icon(Icons.arrow_back, color: p.primary, size: 18),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }),
-        const SizedBox(height: 6),
-        UiText(
-          'ذِكْر اليوم',
-          style: TextStyle(
-            color: p.ink,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
-        const SizedBox(height: 10),
-        Surface(
-          color: p.dark ? p.card : Colors.white,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              UiText(
-                daily.title,
-                style: TextStyle(color: p.primary, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              UiText(
-                daily.arabic,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: p.ink, fontSize: 19, height: 1.9),
-              ),
-              const SizedBox(height: 8),
-              UiText(
-                daily.source,
-                style: TextStyle(color: p.ink.withOpacity(.6), fontSize: 12),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 18),
-        UiText(
-          'النسخة الحالية تعرض مجموعة أولية من الأذكار الموثقة؛ بقية المحتوى قيد المراجعة.',
-          style: TextStyle(color: p.ink.withOpacity(.63), fontSize: 12),
-        ),
-      ],
-    );
-  }
-}
-
 class LibraryPage extends StatefulWidget {
-  const LibraryPage({super.key, required this.store});
+  const LibraryPage({
+    super.key,
+    required this.store,
+    this.initialFavorites = false,
+  });
+  final bool initialFavorites;
   final WirdState store;
   @override
   State<LibraryPage> createState() => _LibraryPageState();
@@ -722,7 +569,7 @@ class LibraryPage extends StatefulWidget {
 
 class _LibraryPageState extends State<LibraryPage> {
   String query = '';
-  bool favoriteOnly = false;
+  late bool favoriteOnly = widget.initialFavorites;
   @override
   Widget build(BuildContext context) {
     final store = widget.store;
@@ -875,7 +722,7 @@ class _ReaderPageState extends State<ReaderPage> {
     super.initState();
     index = widget.initialIndex.clamp(
       0,
-     inSection(widget.section).isNotEmpty
+      inSection(widget.section).isNotEmpty
           ? inSection(widget.section).length - 1
           : 0,
     );
@@ -1103,9 +950,7 @@ class _ReaderPageState extends State<ReaderPage> {
                             ),
                             const SizedBox(height: 12),
                             UiText(
-                              e.isQuran
-                                  ? 'آية قرآنية • توقيت القراءة موثق بحديث صحيح'
-                                  : 'صحيح',
+                              e.isQuran ? 'آية قرآنية' : 'صحيح',
                               style: TextStyle(
                                 color: p.primary,
                                 fontWeight: FontWeight.bold,

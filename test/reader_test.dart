@@ -19,10 +19,7 @@ void main() {
         locale: const Locale('ar'),
         supportedLocales: const [Locale('ar')],
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        home: ReaderPage(
-          store: store,
-          section: DhikrSection.morning,
-        ),
+        home: ReaderPage(store: store, section: DhikrSection.morning),
       ),
     );
 
@@ -53,10 +50,7 @@ void main() {
     await tester.pump();
 
     expect(store.count(firstEntry), 1);
-    expect(
-      find.text('1 / ${firstEntry.count}'),
-      findsOneWidget,
-    );
+    expect(find.text('1 / ${firstEntry.count}'), findsOneWidget);
 
     // Verify the favorite button updates state.
     await tester.tap(find.byTooltip('المفضلة'));

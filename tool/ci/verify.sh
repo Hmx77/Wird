@@ -7,9 +7,10 @@ flutter pub get
 dart format lib test tool
 dart format --output=none --set-exit-if-changed lib test tool
 dart tool/content_check.dart
+flutter test tool/brand_assets_test.dart --reporter expanded
 python3 tool/static_check.py
 flutter analyze
-flutter test --reporter expanded
+WIRD_REVIEW_IMAGES=1 flutter test --reporter expanded
 case "${1:-debug}" in
   debug) flutter build apk --debug ;;
   ios) flutter build ios --release --no-codesign ;;
