@@ -5,6 +5,10 @@ on:
   pull_request:
   workflow_dispatch:
     inputs:
+      reuse_ios_run:
+        description: Existing successful iOS run for the review gallery
+        type: string
+        default: ""
       reuse_android_run:
         description: Existing APK run for native recheck with Android build disabled
         type: string
@@ -188,11 +192,13 @@ jobs:
           name: wird-android-device-review
           path: reviewed-native
       - uses: actions/download-artifact@v4
-        if: inputs.build_ios
+        if: inputs.build_ios || inputs.reuse_ios_run != ''
         continue-on-error: true
         with:
           name: wird-ios-verification
           path: reviewed-ios
+          run-id: ${{ inputs.reuse_ios_run || github.run_id }}
+          github-token: ${{ github.token }}
       - name: Preserve verified native artwork and visual review images
         shell: python
         run: |
