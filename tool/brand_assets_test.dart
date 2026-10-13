@@ -2,6 +2,7 @@
 // Run before native builds: flutter test tool/brand_assets_test.dart
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -9,6 +10,57 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wird/main.dart';
+
+// iOS app icons must be RGB PNGs with no alpha channel. Preserve the exact
+// rendered RGB values while encoding opaque icon output without new packages.
+Uint8List opaqueRgbPng(int width, int height, Uint8List rgba) {
+  final rows = Uint8List((width * 3 + 1) * height);
+  for (var y = 0; y < height; y++) {
+    final row = y * (width * 3 + 1);
+    for (var x = 0; x < width; x++) {
+      final pixel = (y * width + x) * 4;
+      if (rgba[pixel + 3] != 255) {
+        throw StateError('iOS icon output must be fully opaque');
+      }
+      for (var channel = 0; channel < 3; channel++) {
+        rows[row + 1 + x * 3 + channel] = rgba[pixel + channel];
+      }
+    }
+  }
+  int crc32(List<int> bytes) {
+    var crc = 0xffffffff;
+    for (final byte in bytes) {
+      crc ^= byte;
+      for (var bit = 0; bit < 8; bit++) {
+        crc = (crc & 1) != 0 ? 0xedb88320 ^ (crc >> 1) : crc >> 1;
+      }
+    }
+    return crc ^ 0xffffffff;
+  }
+
+  Uint8List chunk(String type, List<int> data) {
+    final body = Uint8List.fromList([...ascii.encode(type), ...data]);
+    final length = ByteData(4)..setUint32(0, data.length);
+    final checksum = ByteData(4)..setUint32(0, crc32(body));
+    return Uint8List.fromList([
+      ...length.buffer.asUint8List(),
+      ...body,
+      ...checksum.buffer.asUint8List(),
+    ]);
+  }
+
+  final header = ByteData(13)
+    ..setUint32(0, width)
+    ..setUint32(4, height)
+    ..setUint8(8, 8)
+    ..setUint8(9, 2);
+  return (BytesBuilder()
+        ..add([137, 80, 78, 71, 13, 10, 26, 10])
+        ..add(chunk('IHDR', header.buffer.asUint8List()))
+        ..add(chunk('IDAT', ZLibEncoder().convert(rows)))
+        ..add(chunk('IEND', [])))
+      .takeBytes();
+}
 
 void main() {
   testWidgets('render owned brand assets, safe-zone icons and opening', (
@@ -24,6 +76,7 @@ void main() {
       Size size,
       Widget child, {
       double ratio = 1,
+      Color background = const Color(0xFF0B3437),
     }) async {
       tester.view.physicalSize = size;
       tester.view.devicePixelRatio = 1;
@@ -37,10 +90,7 @@ void main() {
             supportedLocales: const [Locale('ar'), Locale('en')],
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
             theme: ThemeData(fontFamily: 'NotoSansArabic'),
-            home: Scaffold(
-              backgroundColor: const Color(0xFF0B3437),
-              body: child,
-            ),
+            home: Scaffold(backgroundColor: background, body: child),
           ),
         ),
       );
@@ -68,7 +118,11 @@ void main() {
         final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
         final file = File(path);
         file.parent.createSync(recursive: true);
-        file.writeAsBytesSync(bytes!.buffer.asUint8List());
+        file.writeAsBytesSync(
+          path.contains('/AppIcon.appiconset/')
+              ? opaqueRgbPng(image.width, image.height, rgba)
+              : bytes!.buffer.asUint8List(),
+        );
         image.dispose();
       });
       debugPrint('Rendered $path');
@@ -126,6 +180,7 @@ void main() {
                 child: preview,
               ),
         ratio: 6,
+        background: const Color(0xFFF3EEDF),
       );
     }
     final icons = Directory('ios/Runner/Assets.xcassets/AppIcon.appiconset');
