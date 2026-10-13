@@ -96,9 +96,8 @@ void main() {
           double.parse((icon['scale'] as String).replaceAll('x', ''));
       await render(
         '${icons.path}/${icon['filename']}',
-        const Size(108, 108),
-        const Center(child: WirdMark(size: 108)),
-        ratio: dimension / 108,
+        Size(dimension, dimension),
+        Center(child: WirdMark(size: dimension)),
       );
     }
     for (final scale in [1, 2, 3]) {
