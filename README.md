@@ -2,18 +2,20 @@
 
 Arabic-first, private, offline Flutter application for Android and iOS, expanded from the supplied starter.
 
-**Status: Android debug APK built successfully; unsigned iOS device build passed.** [Verification run #20](https://github.com/Hmx77/Wird/actions/runs/38159340833) passed Flutter analysis, all 12 automated tests on Linux and macOS, and Android/iOS native builds. [Download the debug APK artifact](https://github.com/Hmx77/Wird/actions/runs/38159340833/artifacts/11710045349), unzip it and install `app-debug.apk` on Android. See [the actual results and release blockers](docs/BUILD_STATUS_2026-10-11.md) and [GitHub automation](docs/GITHUB_ACTIONS.md). This debug APK is for testing; production signing, physical-device QA and qualified religious proofreading remain pending. No app store publication occurred.
+**Premium redesign is under review on `redesign/premium-20261013`, in draft PR #1.** Run #28 passed dependency resolution, analysis, all 22 tests, asset generation and Android debug packaging. Run #29 passed the same iOS checks, unsigned device compilation and actual iOS 26 simulator installation/launch with Xcode 26.3. Android offline runtime revalidation is recorded separately in `docs/BUILD_STATUS_2026-10-14.md`. The repository remains private; no merge or store publication has occurred.
+
+The redesign adds the approved original-artwork crop and separate kasra layer, a warm botanical opening, darker home cards, four navigation tabs with an owned sujood icon, Arabic names for all ten themes, licensed offline Arabic fonts and visual/native smoke checks. Existing content and preference keys are preserved. The hidden calendar/activity interface retains its stored data. See `docs/REDESIGN_TRACEABILITY.md` for requirement mapping and acceptance gates.
 
 ## Implemented source
 
-- Exact uploaded logo preserved byte-for-byte in-app, with mechanically resized launcher copies and native splash screens. No redesign, recoloring or cropping.
+- Exact uploaded logo preserved byte-for-byte in-app, with mechanically resized launcher copies and native splash screens. Original source PNG is unchanged; the review UI clips excess canvas and draws the separately approved kasra in code.
 - All ten starter palettes, default **Stone & Teal**: Olive & Cream, Ocean Blue, Mocha & Sand, Soft Lavender, Emerald & Gold, Midnight Blue, Charcoal & Sage, Dusty Rose & Stone, Stone & Teal, Sage & Ivory.
 - Arabic-first interface with saved Arabic/English UI selection, RTL religious text, scalable text, focus mode, and source/benefit/meaning panels. Religious text remains in Arabic; English religious translations await review.
 - **19 source-checked entries:** six morning, five evening, eight bedtime. Curated collection, not every possible authentic dhikr.
 - Persistent repetition counters, undo, long-press reset, optional haptics and auto-advance; separate local-date progress with midnight refresh.
 - Favorites, Arabic search ignoring diacritics, tatweel and common alef forms.
 - Referenced Sunnah/Nawafil guidance and optional prayer tracking.
-- Seven-day history and monthly activity grid; no invented religious streak rewards.
+- Stored activity history remains preserved; the redesign hides the calendar/activity dashboard and its navigation tab.
 - Three opt-in daily local reminders, selected clock times, permissions, notification reader routing, Android reboot restoration and timezone refresh on resume. Inexact delivery can be delayed by battery restrictions.
 - Full-text Arabic PNG share cards with reference, timing and count context; OS share sheet and iPad anchor.
 - Local audio playback, pause, replay and seek implementation with rights-evidence and Arabic-review gates. **Zero recordings supplied.** Unavailable state is honest; no unlicensed or synthetic substitute. No background audio service claimed.
@@ -24,13 +26,14 @@ Arabic-first, private, offline Flutter application for Android and iOS, expanded
 
 **Windows:** follow [the setup and build guide](docs/WINDOWS_BUILD.md), then run `./tool/build-windows.ps1 -Mode Debug` in PowerShell. It stops on validation, analysis, test or build failure. See [the startup security record](docs/STARTUP_SECURITY.md) for the blocked command and isolation result.
 
-Baseline: Flutter 3.35.7 / Dart 3.9, Java 17, Android compile SDK 36 (target 35), minSdk 23, iOS 14+, Xcode on macOS, CocoaPods. Direct dependency versions are pinned. **pubspec.lock was not fabricated**; retain the real generated lockfile after resolving on a permitted build host.
+Baseline: Flutter 3.35.7 / Dart 3.9, Java 17, Android compile SDK 36 (target 36), minSdk 23, iOS 14+, Xcode on macOS, CocoaPods. Direct dependency versions are pinned. **pubspec.lock was not fabricated**; retain the real generated lockfile after resolving on a permitted build host.
 
 Native project files are included. Do not overwrite them with `flutter create .`.
 
 ```sh
 flutter pub get
 dart tool/content_check.dart
+flutter test tool/brand_assets_test.dart
 python3 tool/static_check.py
 flutter analyze
 flutter test
@@ -57,4 +60,4 @@ iOS: open `ios/Runner.xcworkspace`; select your Apple team for Runner and WirdWi
 
 See `docs/RELEASE_READINESS.md`, `docs/CONTENT_REVIEW.md`, `docs/AUDIO_PERMISSIONS.md`, and `docs/PRIVACY.md`.
 
-Prior-conversation retrieval failed. The supplied starter, current request and visible decisions were used. Unseen requirements have not been invented. The larger 19+ morning list mentioned in the starter was not supplied; unresolved additions remain in the review queue.
+The original 25 morning-reference images remain unavailable. Prior-context retrieval found descriptions but no exact source inventory. No unseen entries were invented. The existing 19-entry catalog remains pending qualified independent Arabic/religious proofreading before public release. See `docs/REDESIGN_TRACEABILITY.md` and `docs/redesign-content-manifest.csv`.
