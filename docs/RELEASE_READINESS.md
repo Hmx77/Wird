@@ -1,25 +1,23 @@
 # Release readiness — 14 October 2026
 
-## Actual checks
+## Current content release gates
 
-| Check | Result |
-|---|---|
-| Original logo and bundled religious source text | Original SHA-256 values retained |
-| Dependency installation and Flutter analysis | Passed on Linux and macOS |
-| Automated Flutter tests | All 22 passed on Linux and macOS |
-| Reproducible native artwork generation | Passed; debug-banner pixel gate, icon dimensions, opaque RGB iOS output |
-| Content, theme, XML/plist, audio-rights and signing-policy checks | Passed; not independent scholarly certification |
-| Android debug APK | Built successfully in run #28; 161,304,484 bytes |
-| iOS unsigned device compilation | Passed with Xcode 26.3 in run #29 |
-| iOS simulator installation and launch | Passed in run #29, with actual screen capture |
-| Android offline emulator validation | Passed in run #33; foreground/home content independently confirmed in all three views |
-| Android signed release APK/AAB | Not built: signing material unavailable |
-| Signed iOS IPA / App Store submission | Not built or submitted: Apple signing unavailable |
-| Physical-device notifications/widgets/accessibility | Pending |
+The supplied 25/23/18 PDFs are now available and all 66 screens have been compared. Current catalog: 18 morning, 15 evening, 16 bedtime entries; 17 reference screens remain withheld for religious review. See `CONTENT_VERIFICATION_2026-10-14.md` for every decision. The original logo remains unchanged; the Quran payload is now the credited verbatim Tanzil text with 54 source verse records, including all 30 Al-Mulk verses. All 19 legacy IDs remain compatible.
 
-The local Flutter startup invocation `/tmp/wird-flutter-sdk/bin/flutter --version` triggered the earlier security warning. It was not retried with unrestricted metadata access. GitHub-hosted builds install a metadata firewall before Flutter startup and invoke validation with a clean environment. Local standalone Dart checks run with network syscalls denied. See STARTUP_SECURITY.md for evidence and limits.
+`BUILD_STATUS_CONTENT_2026-10-14.md` records fresh source revisions, actual test/build results, earlier failures and artifact ZIP digests. The current full validation uses 36 automated tests, in addition to native asset rendering. The earlier 22-test/19-entry results in `BUILD_STATUS_2026-10-14.md` are historical redesign evidence.
 
-See BUILD_STATUS_2026-10-14.md for actual source revisions, runs, artifact hashes and failures. Source remains on a private draft review branch; no store publication or merge has occurred.
+The repository and development artifacts remain private. No merge or store publication has occurred. PR #1 remains open for review; its owner's existing review status is preserved.
+
+Production still requires:
+
+- Qualified independent religious/Arabic proofreading of admitted text, citations, timing, benefits and rendered typography. No qualified approval has been obtained.
+- Resolution of the 17 held reference screens and partial/disputed clauses if they are to be admitted. Sevenfold حسبي الله attribution/count/benefit caution remains explicit; Quran wording alone does not authenticate that practice.
+- Owner-controlled Android signing for release APK/AAB and reliable upgrades. CI debug keys are test keys and may differ between fresh runners; this is not a production signing identity.
+- Apple team, certificates/profiles, identifiers and matching App Group provisioning for Runner and WirdWidget. Unsigned device/simulator compilation and simulator launch do not produce a distributable signed IPA.
+- Physical-device notification/widget/accessibility, signed-upgrade/data-retention and owner visual acceptance checks below.
+- Verified redistribution rights and Arabic review before any audio is enabled. Zero recordings have been added.
+
+The local Flutter startup invocation `/tmp/wird-flutter-sdk/bin/flutter --version` triggered the earlier security warning. It was not retried with unrestricted metadata access. GitHub-hosted builds install a metadata firewall before Flutter startup and invoke validation with a clean environment. Local pure Dart checks run with network syscalls denied. See `STARTUP_SECURITY.md` for evidence and limits.
 
 ## Device QA required
 

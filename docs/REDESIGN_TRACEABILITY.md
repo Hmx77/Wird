@@ -1,5 +1,7 @@
 # Premium redesign baseline and traceability - 13 October 2026
 
+Historical redesign baseline. The completed 14 October catalog and all 66 PDF decisions are recorded in `CONTENT_VERIFICATION_2026-10-14.md`; fresh 36-test Android/iOS verification and current APK artifacts are recorded in `BUILD_STATUS_CONTENT_2026-10-14.md`. Original branding and the approved premium design remain preserved.
+
 Authoritative source: attached 28-page master specification, read in full including visual appendix. Baseline remote commit: 8656ab8f0d0341acb1e1f05071713b5da1b1f80e. Repo remains private. Work is isolated on redesign/premium-20261013; no merge/store release authorized.
 
 Baseline source inspection confirms 6 morning, 5 evening and 8 bedtime entries. Redesign analysis and all 22 automated tests passed on Linux and macOS. Android debug APK generation passed run #28. Xcode 26.3 unsigned device compilation, simulator compilation, installation and launch passed run #29 after fixing the widget bundle name and version parity. The original artwork PNG and religious source text remain unchanged. See BUILD_STATUS_2026-10-14.md for actual run revisions, earlier failures, native review results and artifact digests.
