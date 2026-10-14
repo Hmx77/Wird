@@ -85,7 +85,7 @@ void main() {
             await tester.scrollUntilVisible(
               find.byType(DropdownButton<int>),
               300,
-              scrollable: find.byType(Scrollable).last,
+              scrollable: find.byType(Scrollable).first,
             );
             await tester.tap(find.byType(DropdownButton<int>));
             await tester.pumpAndSettle();
@@ -98,7 +98,7 @@ void main() {
             await tester.scrollUntilVisible(
               find.text('0 / 10'),
               200,
-              scrollable: find.byType(Scrollable).last,
+              scrollable: find.byType(Scrollable).first,
             );
             final countButton = find.text(
               language == 'ar' ? 'اضغط للعدّ' : 'Tap to count',
@@ -106,7 +106,7 @@ void main() {
             await tester.scrollUntilVisible(
               countButton,
               200,
-              scrollable: find.byType(Scrollable).last,
+              scrollable: find.byType(Scrollable).first,
             );
             await tester.pumpAndSettle();
             await tester.tap(countButton);
@@ -117,7 +117,7 @@ void main() {
             await tester.scrollUntilVisible(
               find.text('0 / 1'),
               600,
-              scrollable: find.byType(Scrollable).last,
+              scrollable: find.byType(Scrollable).first,
               maxScrolls: 100,
             );
           }
