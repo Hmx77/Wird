@@ -16,10 +16,27 @@ def require(condition, message):
 
 audit = json.loads((ROOT / 'docs/content-audit.json').read_text(encoding='utf-8'))
 require(hashlib.sha256((ROOT / 'lib/content.dart').read_bytes()).hexdigest() == audit['contentFileSHA256'], 'Corpus changed since source review')
+require(hashlib.sha256((ROOT / 'lib/quran_text.dart').read_bytes()).hexdigest() == audit['quranFileSHA256'], 'Quran text changed since source review')
 entries = audit['entries']
 require(len(entries) == len({e['id'] for e in entries}), 'Duplicate entry IDs')
 for entry in entries:
-    require(entry['reviewed'] and entry['sourceUrl'].startswith('https://sunnah.com/'), 'Unreviewed item')
+    require(entry['reviewed'] and any(entry['sourceUrl'].startswith('https://' + host + '/') for host in ['sunnah.com', 'dorar.net', 'tanzil.net']), 'Unreviewed item')
+    require(entry['isQuran'] or 'صحيح' in entry['source'], 'No explicit Sahih evidence')
+screen_map = json.loads((ROOT / 'docs/reference-screen-map.json').read_text())
+screens = screen_map['screens']
+for section, target in [('morning',25),('evening',23),('sleep',18)]:
+    section_screens = [s['screen'] for s in screens if s['section']==section]
+    require(sorted(section_screens)==list(range(1,target+1)), 'Missing or duplicate reference screen')
+    require([e['referenceScreens'][0] for e in entries if e['section']==section] == sorted(e['referenceScreens'][0] for e in entries if e['section']==section), 'Reference order changed')
+for screen in screens:
+    require(all(id in {e['id'] for e in entries} for id in screen['entryIds']), 'Unknown mapped entry')
+    if screen['decision']=='pending': require(not screen['entryIds'], 'Pending material exposed')
+require(not any(e['id'] in {p['id'] for p in screen_map['pendingCandidates']} for e in entries), 'Review queue reached reading corpus')
+quran_source = json.loads((ROOT / 'docs/quran-source.json').read_text())
+require(len([k for k in quran_source['verses'] if k.startswith('67:')])==30, 'Incomplete Mulk')
+for entry in entries:
+    if entry['isQuran']:
+        require(entry['quranSourceUrl']=='https://tanzil.net' and 'Tanzil Project' in entry['source'], 'Quran attribution missing')
 require({e['section'] for e in entries} == {'morning', 'evening', 'sleep'}, 'Missing section')
 main = (ROOT / 'lib/main.dart').read_text(encoding='utf-8')
 require(len(re.findall(r"WirdPalette\(\s*'", main)) == 10, 'Ten theme palettes required')
