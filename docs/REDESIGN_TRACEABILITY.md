@@ -2,19 +2,19 @@
 
 Authoritative source: attached 28-page master specification, read in full including visual appendix. Baseline remote commit: 8656ab8f0d0341acb1e1f05071713b5da1b1f80e. Repo remains private. Work is isolated on redesign/premium-20261013; no merge/store release authorized.
 
-Baseline source inspection confirms 6 morning, 5 evening, 8 bedtime entries. Local structural checks passed. The prior verified run passed 12 tests and Android/unsigned iOS builds; a new unchanged baseline CI run was dispatched on 13 October. New redesign tests/builds are not yet claimed passing.
+Baseline source inspection confirms 6 morning, 5 evening and 8 bedtime entries. Redesign analysis and all 22 automated tests passed on Linux and macOS. Android debug APK generation passed run #28. Xcode 26.3 unsigned device compilation, simulator compilation, installation and launch passed run #29 after fixing the widget bundle name and version parity. The original artwork PNG and religious source text remain unchanged. See BUILD_STATUS_2026-10-14.md for actual run revisions, earlier failures, native review results and artifact digests.
 
 | Requirement | Implementation | Acceptance remaining |
 |---|---|---|
-| FR-01 launcher | Reproducible Flutter artwork renderer; adaptive safe zone; all iOS sizes | Generated assets, mask previews, actual launcher QA |
+| FR-01 launcher | Reproducible Flutter artwork renderer; adaptive safe zone; all iOS sizes | Generated/mask/native captures reviewed; owner acceptance pending |
 | FR-02 kasra | Original PNG immutable; one separate vector kasra under waw | Small-size visual proof and owner acceptance |
-| FR-03 opening | Ivory botanical/crescent/skyline vector composition; OS-compatible native opening | Cold/warm native startup QA |
-| FR-04 home | Dark theme-derived teal/slate home and restrained gold accents | Phone/tablet screenshots |
-| FR-05 header/cards | Cropped official branding, concise category entry points | Large-text and RTL/LTR checks |
-| FR-06 tracking | ProgressPage removed from shell only; stored data/code retained | Four-tab and persistence regression tests |
-| FR-07 localization | All ten palette names have explicit Arabic mappings; English identities unchanged | Language switching and settings screenshots |
-| FR-08 sujood | Owned vector kneeling torso and forehead at ground level | Small-icon visual review |
-| FR-09 navigation | Four tabs; search/favorites via home and library | Navigation smoke tests |
+| FR-03 opening | Ivory botanical/crescent/skyline vector composition; OS-compatible native opening | iOS launch and Android cold-launch captures passed; physical performance pending |
+| FR-04 home | Dark theme-derived teal/slate home and restrained gold accents | Actual Android phone/tablet and iOS screens reviewed |
+| FR-05 header/cards | Cropped official branding, concise category entry points | Widget tests and native large-font captures passed |
+| FR-06 tracking | ProgressPage removed from shell only; stored data/code retained | Four-tab/persistence tests passed; physical signed-update gate remains |
+| FR-07 localization | All ten palette names have explicit Arabic mappings; English identities unchanged | Language/theme tests passed; review screenshots preserved |
+| FR-08 sujood | Owned vector kneeling torso and forehead at ground level | Navigation icon visible in native captures; owner acceptance pending |
+| FR-09 navigation | Four tabs; search/favorites via home and library | Automated navigation tests passed |
 | FR-10 brand system | Shared original artwork, vector kasra, warm opening and richer home; licensed Noto Sans Arabic | Cross-platform appearance and owner acceptance |
 | FR-11 catalog | 19 existing stable IDs and source text unchanged; CSV manifest and source review | BLOCKED: original 25-screen source references unavailable; qualified independent proofreading pending |
 

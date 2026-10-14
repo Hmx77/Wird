@@ -1,12 +1,12 @@
 # Build Wird on Windows
 
-This guide builds the supplied source; it does not claim the source has passed Flutter analysis or native compilation. The included PowerShell script stops at the first failed command. Do not run `flutter create .` over this project: its native widget, notification and signing configuration is already included.
+This guide builds the supplied source. GitHub Actions has passed analysis, all 22 tests, Android debug compilation and unsigned iOS compilation/simulator launch; see BUILD_STATUS_2026-10-14.md for exact revisions and remaining device gates. The included PowerShell script stops at the first failed command. Do not run `flutter create .` over this project: its native widget, notification and signing configuration is already included.
 
 ## 1. Install the project toolchain
 
 Use your Windows computer (not a cloud shell containing service credentials). Install Git for Windows, Python 3 with `python` on PATH, Android Studio, and a Java 17 JDK. Download the **Windows Flutter 3.35.7** SDK from the official archive: https://docs.flutter.dev/install/archive. This is the source project's pinned baseline, not a claim that it is the newest SDK. Extract it to `C:\src\flutter`. Extract the app archive to `C:\src\wird_flutter_starter` (the directory containing `pubspec.yaml`).
 
-In Android Studio's SDK Manager install Android SDK Platform 35, SDK Build-Tools 35.0.0, Android SDK Platform-Tools and Android SDK Command-line Tools (latest). Install the Android Emulator if you do not use a physical phone. Gradle may download the Flutter-selected NDK on its first build. Dependency downloads require internet; the resulting app's core reading and tracking work offline.
+In Android Studio's SDK Manager install Android SDK Platform 36, SDK Build-Tools 35.0.0, Android SDK Platform-Tools and Android SDK Command-line Tools (latest). Install the Android Emulator if you do not use a physical phone. Gradle may download the Flutter-selected NDK on its first build. Dependency downloads require internet; the resulting app's core reading and tracking work offline.
 
 Open a new PowerShell window. Adjust the JDK path below to your actual Java 17 installation:
 
@@ -37,6 +37,7 @@ If your personal machine blocks downloaded scripts, review this project's script
 flutter --version
 flutter pub get
 dart tool/content_check.dart
+flutter test tool/brand_assets_test.dart
 python tool/static_check.py
 flutter analyze
 flutter test
@@ -85,6 +86,7 @@ Windows cannot compile this iOS project. Copy source and the generated lockfile 
 ```sh
 flutter doctor -v
 flutter pub get
+flutter test tool/brand_assets_test.dart
 cd ios
 pod install
 cd ..
