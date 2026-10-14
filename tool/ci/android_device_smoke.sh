@@ -68,15 +68,35 @@ until [ "$(adb shell settings get global airplane_mode_on | tr -d '\r')" = 1 ] &
   sleep 2
 done
 { adb shell settings get global airplane_mode_on; adb shell settings get global wifi_on; adb shell settings get global mobile_data; } > verification/device/offline-radio-settings.txt
+wird_wait_for_home() {
+  wird_view_stage="$1"
+  wird_view_deadline=$((SECONDS + 90))
+  while [ "$SECONDS" -lt "$wird_view_deadline" ]; do
+    if timeout 15 adb shell uiautomator dump "/sdcard/wird-$wird_view_stage.xml" >/dev/null 2>&1 &&
+       adb pull "/sdcard/wird-$wird_view_stage.xml" "verification/device/$wird_view_stage.xml" >/dev/null 2>&1 &&
+       python3 - "verification/device/$wird_view_stage.xml" <<'PYVIEW'
+import sys, xml.etree.ElementTree as ET
+nodes=list(ET.parse(sys.argv[1]).getroot().iter('node'))
+labels=' '.join(n.get('text','')+' '+n.get('content-desc','') for n in nodes)
+assert any(n.get('package') == 'ae.wird.app' for n in nodes), 'Wird is not the foreground app'
+assert 'الصباح' in labels or 'Morning' in labels, 'Wird home content is not ready'
+PYVIEW
+    then
+      echo "PASS: interactive Wird home visible for $wird_view_stage"
+      return 0
+    fi
+    sleep 3
+  done
+  echo "Wird home did not become visible for $wird_view_stage." >&2
+  return 1
+}
 adb shell input keyevent KEYCODE_HOME
 adb shell input swipe 540 1900 540 350 600
 sleep 2
 adb exec-out screencap -p > verification/device/android-launcher.png
 adb shell am start -W -n ae.wird.app/.MainActivity
-sleep 4
+wird_wait_for_home window
 adb exec-out screencap -p > verification/device/android-home-offline.png
-adb shell uiautomator dump /sdcard/wird-review.xml
-adb pull /sdcard/wird-review.xml verification/device/window.xml
 adb shell am force-stop ae.wird.app
 adb shell screenrecord --time-limit 8 /sdcard/wird-startup.mp4 &
 record_pid=$!
@@ -89,14 +109,14 @@ adb shell wm density 320
 adb shell settings put system font_scale 1.5
 adb shell am force-stop ae.wird.app
 adb shell am start -W -n ae.wird.app/.MainActivity
-sleep 3
+wird_wait_for_home small-large-font
 adb exec-out screencap -p > verification/device/android-small-large-font.png
 adb shell wm size 1600x2560
 adb shell wm density 240
 adb shell settings put system font_scale 1
 adb shell am force-stop ae.wird.app
 adb shell am start -W -n ae.wird.app/.MainActivity
-sleep 3
+wird_wait_for_home tablet
 adb exec-out screencap -p > verification/device/android-tablet.png
 adb logcat -d -s AndroidRuntime:E flutter:E > verification/device/runtime-errors.log
 if grep -Eq 'FATAL EXCEPTION|Unhandled Exception' verification/device/runtime-errors.log; then
