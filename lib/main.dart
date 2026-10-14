@@ -856,6 +856,7 @@ class _ReaderPageState extends State<ReaderPage> {
                 children: [
                   UiText(
                     '${index + 1} / ${sectionEntries.length}',
+                    textDirection: TextDirection.ltr,
                     style: TextStyle(color: p.ink),
                   ),
                   const SizedBox(width: 14),
@@ -1124,6 +1125,7 @@ class _ReaderPageState extends State<ReaderPage> {
                           ),
                           UiText(
                             '$progress / $target',
+                            textDirection: TextDirection.ltr,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
