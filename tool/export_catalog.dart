@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import '../lib/content.dart';
+import 'package:wird/content.dart';
 
 void main() {
   stdout.writeln(

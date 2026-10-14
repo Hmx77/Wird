@@ -1,4 +1,4 @@
-import '../lib/content.dart';
+import 'package:wird/content.dart';
 import 'dart:io';
 
 void check(bool condition, String message) {
