@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wird/content.dart';
 import 'package:wird/main.dart';
 import 'package:wird/ui_strings.dart';
 
@@ -53,7 +54,10 @@ void main() {
       expect(find.text('متابعتي'), findsNothing);
       expect(find.byType(ProgressPage), findsNothing);
       expect(find.byType(SujoodIcon), findsWidgets);
-      expect(store.favorites, contains('morning_sayyid'));
+      expect(
+        store.favorites,
+        contains(inSection(DhikrSection.morning).first.id),
+      );
       await tester.tap(find.text('الإعدادات'));
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
@@ -194,7 +198,10 @@ void main() {
       expect(store.counts.values, contains(1));
       await tester.tap(find.byTooltip(uiString('المفضلة', language)));
       await tester.pump();
-      expect(store.favorites, contains('morning_sayyid'));
+      expect(
+        store.favorites,
+        contains(inSection(DhikrSection.morning).first.id),
+      );
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
       await tester.tap(find.text(uiString('النوافل', language)));
@@ -209,7 +216,10 @@ void main() {
       await store.pendingWrites;
       final reopened = WirdState();
       await reopened.initialize();
-      expect(reopened.favorites, contains('morning_sayyid'));
+      expect(
+        reopened.favorites,
+        contains(inSection(DhikrSection.morning).first.id),
+      );
       expect(reopened.counts, store.counts);
       expect(reopened.languageCode, language);
       await tester.pumpWidget(const SizedBox.shrink());

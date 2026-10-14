@@ -71,7 +71,12 @@ void main() {
             ),
           );
           await tester.pumpAndSettle();
-          final text = tester.widget<SelectableText>(find.text(entry.arabic));
+          final text = tester.widget<SelectableText>(
+            find.byWidgetPredicate(
+              (widget) =>
+                  widget is SelectableText && widget.data == entry.arabic,
+            ),
+          );
           expect(text.maxLines, isNull);
           expect(text.textDirection, TextDirection.rtl);
           expect(tester.takeException(), isNull);
@@ -95,9 +100,16 @@ void main() {
               200,
               scrollable: find.byType(Scrollable).last,
             );
-            await tester.tap(
-              find.text(language == 'ar' ? 'اضغط للعدّ' : 'Tap to count'),
+            final countButton = find.text(
+              language == 'ar' ? 'اضغط للعدّ' : 'Tap to count',
             );
+            await tester.scrollUntilVisible(
+              countButton,
+              200,
+              scrollable: find.byType(Scrollable).last,
+            );
+            await tester.pumpAndSettle();
+            await tester.tap(countButton);
             await tester.pump();
             expect(find.text('1 / 10'), findsOneWidget);
             expect(state.count(entry), 1);
