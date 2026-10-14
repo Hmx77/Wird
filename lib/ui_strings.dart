@@ -1,6 +1,29 @@
 import 'package:flutter/material.dart';
 
+const themeArabic = <String, String>{
+  'Olive & Cream': 'زيتوني وكريمي',
+  'Ocean Blue': 'أزرق المحيط',
+  'Mocha & Sand': 'الموكا والرمال',
+  'Soft Lavender': 'لافندر ناعم',
+  'Emerald & Gold': 'الزمرد والذهب',
+  'Midnight Blue': 'أزرق منتصف الليل',
+  'Charcoal & Sage': 'فحمي ومريمي',
+  'Dusty Rose & Stone': 'وردي غباري وحجري',
+  'Stone & Teal': 'حجري وفيروزي',
+  'Sage & Ivory': 'أخضر مريمي وعاجي',
+};
+
 const uiEnglish = <String, String>{
+  'عدد التكرار': 'Repetition count',
+  'نص القرآن — Tanzil': 'Quran text — Tanzil',
+  'آية قرآنية': 'Quranic verse',
+  'وردك اليومي': 'Your daily Wird',
+  'لحظات من السكينة': 'Moments of serenity',
+  'اختر وردك وابدأ القراءة': 'Choose your Wird and begin reading',
+  'القراءة والمفضلة': 'Reading and favorites',
+  'أذكارك محفوظة دون اتصال': 'Your Athkar, available offline',
+  'قيد المراجعة الدينية': 'Religious proofreading pending',
+
   "الرئيسية": "Home",
   "الأذكار": "Athkar",
   "النوافل": "Prayers",
@@ -97,7 +120,7 @@ const uiEnglish = <String, String>{
 };
 
 String uiString(String text, String languageCode) {
-  if (languageCode != 'en') return text;
+  if (languageCode != 'en') return themeArabic[text] ?? text;
   if (uiEnglish.containsKey(text)) return uiEnglish[text]!;
   final completed = RegExp(r'^(\d+ / \d+) مكتمل$').firstMatch(text);
   if (completed != null) return '${completed[1]} complete';

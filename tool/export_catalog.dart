@@ -5,7 +5,7 @@ import 'package:wird/content.dart';
 void main() {
   stdout.writeln(
     const JsonEncoder.withIndent('  ').convert({
-      'reviewDate': '2026-10-09',
+      'reviewDate': '2026-10-14',
       'reviewLevel': 'source-checked; independent release proofreading pending',
       'entries': entries
           .map(
@@ -15,6 +15,9 @@ void main() {
               'arabic': e.arabic,
               'count': e.count,
               'countDescription': e.countDescription,
+              'countAlternatives': e.countAlternatives,
+              'referenceScreens': e.referenceScreens,
+              'quranSourceUrl': e.quranSourceUrl,
               'source': e.source,
               'sourceUrl': e.sourceUrl,
               'timing': e.timing,

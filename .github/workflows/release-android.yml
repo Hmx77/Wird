@@ -12,17 +12,22 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Free unused hosted-runner toolchains for Android packaging
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /usr/local/.ghcup
+          df -h /
       - run: bash tool/ci/block_metadata.sh
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.35.7'
           channel: stable
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
       - name: Use preinstalled Android SDK
-        run: test -d "$ANDROID_HOME/platforms/android-35"
+        run: test -d "$ANDROID_HOME/platforms/android-36"
       - name: Require existing signing material
         env:
           WIRD_KEYSTORE_BASE64: ${{ secrets.WIRD_KEYSTORE_BASE64 }}

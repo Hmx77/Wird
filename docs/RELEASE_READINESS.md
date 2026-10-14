@@ -1,35 +1,23 @@
-> Latest status and changes: `BUILD_STATUS_2026-10-10.md`. GitHub repository exists privately; source upload and CI execution await repository access.
+# Release readiness — 14 October 2026
 
-# Release readiness — 9 October 2026
+## Current content release gates
 
-## Actual checks
+The supplied 25/23/18 PDFs are now available and all 66 screens have been compared. Current catalog: 18 morning, 15 evening, 16 bedtime entries; 17 reference screens remain withheld for religious review. See `CONTENT_VERIFICATION_2026-10-14.md` for every decision. The original logo remains unchanged; the Quran payload is now the credited verbatim Tanzil text with 54 source verse records, including all 30 Al-Mulk verses. All 19 legacy IDs remain compatible.
 
-| Check | Result |
-|---|---|
-| Exact source logo vs uploaded PNG | SHA-256 matched |
-| Dart formatter/parser across lib/test/tool | Passed |
-| Standalone Dart content regression checks | Passed: 19 entries, IDs, sections, counts, sources, Arabic search |
-| Native XML/storyboards/plists/entitlements | Parsed successfully |
-| iOS icon dimensions | Passed |
-| Ten themes / default palette | Passed structural check |
-| Audio manifest / release signing policy | Passed structural check |
-| Android receiver / iOS extension configuration | Passed structural check only |
-| Flutter resolution / analysis / full tests | Blocked, not passed |
-| Android APK/AAB | Not compiled |
-| iOS IPA | Not compiled; no macOS/Xcode here |
-| Device/accessibility/store testing | Not run |
-| Offline structural checks after resumption | Passed again; Python reads explicitly use UTF-8 for Windows Arabic compatibility |
-| Windows PowerShell build script | Included; not executed (PowerShell unavailable here) |
+`BUILD_STATUS_CONTENT_2026-10-14.md` records fresh source revisions, actual test/build results, earlier failures and artifact ZIP digests. The current full validation uses 36 automated tests, in addition to native asset rendering. The earlier 22-test/19-entry results in `BUILD_STATUS_2026-10-14.md` are historical redesign evidence.
 
-Flutter startup attempted a link-local cloud metadata request while setting up its tooling. Automatic approval review rejected it because the endpoint can expose instance metadata or credentials. That initialization was not retried or bypassed. Standalone Dart was used only for independent offline parsing/formatting and the package-free content check; this is not a Flutter test run.
+The repository and development artifacts remain private. No merge or store publication has occurred. PR #1 remains open for review; its owner's existing review status is preserved.
 
-## Tests included, awaiting Flutter
+Production still requires:
 
-- `test/content_test.dart`: corpus/source invariants.
-- `test/state_test.dart`: counter bounds, persistence, defaults, midnight separation, corruption recovery, deletion.
-- `test/reader_test.dart`: immediate reader counter/favorite updates.
+- Qualified independent religious/Arabic proofreading of admitted text, citations, timing, benefits and rendered typography. No qualified approval has been obtained.
+- Resolution of the 17 held reference screens and partial/disputed clauses if they are to be admitted. Sevenfold حسبي الله attribution/count/benefit caution remains explicit; Quran wording alone does not authenticate that practice.
+- Owner-controlled Android signing for release APK/AAB and reliable upgrades. CI debug keys are test keys and may differ between fresh runners; this is not a production signing identity.
+- Apple team, certificates/profiles, identifiers and matching App Group provisioning for Runner and WirdWidget. Unsigned device/simulator compilation and simulator launch do not produce a distributable signed IPA.
+- Physical-device notification/widget/accessibility, signed-upgrade/data-retention and owner visual acceptance checks below.
+- Verified redistribution rights and Arabic review before any audio is enabled. Zero recordings have been added.
 
-The supplied CI workflow has not executed. Resolve dependencies on an approved host, preserve the real lockfile, and run all gates before calling the app production-ready.
+The local Flutter startup invocation `/tmp/wird-flutter-sdk/bin/flutter --version` triggered the earlier security warning. It was not retried with unrestricted metadata access. GitHub-hosted builds install a metadata firewall before Flutter startup and invoke validation with a clean environment. Local pure Dart checks run with network syscalls denied. See `STARTUP_SECURITY.md` for evidence and limits.
 
 ## Device QA required
 
@@ -40,14 +28,15 @@ The supplied CI workflow has not executed. Resolve dependencies on an approved h
 5. Add/remove widgets, progress/deletion refresh, prior-day reset. Android periodic refresh and iOS timeline delivery are OS-controlled. Validate provisioned App Group on iPhone.
 6. All share cards, especially long three-surah text: no clipping, Arabic shaping, RTL and iPad share-sheet position.
 7. Once licensed recordings exist: pronunciation, play/pause/replay/seek, interruptions, leaving/backgrounding reader, no automatic worship-counter increments.
-8. Native compilation and plugin compatibility. Source parsing cannot establish runtime behavior.
+8. Validate production-signed builds and startup performance on actual devices; debug emulator timing is not a release benchmark.
 
 ## External input / access still needed
 
 - Licensed recordings or written redistribution permission for audio.
 - Independent qualified religious/Arabic proofreading and resolution of the content review queue before public release.
 - Apple Developer signing team/profiles/App Group; Google Play account and Android upload keystore for distribution.
-- A Flutter build host with safe isolation or the local Windows setup in `WINDOWS_BUILD.md`. The no-network namespace preflight failed here; unrestricted cloud metadata access is not requested or authorized. See `STARTUP_SECURITY.md`.
+- The original 25 morning-reference screens to finish the requested omission comparison.
+- Physical devices for the remaining notification, widget, accessibility and signed-update tests.
 - Ownership confirmation for provisional bundle identifiers before registration.
 
 No store publishing, account configuration or contacting third parties was performed.

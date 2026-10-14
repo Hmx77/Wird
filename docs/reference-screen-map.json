@@ -1,0 +1,1119 @@
+{
+  "date": "2026-10-14",
+  "referencePDFs": [
+    {
+      "file": "Wird_Evening_Athkar_23_Screenshots_Ordered(1).pdf",
+      "sha256": "e8685ece77302bfe19f5ac40da85906e77a133fc5590dd2c766fc061b1c8f962"
+    },
+    {
+      "file": "Wird_Bedtime_Athkar_18_Screenshots_Ordered(1).pdf",
+      "sha256": "43339d42f937f32242740d74991314fc8a01c4b2c9f6b98873dd2cc2ea527b0d"
+    },
+    {
+      "file": "Wird_Morning_Athkar_25_Screenshots_Ordered(1).pdf",
+      "sha256": "c6f656085b662d55c7a50c2172d00e03ff3a1199a555525fa5b78bb93c4da46a"
+    }
+  ],
+  "screens": [
+    {
+      "section": "morning",
+      "screen": 1,
+      "title": "آية الكرسي",
+      "entryIds": [
+        "morning_kursi"
+      ],
+      "decision": "corrected",
+      "notes": "Complete Quran verse retained. Timed protection claim withheld owing to differing grading/wording; do not import the bedtime Bukhari benefit into morning/evening.",
+      "sourceUrls": [
+        "https://tanzil.net/#2:255",
+        "https://dorar.net/h/UA2ZPwXk",
+        "https://dorar.net/h/iyqeplK5?osoul=1"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 2,
+      "title": "سورة الإخلاص",
+      "entryIds": [
+        "morning_ikhlas"
+      ],
+      "decision": "admitted",
+      "notes": "Separate surahs, each three repetitions, matching screens. Explicit Sahih grading recorded alongside Hasan/Hasan-Sahih differences; proofreading pending.",
+      "sourceUrls": [
+        "https://dorar.net/h/4HhZknUQ"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 3,
+      "title": "سورة الفلق",
+      "entryIds": [
+        "morning_falaq"
+      ],
+      "decision": "admitted",
+      "notes": "Separate surahs, each three repetitions, matching screens. Explicit Sahih grading recorded alongside Hasan/Hasan-Sahih differences; proofreading pending.",
+      "sourceUrls": [
+        "https://dorar.net/h/4HhZknUQ"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 4,
+      "title": "سورة الناس",
+      "entryIds": [
+        "morning_nas"
+      ],
+      "decision": "admitted",
+      "notes": "Separate surahs, each three repetitions, matching screens. Explicit Sahih grading recorded alongside Hasan/Hasan-Sahih differences; proofreading pending.",
+      "sourceUrls": [
+        "https://dorar.net/h/4HhZknUQ"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 5,
+      "title": "أصبحنا وأصبح الملك لله",
+      "entryIds": [
+        "morning_kingdom"
+      ],
+      "decision": "admitted",
+      "notes": "Reference order retained.",
+      "sourceUrls": [
+        "https://sunnah.com/muslim:2723b"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 6,
+      "title": "اللهم بك أصبحنا",
+      "entryIds": [
+        "morning_bika"
+      ],
+      "decision": "admitted",
+      "notes": "Reference order retained.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:5068"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 7,
+      "title": "سيد الاستغفار",
+      "entryIds": [
+        "morning_sayyid"
+      ],
+      "decision": "admitted",
+      "notes": "Reference order retained.",
+      "sourceUrls": [
+        "https://sunnah.com/bukhari:6306"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 8,
+      "title": "أشهدك وأشهد حملة عرشك",
+      "entryIds": [],
+      "decision": "pending",
+      "notes": "The fourfold emancipation claim is graded Daif by Al-Albani in Abu Dawud 5069; no Sahih count-four practice admitted.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:5069"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 9,
+      "title": "ما أصبح / أمسى بي من نعمة",
+      "entryIds": [],
+      "decision": "pending",
+      "notes": "Abu Dawud 5073 is graded Daif. The screenshot also adds أو بأحد من خلقك beyond the displayed matn. Withheld, not reconstructed.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:5073"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 10,
+      "title": "العافية في البدن والسمع والبصر",
+      "entryIds": [],
+      "decision": "pending",
+      "notes": "Abu Dawud 5090 is Hasan in chain, not Sahih under this product policy. Count three retained only in the review queue.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:5090"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 11,
+      "title": "الاستعاذة من الهم والحزن",
+      "entryIds": [
+        "morning_worry"
+      ],
+      "decision": "corrected",
+      "notes": "Bukhari wording ضلع الدين وغلبة الرجال replaces the screenshot غلبة الدين وقهر الرجال. General occasion explicitly labelled.",
+      "sourceUrls": [
+        "https://sunnah.com/bukhari:6369"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 12,
+      "title": "حسبي الله لا إله إلا هو",
+      "entryIds": [],
+      "decision": "pending",
+      "notes": "Screenshot authenticity caution preserved: disputed attribution, sevenfold morning/evening specification and promised sufficiency are NOT approved. Quran 9:129 is authentic scripture; this does not authenticate the sevenfold practice. Abu Dawud 5081 is a companion report with the wording صادقا كان بها أو كاذبا and is labelled Mawdu by Al-Albani on the cited page. This is a judgement on that report, not on the Quranic words. Qualified scholarly review is mandatory.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:5081"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 13,
+      "title": "العفو والعافية",
+      "entryIds": [
+        "morning_wellbeing"
+      ],
+      "decision": "variant",
+      "notes": "Correct existing Abu Dawud 5074 opening العافية retained, without inserting the screenshot extra العفو in the first clause.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:5074"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 14,
+      "title": "فاطر السماوات والأرض",
+      "entryIds": [
+        "morning_creator"
+      ],
+      "decision": "partial",
+      "notes": "Full Sahih Abu Dawud 5067 matn used. Different ordering and extra وأن أقترف... clause of Hasan Tirmidhi 3529 are not blended; extension pending.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:5067",
+        "https://sunnah.com/tirmidhi:3529"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 15,
+      "title": "بسم الله الذي لا يضر",
+      "entryIds": [
+        "morning_protection"
+      ],
+      "decision": "admitted",
+      "notes": "Reference order retained.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:5088"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 16,
+      "title": "رضيت بالله ربًا",
+      "entryIds": [],
+      "decision": "pending",
+      "notes": "Ibn Majah 3870 is Hasan; Abu Dawud 5072 is Daif. No Sahih evidence for the screenshot threefold timed practice established. Do not transfer the different context of Muslim 34.",
+      "sourceUrls": [
+        "https://sunnah.com/ibnmajah:3870"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 17,
+      "title": "يا حي يا قيوم برحمتك أستغيث",
+      "entryIds": [],
+      "decision": "pending",
+      "notes": "The morning/evening matn is graded Hasan in Al-Albani, Sahih al-Jami 5820; a book title containing صحيح does not make every entry Sahih. Withheld under the strict policy.",
+      "sourceUrls": [
+        "https://dorar.net/h/YsQbIip8"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 18,
+      "title": "أصبح / أمسى الملك لله رب العالمين",
+      "entryIds": [],
+      "decision": "pending",
+      "notes": "Abu Dawud 5084 is Daif. Do not conflate its conquest/light/blessing clauses with the distinct Sahih Muslim 2723 kingdom supplication.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:5084"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 19,
+      "title": "أصبحنا على فطرة الإسلام",
+      "entryIds": [
+        "morning_fitrah"
+      ],
+      "decision": "admitted",
+      "notes": "Reference order retained.",
+      "sourceUrls": [
+        "https://dorar.net/h/GLuDBTFW"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 20,
+      "title": "لا إله إلا الله وحده",
+      "entryIds": [
+        "morning_tahlil"
+      ],
+      "decision": "corrected",
+      "notes": "One selectable entry, three valid alternatives 1/10/100 with separate evidence and timing. No three duplicates, no mandatory combined targets. Evening 100 is general daily recitation; the promise is not changed to protection until morning.",
+      "sourceUrls": [
+        "https://sunnah.com/bukhari:3293",
+        "https://sunnah.com/abudawud:5077",
+        "https://sunnah.com/muslim:2693"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 21,
+      "title": "سبحان الله وبحمده",
+      "entryIds": [
+        "morning_tasbih"
+      ],
+      "decision": "admitted",
+      "notes": "Reference order retained.",
+      "sourceUrls": [
+        "https://sunnah.com/muslim:2692"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 22,
+      "title": "عدد خلقه ورضا نفسه",
+      "entryIds": [
+        "morning_creation"
+      ],
+      "decision": "admitted",
+      "notes": "Reference order retained.",
+      "sourceUrls": [
+        "https://sunnah.com/muslim:2726a"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 23,
+      "title": "العلم النافع والرزق الطيب",
+      "entryIds": [
+        "morning_knowledge"
+      ],
+      "decision": "admitted",
+      "notes": "Timing restored: after the salam of Fajr, not an unspecified morning count.",
+      "sourceUrls": [
+        "https://sunnah.com/ibnmajah:925"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 24,
+      "title": "الاستغفار والتوبة",
+      "entryIds": [
+        "morning_istighfar"
+      ],
+      "decision": "corrected",
+      "notes": "Corrected the screenshot Bukhari attribution for 100: Bukhari 6307 says more than 70; Muslim 2702 supports daily 100. Display is an invocation, not a quote claiming this exact combined phrase is mandated 100 every morning.",
+      "sourceUrls": [
+        "https://sunnah.com/muslim:2702a",
+        "https://sunnah.com/bukhari:6307",
+        "https://sunnah.com/muslim:2702b"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "morning",
+      "screen": 25,
+      "title": "الصلاة على النبي ﷺ",
+      "entryIds": [
+        "morning_salawat"
+      ],
+      "decision": "corrected",
+      "notes": "General Salawat kept using a complete explicitly narrated Bukhari formula. Screenshot short صيغة is not falsely quoted as a verbatim Sahih hadith. Timed tenfold specification withheld; target 1 is labelled tracking only. General Muslim 408 one-for-ten benefit retained.",
+      "sourceUrls": [
+        "https://sunnah.com/bukhari:3370",
+        "https://sunnah.com/muslim:408",
+        "https://dorar.net/h/Zx6Sk8ey"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 1,
+      "title": "آية الكرسي",
+      "entryIds": [
+        "evening_kursi"
+      ],
+      "decision": "corrected",
+      "notes": "Complete Quran verse retained. Timed protection claim withheld owing to differing grading/wording; do not import the bedtime Bukhari benefit into morning/evening.",
+      "sourceUrls": [
+        "https://tanzil.net/#2:255",
+        "https://dorar.net/h/UA2ZPwXk",
+        "https://dorar.net/h/iyqeplK5?osoul=1"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 2,
+      "title": "سورة الإخلاص",
+      "entryIds": [
+        "evening_ikhlas"
+      ],
+      "decision": "admitted",
+      "notes": "Separate surahs, each three repetitions, matching screens. Explicit Sahih grading recorded alongside Hasan/Hasan-Sahih differences; proofreading pending.",
+      "sourceUrls": [
+        "https://dorar.net/h/4HhZknUQ"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 3,
+      "title": "سورة الفلق",
+      "entryIds": [
+        "evening_falaq"
+      ],
+      "decision": "admitted",
+      "notes": "Separate surahs, each three repetitions, matching screens. Explicit Sahih grading recorded alongside Hasan/Hasan-Sahih differences; proofreading pending.",
+      "sourceUrls": [
+        "https://dorar.net/h/4HhZknUQ"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 4,
+      "title": "سورة الناس",
+      "entryIds": [
+        "evening_nas"
+      ],
+      "decision": "admitted",
+      "notes": "Separate surahs, each three repetitions, matching screens. Explicit Sahih grading recorded alongside Hasan/Hasan-Sahih differences; proofreading pending.",
+      "sourceUrls": [
+        "https://dorar.net/h/4HhZknUQ"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 5,
+      "title": "أمسينا وأمسى الملك لله",
+      "entryIds": [
+        "evening_kingdom"
+      ],
+      "decision": "variant",
+      "notes": "Correct existing Muslim 2723a wording retained, rather than blending the screenshot b-variant into it.",
+      "sourceUrls": [
+        "https://sunnah.com/muslim:2723a"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 6,
+      "title": "اللهم بك أمسينا",
+      "entryIds": [
+        "evening_bika"
+      ],
+      "decision": "admitted",
+      "notes": "Evening المصير independently verified in Ibn Majah 3868; morning النشور retained from Abu Dawud 5068. Variants are not silently blended.",
+      "sourceUrls": [
+        "https://sunnah.com/ibnmajah:3868"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 7,
+      "title": "سيد الاستغفار",
+      "entryIds": [
+        "evening_sayyid"
+      ],
+      "decision": "admitted",
+      "notes": "Reference order retained.",
+      "sourceUrls": [
+        "https://sunnah.com/bukhari:6306"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 8,
+      "title": "أشهدك وأشهد حملة عرشك",
+      "entryIds": [],
+      "decision": "pending",
+      "notes": "The fourfold emancipation claim is graded Daif by Al-Albani in Abu Dawud 5069; no Sahih count-four practice admitted.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:5069"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 9,
+      "title": "ما أصبح / أمسى بي من نعمة",
+      "entryIds": [],
+      "decision": "pending",
+      "notes": "Abu Dawud 5073 is graded Daif. The screenshot also adds أو بأحد من خلقك beyond the displayed matn. Withheld, not reconstructed.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:5073"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 10,
+      "title": "العافية في البدن والسمع والبصر",
+      "entryIds": [],
+      "decision": "pending",
+      "notes": "Abu Dawud 5090 is Hasan in chain, not Sahih under this product policy. Count three retained only in the review queue.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:5090"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 11,
+      "title": "الاستعاذة من الهم والحزن",
+      "entryIds": [
+        "evening_worry"
+      ],
+      "decision": "corrected",
+      "notes": "Bukhari wording ضلع الدين وغلبة الرجال replaces the screenshot غلبة الدين وقهر الرجال. General occasion explicitly labelled.",
+      "sourceUrls": [
+        "https://sunnah.com/bukhari:6369"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 12,
+      "title": "حسبي الله لا إله إلا هو",
+      "entryIds": [],
+      "decision": "pending",
+      "notes": "Screenshot authenticity caution preserved: disputed attribution, sevenfold morning/evening specification and promised sufficiency are NOT approved. Quran 9:129 is authentic scripture; this does not authenticate the sevenfold practice. Abu Dawud 5081 is a companion report with the wording صادقا كان بها أو كاذبا and is labelled Mawdu by Al-Albani on the cited page. This is a judgement on that report, not on the Quranic words. Qualified scholarly review is mandatory.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:5081"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 13,
+      "title": "العفو والعافية",
+      "entryIds": [
+        "evening_wellbeing"
+      ],
+      "decision": "variant",
+      "notes": "Correct existing Abu Dawud 5074 opening العافية retained, without inserting the screenshot extra العفو in the first clause.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:5074"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 14,
+      "title": "فاطر السماوات والأرض",
+      "entryIds": [
+        "evening_creator"
+      ],
+      "decision": "partial",
+      "notes": "Full Sahih Abu Dawud 5067 matn used. Different ordering and extra وأن أقترف... clause of Hasan Tirmidhi 3529 are not blended; extension pending.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:5067",
+        "https://sunnah.com/tirmidhi:3529"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 15,
+      "title": "بسم الله الذي لا يضر",
+      "entryIds": [
+        "evening_protection"
+      ],
+      "decision": "admitted",
+      "notes": "Reference order retained.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:5088"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 16,
+      "title": "رضيت بالله ربًا",
+      "entryIds": [],
+      "decision": "pending",
+      "notes": "Ibn Majah 3870 is Hasan; Abu Dawud 5072 is Daif. No Sahih evidence for the screenshot threefold timed practice established. Do not transfer the different context of Muslim 34.",
+      "sourceUrls": [
+        "https://sunnah.com/ibnmajah:3870"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 17,
+      "title": "يا حي يا قيوم برحمتك أستغيث",
+      "entryIds": [],
+      "decision": "pending",
+      "notes": "The morning/evening matn is graded Hasan in Al-Albani, Sahih al-Jami 5820; a book title containing صحيح does not make every entry Sahih. Withheld under the strict policy.",
+      "sourceUrls": [
+        "https://dorar.net/h/YsQbIip8"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 18,
+      "title": "أصبح / أمسى الملك لله رب العالمين",
+      "entryIds": [],
+      "decision": "pending",
+      "notes": "Abu Dawud 5084 is Daif. Do not conflate its conquest/light/blessing clauses with the distinct Sahih Muslim 2723 kingdom supplication.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:5084"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 19,
+      "title": "أمسينا على فطرة الإسلام",
+      "entryIds": [],
+      "decision": "pending",
+      "notes": "The Sahih al-Jami 4674 source has morning words أصبحنا in the displayed matn even when noting evening use. Ahmad variants differ. Exact أمسينا wording is not reconstructed; qualified wording review required. Morning wording is admitted separately.",
+      "sourceUrls": [
+        "https://dorar.net/h/GLuDBTFW"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 20,
+      "title": "لا إله إلا الله وحده",
+      "entryIds": [
+        "evening_tahlil"
+      ],
+      "decision": "corrected",
+      "notes": "One selectable entry, three valid alternatives 1/10/100 with separate evidence and timing. No three duplicates, no mandatory combined targets. Evening 100 is general daily recitation; the promise is not changed to protection until morning.",
+      "sourceUrls": [
+        "https://sunnah.com/bukhari:3293",
+        "https://sunnah.com/abudawud:5077",
+        "https://sunnah.com/muslim:2693"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 21,
+      "title": "سبحان الله وبحمده",
+      "entryIds": [
+        "evening_tasbih"
+      ],
+      "decision": "admitted",
+      "notes": "Reference order retained.",
+      "sourceUrls": [
+        "https://sunnah.com/muslim:2692"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 22,
+      "title": "أعوذ بكلمات الله التامات",
+      "entryIds": [
+        "evening_perfect_words"
+      ],
+      "decision": "admitted",
+      "notes": "Three repetitions with explicit Sahih Darussalam grading; original Tirmidhi Hasan classification recorded. Muslim is not cited as prescribing three.",
+      "sourceUrls": [
+        "https://sunnah.com/tirmidhi:3604b"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "evening",
+      "screen": 23,
+      "title": "الصلاة على النبي ﷺ",
+      "entryIds": [
+        "evening_salawat"
+      ],
+      "decision": "corrected",
+      "notes": "General Salawat kept using a complete explicitly narrated Bukhari formula. Screenshot short صيغة is not falsely quoted as a verbatim Sahih hadith. Timed tenfold specification withheld; target 1 is labelled tracking only. General Muslim 408 one-for-ten benefit retained.",
+      "sourceUrls": [
+        "https://sunnah.com/bukhari:3370",
+        "https://sunnah.com/muslim:408",
+        "https://dorar.net/h/Zx6Sk8ey"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "sleep",
+      "screen": 1,
+      "title": "آية الكرسي",
+      "entryIds": [
+        "sleep_kursi"
+      ],
+      "decision": "admitted",
+      "notes": "Complete Quran text standardized to verbatim Tanzil. Correct bedtime Bukhari 2311 benefit preserved; screenshot generic morning/evening note not imported.",
+      "sourceUrls": [
+        "https://sunnah.com/bukhari:2311"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "sleep",
+      "screen": 2,
+      "title": "خواتيم سورة البقرة",
+      "entryIds": [
+        "sleep_baqarah_end"
+      ],
+      "decision": "admitted",
+      "notes": "Reference sequence retained.",
+      "sourceUrls": [
+        "https://sunnah.com/bukhari:5009"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "sleep",
+      "screen": 3,
+      "title": "سورة الكافرون",
+      "entryIds": [
+        "sleep_kafirun"
+      ],
+      "decision": "admitted",
+      "notes": "Reference sequence retained.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:5055"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "sleep",
+      "screen": 4,
+      "title": "الإخلاص والفلق والناس",
+      "entryIds": [
+        "sleep_ikhlas_falaq_nas"
+      ],
+      "decision": "grouped",
+      "notes": "Screens 4–6 map to the existing complete three-surah/blowing/wiping routine repeated three times. No duplicate separate triple counters added, and old favorite ID preserved.",
+      "sourceUrls": [
+        "https://sunnah.com/bukhari:5017"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "sleep",
+      "screen": 5,
+      "title": "الإخلاص والفلق والناس",
+      "entryIds": [
+        "sleep_ikhlas_falaq_nas"
+      ],
+      "decision": "grouped",
+      "notes": "Continuation of the complete routine mapped to screen 4; not a new unique entry.",
+      "sourceUrls": [
+        "https://sunnah.com/bukhari:5017"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "sleep",
+      "screen": 6,
+      "title": "الإخلاص والفلق والناس",
+      "entryIds": [
+        "sleep_ikhlas_falaq_nas"
+      ],
+      "decision": "grouped",
+      "notes": "Continuation of the complete routine mapped to screen 4; not a new unique entry.",
+      "sourceUrls": [
+        "https://sunnah.com/bukhari:5017"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "sleep",
+      "screen": 7,
+      "title": "باسمك ربي وضعت جنبي",
+      "entryIds": [
+        "sleep_bismika"
+      ],
+      "decision": "admitted",
+      "notes": "Reference sequence retained.",
+      "sourceUrls": [
+        "https://sunnah.com/bukhari:6320"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "sleep",
+      "screen": 8,
+      "title": "اللهم قني عذابك",
+      "entryIds": [
+        "sleep_protect_punishment"
+      ],
+      "decision": "corrected",
+      "notes": "Sahih wording retained. Screenshot count 3 rejected explicitly because the cited grade excludes that addition. Target 1 is tracking, not a new prescribed numerical claim.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:5045"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "sleep",
+      "screen": 9,
+      "title": "باسمك أموت وأحيا",
+      "entryIds": [
+        "sleep_life"
+      ],
+      "decision": "variant",
+      "notes": "Correct existing Bukhari 6312 باسمك أموت وأحيا preserved. Screenshot extra اللهم not blended into the selected source.",
+      "sourceUrls": [
+        "https://sunnah.com/bukhari:6312"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "sleep",
+      "screen": 10,
+      "title": "الحمد لله الذي أطعمنا",
+      "entryIds": [
+        "sleep_gratitude"
+      ],
+      "decision": "admitted",
+      "notes": "Reference sequence retained.",
+      "sourceUrls": [
+        "https://sunnah.com/muslim:2715"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "sleep",
+      "screen": 11,
+      "title": "اللهم خلقت نفسي",
+      "entryIds": [
+        "sleep_soul"
+      ],
+      "decision": "corrected",
+      "notes": "Exact Muslim wording خلقت نفسي retained without adding screenshot إنك.",
+      "sourceUrls": [
+        "https://sunnah.com/muslim:2712"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "sleep",
+      "screen": 12,
+      "title": "اللهم رب السماوات",
+      "entryIds": [
+        "sleep_lord"
+      ],
+      "decision": "variant",
+      "notes": "Exact Muslim 2713a رب الأرض and وأغننا retained; screenshot رب العرش without الأرض and أغننا altered only to the cited complete source.",
+      "sourceUrls": [
+        "https://sunnah.com/muslim:2713a"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "sleep",
+      "screen": 13,
+      "title": "اللهم أسلمت وجهي إليك",
+      "entryIds": [
+        "sleep_surrender"
+      ],
+      "decision": "variant",
+      "notes": "Complete single Sahih 6311 variant used, not the screenshot composite أسلمت نفسي + وجهت وجهي. آخر ما تقول guidance kept despite reference placing Mulk later.",
+      "sourceUrls": [
+        "https://sunnah.com/bukhari:6311"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "sleep",
+      "screen": 14,
+      "title": "سورة الملك — كاملة",
+      "entryIds": [
+        "sleep_mulk"
+      ],
+      "decision": "completed",
+      "notes": "All 30 verses sourced verbatim with numbered boundaries, including cropped remainder. Basmala is present in the publisher first-verse record and is not assigned its own verse number. Tirmidhi 2892 timing/virtue claim is Daif in Darussalam and remains pending; Quran text itself admitted.",
+      "sourceUrls": [
+        "https://tanzil.net/#67:1",
+        "https://sunnah.com/tirmidhi:2892"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "sleep",
+      "screen": 15,
+      "title": "التسبيح والتحميد والتكبير",
+      "entryIds": [
+        "sleep_tasbih",
+        "sleep_tahmid",
+        "sleep_takbir"
+      ],
+      "decision": "split",
+      "notes": "Reference screen is one routine with three distinct counters: 33,33,34. All three old IDs preserved. Not three new unique screenshot items.",
+      "sourceUrls": [
+        "https://sunnah.com/muslim:2727a"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "sleep",
+      "screen": 16,
+      "title": "لا إله إلا الله الواحد القهار",
+      "entryIds": [],
+      "decision": "pending",
+      "notes": "Screenshot Bukhari attribution is not supported by the retrieved reference. Ibn Hibban 5530 is graded sound in chain by Shuayb al-Arnaut; Ibn Hajar labels the narration معلول in Ithaf al-Mahara 17/320. Matn and attribution require qualified conflict review; do not assert consensus Sahih.",
+      "sourceUrls": [
+        "https://dorar.net/hadith/sharh/112428"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "sleep",
+      "screen": 17,
+      "title": "دعاء الفزع في النوم",
+      "entryIds": [],
+      "decision": "pending",
+      "notes": "Abu Dawud 3893 is Hasan excluding the later companion practice. Screenshot adds وعقابه absent in that matn. Do not guess an exact composite or treat Hasan as Sahih.",
+      "sourceUrls": [
+        "https://sunnah.com/abudawud:3893"
+      ],
+      "qualifiedReview": "pending"
+    },
+    {
+      "section": "sleep",
+      "screen": 18,
+      "title": "ما يفعل من رأى حلمًا يكرهه",
+      "entryIds": [
+        "sleep_bad_dream"
+      ],
+      "decision": "completed",
+      "notes": "Cropped screen reconstructed only from Muslim 2262/2263a/2261a, with independent passages labelled. Three leftward spits/blows, refuge, turn side, prayer, do not relate. Counter 1 acknowledges reading guidance, not performing a threefold bedtime recitation.",
+      "sourceUrls": [
+        "https://sunnah.com/muslim:2262",
+        "https://sunnah.com/muslim:2263a",
+        "https://sunnah.com/muslim:2261a"
+      ],
+      "qualifiedReview": "pending"
+    }
+  ],
+  "pendingCandidates": [
+    {
+      "id": "morning_pending_8",
+      "section": "morning",
+      "screen": 8,
+      "title": "أشهدك وأشهد حملة عرشك",
+      "referenceCount": 4,
+      "arabic": "",
+      "reviewed": false,
+      "reason": "The fourfold emancipation claim is graded Daif by Al-Albani in Abu Dawud 5069; no Sahih count-four practice admitted.",
+      "sourceUrl": "https://sunnah.com/abudawud:5069"
+    },
+    {
+      "id": "morning_pending_9",
+      "section": "morning",
+      "screen": 9,
+      "title": "ما أصبح / أمسى بي من نعمة",
+      "referenceCount": 1,
+      "arabic": "",
+      "reviewed": false,
+      "reason": "Abu Dawud 5073 is graded Daif. The screenshot also adds أو بأحد من خلقك beyond the displayed matn. Withheld, not reconstructed.",
+      "sourceUrl": "https://sunnah.com/abudawud:5073"
+    },
+    {
+      "id": "morning_pending_10",
+      "section": "morning",
+      "screen": 10,
+      "title": "العافية في البدن والسمع والبصر",
+      "referenceCount": 3,
+      "arabic": "",
+      "reviewed": false,
+      "reason": "Abu Dawud 5090 is Hasan in chain, not Sahih under this product policy. Count three retained only in the review queue.",
+      "sourceUrl": "https://sunnah.com/abudawud:5090"
+    },
+    {
+      "id": "morning_pending_12",
+      "section": "morning",
+      "screen": 12,
+      "title": "حسبي الله لا إله إلا هو",
+      "referenceCount": 7,
+      "arabic": "حَسْبِيَ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ",
+      "reviewed": false,
+      "reason": "Screenshot authenticity caution preserved: disputed attribution, sevenfold morning/evening specification and promised sufficiency are NOT approved. Quran 9:129 is authentic scripture; this does not authenticate the sevenfold practice. Abu Dawud 5081 is a companion report with the wording صادقا كان بها أو كاذبا and is labelled Mawdu by Al-Albani on the cited page. This is a judgement on that report, not on the Quranic words. Qualified scholarly review is mandatory.",
+      "sourceUrl": "https://sunnah.com/abudawud:5081"
+    },
+    {
+      "id": "morning_pending_16",
+      "section": "morning",
+      "screen": 16,
+      "title": "رضيت بالله ربًا",
+      "referenceCount": 3,
+      "arabic": "",
+      "reviewed": false,
+      "reason": "Ibn Majah 3870 is Hasan; Abu Dawud 5072 is Daif. No Sahih evidence for the screenshot threefold timed practice established. Do not transfer the different context of Muslim 34.",
+      "sourceUrl": "https://sunnah.com/ibnmajah:3870"
+    },
+    {
+      "id": "morning_pending_17",
+      "section": "morning",
+      "screen": 17,
+      "title": "يا حي يا قيوم برحمتك أستغيث",
+      "referenceCount": 1,
+      "arabic": "",
+      "reviewed": false,
+      "reason": "The morning/evening matn is graded Hasan in Al-Albani, Sahih al-Jami 5820; a book title containing صحيح does not make every entry Sahih. Withheld under the strict policy.",
+      "sourceUrl": "https://dorar.net/h/YsQbIip8"
+    },
+    {
+      "id": "morning_pending_18",
+      "section": "morning",
+      "screen": 18,
+      "title": "أصبح / أمسى الملك لله رب العالمين",
+      "referenceCount": 1,
+      "arabic": "",
+      "reviewed": false,
+      "reason": "Abu Dawud 5084 is Daif. Do not conflate its conquest/light/blessing clauses with the distinct Sahih Muslim 2723 kingdom supplication.",
+      "sourceUrl": "https://sunnah.com/abudawud:5084"
+    },
+    {
+      "id": "evening_pending_8",
+      "section": "evening",
+      "screen": 8,
+      "title": "أشهدك وأشهد حملة عرشك",
+      "referenceCount": 4,
+      "arabic": "",
+      "reviewed": false,
+      "reason": "The fourfold emancipation claim is graded Daif by Al-Albani in Abu Dawud 5069; no Sahih count-four practice admitted.",
+      "sourceUrl": "https://sunnah.com/abudawud:5069"
+    },
+    {
+      "id": "evening_pending_9",
+      "section": "evening",
+      "screen": 9,
+      "title": "ما أصبح / أمسى بي من نعمة",
+      "referenceCount": 1,
+      "arabic": "",
+      "reviewed": false,
+      "reason": "Abu Dawud 5073 is graded Daif. The screenshot also adds أو بأحد من خلقك beyond the displayed matn. Withheld, not reconstructed.",
+      "sourceUrl": "https://sunnah.com/abudawud:5073"
+    },
+    {
+      "id": "evening_pending_10",
+      "section": "evening",
+      "screen": 10,
+      "title": "العافية في البدن والسمع والبصر",
+      "referenceCount": 3,
+      "arabic": "",
+      "reviewed": false,
+      "reason": "Abu Dawud 5090 is Hasan in chain, not Sahih under this product policy. Count three retained only in the review queue.",
+      "sourceUrl": "https://sunnah.com/abudawud:5090"
+    },
+    {
+      "id": "evening_pending_12",
+      "section": "evening",
+      "screen": 12,
+      "title": "حسبي الله لا إله إلا هو",
+      "referenceCount": 7,
+      "arabic": "حَسْبِيَ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ",
+      "reviewed": false,
+      "reason": "Screenshot authenticity caution preserved: disputed attribution, sevenfold morning/evening specification and promised sufficiency are NOT approved. Quran 9:129 is authentic scripture; this does not authenticate the sevenfold practice. Abu Dawud 5081 is a companion report with the wording صادقا كان بها أو كاذبا and is labelled Mawdu by Al-Albani on the cited page. This is a judgement on that report, not on the Quranic words. Qualified scholarly review is mandatory.",
+      "sourceUrl": "https://sunnah.com/abudawud:5081"
+    },
+    {
+      "id": "evening_pending_16",
+      "section": "evening",
+      "screen": 16,
+      "title": "رضيت بالله ربًا",
+      "referenceCount": 3,
+      "arabic": "",
+      "reviewed": false,
+      "reason": "Ibn Majah 3870 is Hasan; Abu Dawud 5072 is Daif. No Sahih evidence for the screenshot threefold timed practice established. Do not transfer the different context of Muslim 34.",
+      "sourceUrl": "https://sunnah.com/ibnmajah:3870"
+    },
+    {
+      "id": "evening_pending_17",
+      "section": "evening",
+      "screen": 17,
+      "title": "يا حي يا قيوم برحمتك أستغيث",
+      "referenceCount": 1,
+      "arabic": "",
+      "reviewed": false,
+      "reason": "The morning/evening matn is graded Hasan in Al-Albani, Sahih al-Jami 5820; a book title containing صحيح does not make every entry Sahih. Withheld under the strict policy.",
+      "sourceUrl": "https://dorar.net/h/YsQbIip8"
+    },
+    {
+      "id": "evening_pending_18",
+      "section": "evening",
+      "screen": 18,
+      "title": "أصبح / أمسى الملك لله رب العالمين",
+      "referenceCount": 1,
+      "arabic": "",
+      "reviewed": false,
+      "reason": "Abu Dawud 5084 is Daif. Do not conflate its conquest/light/blessing clauses with the distinct Sahih Muslim 2723 kingdom supplication.",
+      "sourceUrl": "https://sunnah.com/abudawud:5084"
+    },
+    {
+      "id": "evening_pending_19",
+      "section": "evening",
+      "screen": 19,
+      "title": "أمسينا على فطرة الإسلام",
+      "referenceCount": 1,
+      "arabic": "",
+      "reviewed": false,
+      "reason": "The Sahih al-Jami 4674 source has morning words أصبحنا in the displayed matn even when noting evening use. Ahmad variants differ. Exact أمسينا wording is not reconstructed; qualified wording review required. Morning wording is admitted separately.",
+      "sourceUrl": "https://dorar.net/h/GLuDBTFW"
+    },
+    {
+      "id": "sleep_pending_16",
+      "section": "sleep",
+      "screen": 16,
+      "title": "لا إله إلا الله الواحد القهار",
+      "referenceCount": 1,
+      "arabic": "",
+      "reviewed": false,
+      "reason": "Screenshot Bukhari attribution is not supported by the retrieved reference. Ibn Hibban 5530 is graded sound in chain by Shuayb al-Arnaut; Ibn Hajar labels the narration معلول in Ithaf al-Mahara 17/320. Matn and attribution require qualified conflict review; do not assert consensus Sahih.",
+      "sourceUrl": "https://dorar.net/hadith/sharh/112428"
+    },
+    {
+      "id": "sleep_pending_17",
+      "section": "sleep",
+      "screen": 17,
+      "title": "دعاء الفزع في النوم",
+      "referenceCount": 1,
+      "arabic": "",
+      "reviewed": false,
+      "reason": "Abu Dawud 3893 is Hasan excluding the later companion practice. Screenshot adds وعقابه absent in that matn. Do not guess an exact composite or treat Hasan as Sahih.",
+      "sourceUrl": "https://sunnah.com/abudawud:3893"
+    }
+  ]
+}

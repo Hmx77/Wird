@@ -86,9 +86,7 @@ class _ReminderPanelState extends State<ReminderPanel> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: UiText(
-              e is StateError
-                  ? e.message
-                  : 'تعذر ضبط التذكير. حاول مجددًا.',
+              e is StateError ? e.message : 'تعذر ضبط التذكير. حاول مجددًا.',
             ),
           ),
         );

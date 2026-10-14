@@ -3,6 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 flutter pub get
 dart tool/content_check.dart
+flutter test tool/brand_assets_test.dart
 python3 tool/static_check.py
 flutter analyze
 flutter test

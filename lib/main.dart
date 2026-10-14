@@ -1,4 +1,5 @@
 import 'ui_strings.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/services.dart';
@@ -12,12 +13,21 @@ import 'share_card.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'content.dart';
+import 'quran_text.dart';
+part 'premium_ui.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Reminders.instance.initialize();
   await AudioLibrary.instance.load();
   runApp(const WirdApp());
+  LicenseRegistry.addLicense(() async* {
+    final license = await rootBundle.loadString('assets/fonts/OFL.txt');
+    yield LicenseEntryWithLineBreaks(['Noto Sans Arabic'], license);
+    yield LicenseEntryWithLineBreaks([
+      'Tanzil Quran Text 1.1',
+    ], quranTextLicense);
+  });
 }
 
 class WirdPalette {
@@ -32,6 +42,8 @@ class WirdPalette {
   final String name;
   final Color background, card, primary, ink;
   final bool dark;
+  Color get homeBackground => Color.lerp(ink, const Color(0xFF071D22), .55)!;
+  Color get homeSurface => Color.lerp(homeBackground, primary, .12)!;
 }
 
 const themes = <WirdPalette>[
@@ -127,6 +139,8 @@ class WirdState extends ChangeNotifier {
   double fontSize = 25;
   Set<String> favorites = {};
   Map<String, int> counts = {};
+  Map<String, int> countTargets = {};
+  Map<String, int> countChoices = {};
   Set<String> prayers = {};
   int tasbih = 0;
   SharedPreferences? _prefs;
@@ -182,12 +196,21 @@ class WirdState extends ChangeNotifier {
 
   Future<void> erase() async {
     await pendingWrites;
-    for (final key in ['counts', 'prayers', 'favorites', 'tasbih']) {
+    for (final key in [
+      'counts',
+      'count_targets',
+      'count_choices',
+      'prayers',
+      'favorites',
+      'tasbih',
+    ]) {
       if (_prefs == null || !await _prefs!.remove(key)) {
         throw StateError('Local deletion failed');
       }
     }
     counts.clear();
+    countTargets.clear();
+    countChoices.clear();
     prayers.clear();
     favorites.clear();
     tasbih = 0;
@@ -196,13 +219,21 @@ class WirdState extends ChangeNotifier {
   }
 
   WirdPalette get palette => themes[themeIndex];
+  int target(DhikrEntry entry, [String? date]) {
+    final today = dayKey(_now());
+    final selected =
+        countTargets['${date ?? today}|${entry.id}'] ??
+        ((date == null || date == today) ? countChoices[entry.id] : null);
+    return entry.allowedCounts.contains(selected) ? selected! : entry.count;
+  }
+
   int count(DhikrEntry entry, [String? date]) =>
       (counts['${date ?? dayKey(_now())}|${entry.id}'] ?? 0).clamp(
         0,
-        entry.count,
+        target(entry, date),
       );
   bool isDone(DhikrEntry entry, [String? date]) =>
-      count(entry, date) >= entry.count;
+      count(entry, date) >= target(entry, date);
   int completed(DhikrSection section, [String? date]) =>
       inSection(section).where((e) => isDone(e, date)).length;
   bool prayerDone(String id, [String? date]) =>
@@ -239,6 +270,18 @@ class WirdState extends ChangeNotifier {
     } catch (_) {
       counts = {};
     }
+    Map<String, int> readTargets(String key) {
+      try {
+        final raw =
+            jsonDecode(p.getString(key) ?? '{}') as Map<String, dynamic>;
+        return raw.map((key, value) => MapEntry(key, (value as num).toInt()));
+      } catch (_) {
+        return {};
+      }
+    }
+
+    countTargets = readTargets('count_targets');
+    countChoices = readTargets('count_choices');
     ready = true;
     notifyListeners();
     unawaited(updateWidget());
@@ -273,12 +316,32 @@ class WirdState extends ChangeNotifier {
   }
 
   void setCount(DhikrEntry e, int value) {
-    counts['${dayKey(_now())}|${e.id}'] = value.clamp(0, e.count);
+    if (!entries.contains(e)) return;
+    final key = '${dayKey(_now())}|${e.id}';
+    final selected = target(e);
+    countTargets[key] = selected;
+    counts[key] = value.clamp(0, selected);
     final saved = jsonEncode(counts);
+    final savedTargets = jsonEncode(countTargets);
     save(() => _prefs!.setString('counts', saved));
+    save(() => _prefs!.setString('count_targets', savedTargets));
     notifyListeners();
     if (haptics) unawaited(HapticFeedback.selectionClick());
     unawaited(updateWidget());
+  }
+
+  void chooseCount(DhikrEntry e, int selected) {
+    if (!entries.contains(e) ||
+        !e.allowedCounts.contains(selected) ||
+        selected == target(e))
+      return;
+    countChoices[e.id] = selected;
+    countTargets['${dayKey(_now())}|${e.id}'] = selected;
+    final savedChoices = jsonEncode(countChoices);
+    save(() => _prefs!.setString('count_choices', savedChoices));
+    // Counts for another target cannot silently become completed repetitions.
+    // Historical targets remain attached to their original local dates.
+    setCount(e, 0);
   }
 
   void togglePrayer(String id) {
@@ -350,6 +413,16 @@ class _WirdAppState extends State<WirdApp> with WidgetsBindingObserver {
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         theme: ThemeData(
           useMaterial3: true,
+          fontFamily: 'NotoSansArabic',
+          navigationBarTheme: NavigationBarThemeData(
+            backgroundColor: p.homeBackground,
+            labelTextStyle: const WidgetStatePropertyAll(
+              TextStyle(color: Color(0xFFF3EEDF), fontSize: 12),
+            ),
+            iconTheme: const WidgetStatePropertyAll(
+              IconThemeData(color: Color(0xFFF3EEDF)),
+            ),
+          ),
           brightness: p.dark ? Brightness.dark : Brightness.light,
           scaffoldBackgroundColor: p.background,
           colorScheme: ColorScheme.fromSeed(
@@ -364,7 +437,7 @@ class _WirdAppState extends State<WirdApp> with WidgetsBindingObserver {
         ),
         home: store.ready
             ? WirdShell(store: store)
-            : const Scaffold(body: Center(child: CircularProgressIndicator())),
+            : const Scaffold(body: Center(child: WirdOpening())),
       );
     },
   );
@@ -416,7 +489,6 @@ class _WirdShellState extends State<WirdShell> {
       HomePage(store: store),
       LibraryPage(store: store),
       NawafilPage(store: store),
-      ProgressPage(store: store),
       SettingsPage(store: store),
     ];
     return Scaffold(
@@ -426,7 +498,7 @@ class _WirdShellState extends State<WirdShell> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: page,
         onDestinationSelected: (index) => setState(() => page = index),
-        backgroundColor: p.card,
+        backgroundColor: p.homeBackground,
         indicatorColor: p.primary.withOpacity(.17),
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         destinations: [
@@ -441,14 +513,9 @@ class _WirdShellState extends State<WirdShell> {
             label: tr(context, 'الأذكار'),
           ),
           NavigationDestination(
-            icon: const Icon(Icons.self_improvement_outlined),
-            selectedIcon: const Icon(Icons.self_improvement),
+            icon: const SujoodIcon(),
+            selectedIcon: const SujoodIcon(selected: true),
             label: tr(context, 'النوافل'),
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.calendar_today_outlined),
-            selectedIcon: const Icon(Icons.calendar_month),
-            label: tr(context, 'متابعتي'),
           ),
           NavigationDestination(
             icon: const Icon(Icons.tune_outlined),
@@ -515,6 +582,8 @@ class ThemeColors {
   static WirdPalette of(BuildContext context) {
     final root = context.findAncestorWidgetOfExactType<WirdShell>();
     if (root != null) return root.store.palette;
+    final library = context.findAncestorWidgetOfExactType<LibraryPage>();
+    if (library != null) return library.store.palette;
     final reader = context.findAncestorWidgetOfExactType<ReaderPage>();
     return reader?.store.palette ?? themes[8];
   }
@@ -541,180 +610,13 @@ class Surface extends StatelessWidget {
   );
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key, required this.store});
-  final WirdState store;
-  @override
-  Widget build(BuildContext context) {
-    final p = store.palette;
-    final daily = entries[DateTime.now().day % entries.length];
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(19, 14, 19, 28),
-      children: [
-        Row(
-          children: [
-            Image.asset(
-              'assets/brand/wird_logo.png',
-              width: 76,
-              height: 76,
-              fit: BoxFit.contain,
-              semanticLabel: tr(context, 'شعار ورد'),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  UiText(
-                    'ورد | Wird',
-                    style: TextStyle(
-                      color: p.ink,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  UiText(
-                    'ذِكْرٌ يُرَافِقُ يَوْمَكَ',
-                    style: TextStyle(
-                      color: p.ink.withOpacity(.65),
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 27),
-        UiText(
-          'السلام عليكم ورحمة الله',
-          style: TextStyle(
-            color: p.ink,
-            fontWeight: FontWeight.w700,
-            fontSize: 21,
-          ),
-        ),
-        const SizedBox(height: 20),
-        ...DhikrSection.values.map((section) {
-          final sectionEntries = inSection(section);
-          final completed = store.completed(section);
-          final icon = switch (section) {
-            DhikrSection.morning => Icons.wb_sunny_outlined,
-            DhikrSection.evening => Icons.nightlight_round,
-            DhikrSection.sleep => Icons.bedtime_outlined,
-          };
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(22),
-              onTap: () => openReader(context, store, section),
-              child: Surface(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(icon, color: p.primary, size: 29),
-                        const Spacer(),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            UiText(
-                              sectionLabel(section),
-                              style: TextStyle(
-                                color: p.ink,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 19,
-                              ),
-                            ),
-                            UiText(
-                              '$completed / ${sectionEntries.length} مكتمل',
-                              style: TextStyle(
-                                color: p.ink.withOpacity(.7),
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    LinearProgressIndicator(
-                      value: sectionEntries.isEmpty
-                          ? 0
-                          : completed / sectionEntries.length,
-                      backgroundColor: p.background,
-                      color: p.primary,
-                      minHeight: 6,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        UiText(
-                          'ابدأ القراءة',
-                          style: TextStyle(
-                            color: p.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Icon(Icons.arrow_back, color: p.primary, size: 18),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }),
-        const SizedBox(height: 6),
-        UiText(
-          'ذِكْر اليوم',
-          style: TextStyle(
-            color: p.ink,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
-        const SizedBox(height: 10),
-        Surface(
-          color: p.dark ? p.card : Colors.white,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              UiText(
-                daily.title,
-                style: TextStyle(color: p.primary, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              UiText(
-                daily.arabic,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: p.ink, fontSize: 19, height: 1.9),
-              ),
-              const SizedBox(height: 8),
-              UiText(
-                daily.source,
-                style: TextStyle(color: p.ink.withOpacity(.6), fontSize: 12),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 18),
-        UiText(
-          'النسخة الحالية تعرض مجموعة أولية من الأذكار الموثقة؛ بقية المحتوى قيد المراجعة.',
-          style: TextStyle(color: p.ink.withOpacity(.63), fontSize: 12),
-        ),
-      ],
-    );
-  }
-}
-
 class LibraryPage extends StatefulWidget {
-  const LibraryPage({super.key, required this.store});
+  const LibraryPage({
+    super.key,
+    required this.store,
+    this.initialFavorites = false,
+  });
+  final bool initialFavorites;
   final WirdState store;
   @override
   State<LibraryPage> createState() => _LibraryPageState();
@@ -722,7 +624,7 @@ class LibraryPage extends StatefulWidget {
 
 class _LibraryPageState extends State<LibraryPage> {
   String query = '';
-  bool favoriteOnly = false;
+  late bool favoriteOnly = widget.initialFavorites;
   @override
   Widget build(BuildContext context) {
     final store = widget.store;
@@ -875,7 +777,7 @@ class _ReaderPageState extends State<ReaderPage> {
     super.initState();
     index = widget.initialIndex.clamp(
       0,
-     inSection(widget.section).isNotEmpty
+      inSection(widget.section).isNotEmpty
           ? inSection(widget.section).length - 1
           : 0,
     );
@@ -900,6 +802,7 @@ class _ReaderPageState extends State<ReaderPage> {
       return const Scaffold(body: Center(child: UiText('لا توجد أذكار بعد')));
     final e = sectionEntries[index.clamp(0, sectionEntries.length - 1)];
     final progress = widget.store.count(e);
+    final target = widget.store.target(e);
     return Scaffold(
       appBar: AppBar(
         title: UiText(sectionLabel(widget.section)),
@@ -908,7 +811,13 @@ class _ReaderPageState extends State<ReaderPage> {
             tooltip: tr(context, 'مشاركة بطاقة'),
             onPressed: () async {
               try {
-                await shareDhikrCard(context, e, p.background, p.ink);
+                await shareDhikrCard(
+                  context,
+                  e,
+                  p.background,
+                  p.ink,
+                  repetitionTarget: target,
+                );
               } catch (_) {
                 if (context.mounted)
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -947,6 +856,7 @@ class _ReaderPageState extends State<ReaderPage> {
                 children: [
                   UiText(
                     '${index + 1} / ${sectionEntries.length}',
+                    textDirection: TextDirection.ltr,
                     style: TextStyle(color: p.ink),
                   ),
                   const SizedBox(width: 14),
@@ -1101,11 +1011,34 @@ class _ReaderPageState extends State<ReaderPage> {
                               icon: const Icon(Icons.open_in_new),
                               label: const UiText('فتح المصدر — يحتاج إنترنت'),
                             ),
+                            if (e.quranSourceUrl.isNotEmpty)
+                              TextButton.icon(
+                                onPressed: () async {
+                                  var ok = false;
+                                  try {
+                                    ok = await launchUrl(
+                                      Uri.parse(e.quranSourceUrl),
+                                      mode: LaunchMode.externalApplication,
+                                    );
+                                  } catch (_) {
+                                    /* Same recoverable source failure. */
+                                  }
+                                  if (!ok && context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: UiText(
+                                          'تعذر فتح المرجع. يحتاج اتصالًا بالإنترنت.',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                                icon: const Icon(Icons.open_in_new),
+                                label: const UiText('نص القرآن — Tanzil'),
+                              ),
                             const SizedBox(height: 12),
                             UiText(
-                              e.isQuran
-                                  ? 'آية قرآنية • توقيت القراءة موثق بحديث صحيح'
-                                  : 'صحيح',
+                              e.isQuran ? 'آية قرآنية' : 'صحيح',
                               style: TextStyle(
                                 color: p.primary,
                                 fontWeight: FontWeight.bold,
@@ -1135,15 +1068,37 @@ class _ReaderPageState extends State<ReaderPage> {
                   ),
                 ],
                 const SizedBox(height: 12),
+                if (e.countAlternatives.isNotEmpty)
+                  Center(
+                    child: Semantics(
+                      label: tr(context, 'عدد التكرار'),
+                      child: DropdownButton<int>(
+                        value: target,
+                        items: e.allowedCounts
+                            .map(
+                              (value) => DropdownMenuItem<int>(
+                                value: value,
+                                child: UiText(
+                                  '${tr(context, 'عدد التكرار')}: $value',
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) {
+                          if (value != null) widget.store.chooseCount(e, value);
+                        },
+                      ),
+                    ),
+                  ),
                 Center(
                   child: InkWell(
                     customBorder: const CircleBorder(),
-                    onTap: progress >= e.count
+                    onTap: progress >= target
                         ? null
                         : () {
                             widget.store.setCount(e, progress + 1);
                             if (widget.store.autoAdvance &&
-                                progress + 1 == e.count &&
+                                progress + 1 == target &&
                                 index < sectionEntries.length - 1)
                               setState(() {
                                 index++;
@@ -1162,14 +1117,15 @@ class _ReaderPageState extends State<ReaderPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            progress == e.count
+                            progress == target
                                 ? Icons.check
                                 : Icons.touch_app_outlined,
                             color: Colors.white,
                             size: 20,
                           ),
                           UiText(
-                            '$progress / ${e.count}',
+                            '$progress / $target',
+                            textDirection: TextDirection.ltr,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,

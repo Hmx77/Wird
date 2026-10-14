@@ -1,3 +1,9 @@
+# Current review
+
+Superseded by [the complete 66-screen verification report](CONTENT_VERIFICATION_2026-10-14.md). Current source-checked development catalog: 49 category entries; 17 reference screens pending. Qualified approval remains absent.
+
+---
+
 # Wird content review — 9 October 2026
 
 Status: source-checked development corpus, not a claim to contain every authentic morning/evening remembrance. Automated tests check data integrity, not religious authenticity. A qualified independent Arabic/religious review remains a release gate for this religious product. No unreviewed candidate is displayed as a verified entry.

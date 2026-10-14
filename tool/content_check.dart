@@ -21,10 +21,26 @@ void main() {
       'Missing content ${e.id}',
     );
     check(
-      Uri.parse(e.sourceUrl).host == 'sunnah.com',
+      {
+        'sunnah.com',
+        'dorar.net',
+        'tanzil.net',
+      }.contains(Uri.parse(e.sourceUrl).host),
       'Unexpected source ${e.id}',
     );
-    check(e.source.contains('صحيح'), 'Missing Sahih reference ${e.id}');
+    check(
+      e.isQuran || e.source.contains('صحيح'),
+      'Missing Sahih reference ${e.id}',
+    );
+    check(
+      e.allowedCounts.contains(e.count) && e.allowedCounts.every((n) => n > 0),
+      'Invalid repetition alternatives ${e.id}',
+    );
+    check(
+      e.allowedCounts.toSet().length == e.allowedCounts.length,
+      'Duplicate alternatives ${e.id}',
+    );
+    check(e.referenceScreens.isNotEmpty, 'Missing screenshot mapping ${e.id}');
   }
   for (final section in DhikrSection.values) {
     check(inSection(section).isNotEmpty, 'Empty section $section');
