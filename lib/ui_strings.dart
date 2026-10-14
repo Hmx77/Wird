@@ -14,6 +14,8 @@ const themeArabic = <String, String>{
 };
 
 const uiEnglish = <String, String>{
+  'عدد التكرار': 'Repetition count',
+  'نص القرآن — Tanzil': 'Quran text — Tanzil',
   'آية قرآنية': 'Quranic verse',
   'وردك اليومي': 'Your daily Wird',
   'لحظات من السكينة': 'Moments of serenity',

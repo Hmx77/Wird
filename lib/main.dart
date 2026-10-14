@@ -13,6 +13,7 @@ import 'share_card.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'content.dart';
+import 'quran_text.dart';
 part 'premium_ui.dart';
 
 Future<void> main() async {
@@ -23,6 +24,9 @@ Future<void> main() async {
   LicenseRegistry.addLicense(() async* {
     final license = await rootBundle.loadString('assets/fonts/OFL.txt');
     yield LicenseEntryWithLineBreaks(['Noto Sans Arabic'], license);
+    yield LicenseEntryWithLineBreaks([
+      'Tanzil Quran Text 1.1',
+    ], quranTextLicense);
   });
 }
 
@@ -135,6 +139,8 @@ class WirdState extends ChangeNotifier {
   double fontSize = 25;
   Set<String> favorites = {};
   Map<String, int> counts = {};
+  Map<String, int> countTargets = {};
+  Map<String, int> countChoices = {};
   Set<String> prayers = {};
   int tasbih = 0;
   SharedPreferences? _prefs;
@@ -190,12 +196,21 @@ class WirdState extends ChangeNotifier {
 
   Future<void> erase() async {
     await pendingWrites;
-    for (final key in ['counts', 'prayers', 'favorites', 'tasbih']) {
+    for (final key in [
+      'counts',
+      'count_targets',
+      'count_choices',
+      'prayers',
+      'favorites',
+      'tasbih',
+    ]) {
       if (_prefs == null || !await _prefs!.remove(key)) {
         throw StateError('Local deletion failed');
       }
     }
     counts.clear();
+    countTargets.clear();
+    countChoices.clear();
     prayers.clear();
     favorites.clear();
     tasbih = 0;
@@ -204,13 +219,21 @@ class WirdState extends ChangeNotifier {
   }
 
   WirdPalette get palette => themes[themeIndex];
+  int target(DhikrEntry entry, [String? date]) {
+    final today = dayKey(_now());
+    final selected =
+        countTargets['${date ?? today}|${entry.id}'] ??
+        ((date == null || date == today) ? countChoices[entry.id] : null);
+    return entry.allowedCounts.contains(selected) ? selected! : entry.count;
+  }
+
   int count(DhikrEntry entry, [String? date]) =>
       (counts['${date ?? dayKey(_now())}|${entry.id}'] ?? 0).clamp(
         0,
-        entry.count,
+        target(entry, date),
       );
   bool isDone(DhikrEntry entry, [String? date]) =>
-      count(entry, date) >= entry.count;
+      count(entry, date) >= target(entry, date);
   int completed(DhikrSection section, [String? date]) =>
       inSection(section).where((e) => isDone(e, date)).length;
   bool prayerDone(String id, [String? date]) =>
@@ -247,6 +270,18 @@ class WirdState extends ChangeNotifier {
     } catch (_) {
       counts = {};
     }
+    Map<String, int> readTargets(String key) {
+      try {
+        final raw =
+            jsonDecode(p.getString(key) ?? '{}') as Map<String, dynamic>;
+        return raw.map((key, value) => MapEntry(key, (value as num).toInt()));
+      } catch (_) {
+        return {};
+      }
+    }
+
+    countTargets = readTargets('count_targets');
+    countChoices = readTargets('count_choices');
     ready = true;
     notifyListeners();
     unawaited(updateWidget());
@@ -281,12 +316,32 @@ class WirdState extends ChangeNotifier {
   }
 
   void setCount(DhikrEntry e, int value) {
-    counts['${dayKey(_now())}|${e.id}'] = value.clamp(0, e.count);
+    if (!entries.contains(e)) return;
+    final key = '${dayKey(_now())}|${e.id}';
+    final selected = target(e);
+    countTargets[key] = selected;
+    counts[key] = value.clamp(0, selected);
     final saved = jsonEncode(counts);
+    final savedTargets = jsonEncode(countTargets);
     save(() => _prefs!.setString('counts', saved));
+    save(() => _prefs!.setString('count_targets', savedTargets));
     notifyListeners();
     if (haptics) unawaited(HapticFeedback.selectionClick());
     unawaited(updateWidget());
+  }
+
+  void chooseCount(DhikrEntry e, int selected) {
+    if (!entries.contains(e) ||
+        !e.allowedCounts.contains(selected) ||
+        selected == target(e))
+      return;
+    countChoices[e.id] = selected;
+    countTargets['${dayKey(_now())}|${e.id}'] = selected;
+    final savedChoices = jsonEncode(countChoices);
+    save(() => _prefs!.setString('count_choices', savedChoices));
+    // Counts for another target cannot silently become completed repetitions.
+    // Historical targets remain attached to their original local dates.
+    setCount(e, 0);
   }
 
   void togglePrayer(String id) {
@@ -747,6 +802,7 @@ class _ReaderPageState extends State<ReaderPage> {
       return const Scaffold(body: Center(child: UiText('لا توجد أذكار بعد')));
     final e = sectionEntries[index.clamp(0, sectionEntries.length - 1)];
     final progress = widget.store.count(e);
+    final target = widget.store.target(e);
     return Scaffold(
       appBar: AppBar(
         title: UiText(sectionLabel(widget.section)),
@@ -755,7 +811,13 @@ class _ReaderPageState extends State<ReaderPage> {
             tooltip: tr(context, 'مشاركة بطاقة'),
             onPressed: () async {
               try {
-                await shareDhikrCard(context, e, p.background, p.ink);
+                await shareDhikrCard(
+                  context,
+                  e,
+                  p.background,
+                  p.ink,
+                  repetitionTarget: target,
+                );
               } catch (_) {
                 if (context.mounted)
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -948,6 +1010,31 @@ class _ReaderPageState extends State<ReaderPage> {
                               icon: const Icon(Icons.open_in_new),
                               label: const UiText('فتح المصدر — يحتاج إنترنت'),
                             ),
+                            if (e.quranSourceUrl.isNotEmpty)
+                              TextButton.icon(
+                                onPressed: () async {
+                                  var ok = false;
+                                  try {
+                                    ok = await launchUrl(
+                                      Uri.parse(e.quranSourceUrl),
+                                      mode: LaunchMode.externalApplication,
+                                    );
+                                  } catch (_) {
+                                    /* Same recoverable source failure. */
+                                  }
+                                  if (!ok && context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: UiText(
+                                          'تعذر فتح المرجع. يحتاج اتصالًا بالإنترنت.',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                                icon: const Icon(Icons.open_in_new),
+                                label: const UiText('نص القرآن — Tanzil'),
+                              ),
                             const SizedBox(height: 12),
                             UiText(
                               e.isQuran ? 'آية قرآنية' : 'صحيح',
@@ -980,15 +1067,37 @@ class _ReaderPageState extends State<ReaderPage> {
                   ),
                 ],
                 const SizedBox(height: 12),
+                if (e.countAlternatives.isNotEmpty)
+                  Center(
+                    child: Semantics(
+                      label: tr(context, 'عدد التكرار'),
+                      child: DropdownButton<int>(
+                        value: target,
+                        items: e.allowedCounts
+                            .map(
+                              (value) => DropdownMenuItem<int>(
+                                value: value,
+                                child: UiText(
+                                  '${tr(context, 'عدد التكرار')}: $value',
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) {
+                          if (value != null) widget.store.chooseCount(e, value);
+                        },
+                      ),
+                    ),
+                  ),
                 Center(
                   child: InkWell(
                     customBorder: const CircleBorder(),
-                    onTap: progress >= e.count
+                    onTap: progress >= target
                         ? null
                         : () {
                             widget.store.setCount(e, progress + 1);
                             if (widget.store.autoAdvance &&
-                                progress + 1 == e.count &&
+                                progress + 1 == target &&
                                 index < sectionEntries.length - 1)
                               setState(() {
                                 index++;
@@ -1007,14 +1116,14 @@ class _ReaderPageState extends State<ReaderPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            progress == e.count
+                            progress == target
                                 ? Icons.check
                                 : Icons.touch_app_outlined,
                             color: Colors.white,
                             size: 20,
                           ),
                           UiText(
-                            '$progress / ${e.count}',
+                            '$progress / $target',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,

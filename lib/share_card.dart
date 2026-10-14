@@ -8,9 +8,13 @@ Future<void> shareDhikrCard(
   BuildContext context,
   DhikrEntry entry,
   Color background,
-  Color ink,
-) async {
+  Color ink, {
+  int? repetitionTarget,
+}) async {
   if (!entry.reviewed) throw StateError('Unreviewed content cannot be shared');
+  final selected = repetitionTarget ?? entry.count;
+  if (!entry.allowedCounts.contains(selected))
+    throw ArgumentError('Invalid repetition target');
   const width = 1080.0;
   const margin = 80.0;
   final blocks = <(String, double, FontWeight)>[
@@ -18,11 +22,13 @@ Future<void> shareDhikrCard(
     (entry.title, 38, FontWeight.bold),
     (entry.arabic, 46, FontWeight.normal),
     (entry.source, 27, FontWeight.normal),
+    if (entry.quranSourceUrl.isNotEmpty)
+      (entry.quranSourceUrl, 21, FontWeight.normal),
     (entry.timing, 25, FontWeight.normal),
     (
       entry.countDescription.isEmpty
-          ? 'التكرار الوارد: ${entry.count}'
-          : entry.countDescription,
+          ? 'التكرار الوارد: $selected'
+          : '${entry.countDescription}\nالعداد المختار: $selected',
       25,
       FontWeight.normal,
     ),
