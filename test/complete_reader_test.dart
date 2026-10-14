@@ -15,6 +15,9 @@ void main() {
     final font = FontLoader('NotoSansArabic')
       ..addFont(rootBundle.load('assets/fonts/NotoSansArabic.ttf'));
     await font.load();
+    final icons = FontLoader('MaterialIcons')
+      ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'));
+    await icons.load();
   });
   Future<void> capture(WidgetTester tester, GlobalKey key, String name) async {
     if (Platform.environment['WIRD_REVIEW_IMAGES'] != '1') return;
@@ -79,6 +82,10 @@ void main() {
           );
           expect(text.maxLines, isNull);
           expect(text.textDirection, TextDirection.rtl);
+          final position = tester.widget<Text>(
+            find.text('${index + 1} / ${inSection(entry.section).length}'),
+          );
+          expect(position.textDirection, TextDirection.ltr);
           expect(tester.takeException(), isNull);
           await capture(tester, key, 'complete-$id-$language-top');
           if (id == 'morning_tahlil') {
@@ -122,6 +129,10 @@ void main() {
             );
           }
           await tester.pumpAndSettle();
+          final counter = tester.widget<Text>(
+            find.text('${state.count(entry)} / ${state.target(entry)}'),
+          );
+          expect(counter.textDirection, TextDirection.ltr);
           await capture(tester, key, 'complete-$id-$language-counter');
           expect(tester.takeException(), isNull);
           await state.pendingWrites;
