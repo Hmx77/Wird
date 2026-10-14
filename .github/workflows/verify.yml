@@ -161,6 +161,14 @@ jobs:
           github-token: ${{ github.token }}
       - name: Android emulator offline native smoke test
         run: bash tool/ci/android_device_smoke.sh
+      - name: Upload verified debug APK on native recheck
+        if: ${{ !inputs.build_android && inputs.reuse_android_run != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: wird-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 14
+          if-no-files-found: error
       - name: Preserve actual native screenshots and logs
         if: always()
         uses: actions/upload-artifact@v4
