@@ -54,10 +54,7 @@ void main() {
       expect(find.text('متابعتي'), findsNothing);
       expect(find.byType(ProgressPage), findsNothing);
       expect(find.byType(SujoodIcon), findsWidgets);
-      expect(
-        store.favorites,
-        contains(inSection(DhikrSection.morning).first.id),
-      );
+      expect(store.favorites, contains('morning_sayyid'));
       await tester.tap(find.text('الإعدادات'));
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
