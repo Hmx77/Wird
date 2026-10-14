@@ -57,8 +57,17 @@ if ! adb install --no-streaming -r build/app/outputs/flutter-apk/app-debug.apk; 
   adb logcat -d -s AndroidRuntime:E PackageManager:E > verification/device/install-errors.log
   exit 1
 fi
+adb shell cmd connectivity airplane-mode enable
 adb shell svc wifi disable
-adb shell svc data disable
+adb shell settings put global mobile_data 0
+wird_network_deadline=$((SECONDS + 60))
+until [ "$(adb shell settings get global airplane_mode_on | tr -d '\r')" = 1 ] && [ "$(adb shell settings get global wifi_on | tr -d '\r')" = 0 ]; do
+  if [ "$SECONDS" -ge "$wird_network_deadline" ]; then
+    echo 'Offline radio settings were not confirmed.' >&2; exit 1
+  fi
+  sleep 2
+done
+{ adb shell settings get global airplane_mode_on; adb shell settings get global wifi_on; adb shell settings get global mobile_data; } > verification/device/offline-radio-settings.txt
 adb shell input keyevent KEYCODE_HOME
 adb shell input swipe 540 1900 540 350 600
 sleep 2
