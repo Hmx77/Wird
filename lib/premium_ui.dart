@@ -66,26 +66,27 @@ class _SujoodPainter extends CustomPainter {
     // forearms and hands on the ground, forehead touching the prayer mat.
     canvas.drawPath(
       Path()
-        ..moveTo(3, 23)
-        ..lineTo(5, 19)
-        ..lineTo(9, 21)
-        ..lineTo(13, 21)
+        ..moveTo(3, 25)
+        ..lineTo(5, 21)
+        ..lineTo(9, 24)
+        ..lineTo(13, 24)
         ..lineTo(7, 16)
         ..quadraticBezierTo(5, 13, 8, 10)
         ..quadraticBezierTo(11, 7, 14, 10)
-        ..lineTo(20, 17),
+        ..lineTo(20, 17)
+        ..lineTo(22, 21),
       p,
     );
     canvas.drawPath(
       Path()
         ..moveTo(16, 14)
         ..lineTo(15, 20)
-        ..quadraticBezierTo(15, 23, 18, 23)
-        ..lineTo(20, 23),
+        ..quadraticBezierTo(15, 25, 18, 25)
+        ..lineTo(20, 25),
       p,
     );
     canvas.drawCircle(
-      const Offset(23, 20.5),
+      const Offset(23, 23.5),
       2.5,
       Paint()
         ..color = color

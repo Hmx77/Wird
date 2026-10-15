@@ -361,6 +361,35 @@ class WirdState extends ChangeNotifier {
   }
 }
 
+/// Shared by the running app and visual regression captures.
+ThemeData wirdTheme(WirdPalette p) => ThemeData(
+  useMaterial3: true,
+  fontFamily: 'NotoSansArabic',
+  navigationBarTheme: NavigationBarThemeData(
+    height: 76,
+    elevation: 0,
+    surfaceTintColor: Colors.transparent,
+    backgroundColor: p.homeBackground,
+    labelTextStyle: const WidgetStatePropertyAll(
+      TextStyle(color: Color(0xFFF3EEDF), fontSize: 12),
+    ),
+    iconTheme: const WidgetStatePropertyAll(
+      IconThemeData(color: Color(0xFFF3EEDF)),
+    ),
+  ),
+  brightness: p.dark ? Brightness.dark : Brightness.light,
+  scaffoldBackgroundColor: p.background,
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: p.primary,
+    brightness: p.dark ? Brightness.dark : Brightness.light,
+  ),
+  appBarTheme: AppBarTheme(
+    backgroundColor: p.background,
+    foregroundColor: p.ink,
+    elevation: 0,
+  ),
+);
+
 class WirdApp extends StatefulWidget {
   const WirdApp({super.key});
   @override
@@ -439,33 +468,7 @@ class _WirdAppState extends State<WirdApp> with WidgetsBindingObserver {
         locale: Locale(store.languageCode),
         supportedLocales: const [Locale('ar'), Locale('en')],
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        theme: ThemeData(
-          useMaterial3: true,
-          fontFamily: 'NotoSansArabic',
-          navigationBarTheme: NavigationBarThemeData(
-            height: 76,
-            elevation: 0,
-            surfaceTintColor: Colors.transparent,
-            backgroundColor: p.homeBackground,
-            labelTextStyle: const WidgetStatePropertyAll(
-              TextStyle(color: Color(0xFFF3EEDF), fontSize: 12),
-            ),
-            iconTheme: const WidgetStatePropertyAll(
-              IconThemeData(color: Color(0xFFF3EEDF)),
-            ),
-          ),
-          brightness: p.dark ? Brightness.dark : Brightness.light,
-          scaffoldBackgroundColor: p.background,
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: p.primary,
-            brightness: p.dark ? Brightness.dark : Brightness.light,
-          ),
-          appBarTheme: AppBarTheme(
-            backgroundColor: p.background,
-            foregroundColor: p.ink,
-            elevation: 0,
-          ),
-        ),
+        theme: wirdTheme(p),
         home: store.ready && servicesReady
             ? WirdShell(store: store)
             : const Scaffold(body: Center(child: WirdOpening())),
