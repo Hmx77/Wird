@@ -70,6 +70,55 @@ void main() {
       store.dispose();
     },
   );
+  testWidgets(
+    'all themes preserve home actions, entries and RTL at large text',
+    (tester) async {
+      tester.view.physicalSize = const Size(320, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      SharedPreferences.setMockInitialValues({'haptics': false});
+      final store = WirdState();
+      await store.initialize();
+      for (final language in ['ar', 'en']) {
+        for (var theme = 0; theme < themes.length; theme++) {
+          store.changeTheme(theme);
+          await tester.pumpWidget(
+            MaterialApp(
+              locale: Locale(language),
+              supportedLocales: const [Locale('ar'), Locale('en')],
+              localizationsDelegates: GlobalMaterialLocalizations.delegates,
+              theme: ThemeData(fontFamily: 'NotoSansArabic'),
+              builder: (context, child) => MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(textScaler: const TextScaler.linear(2)),
+                child: child!,
+              ),
+              home: Scaffold(body: HomePage(store: store)),
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(find.byKey(const Key('home-morning')), findsOneWidget);
+          expect(find.byKey(const Key('home-evening')), findsOneWidget);
+          expect(find.byKey(const Key('home-sleep')), findsOneWidget);
+          expect(
+            find.byTooltip(uiString('ابحث عن ذكر', language)),
+            findsOneWidget,
+          );
+          expect(find.text('لحظات من السكينة'), findsNothing);
+          expect(
+            tester.takeException(),
+            isNull,
+            reason: '${themes[theme].name} $language at 200% text',
+          );
+        }
+      }
+      await store.pendingWrites;
+      await tester.pumpWidget(const SizedBox.shrink());
+      store.dispose();
+    },
+  );
   for (final language in ['ar', 'en']) {
     for (final size in [
       const Size(320, 640),
@@ -111,6 +160,13 @@ void main() {
         );
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
+        await tester.runAsync(
+          () => precacheImage(
+            wirdArtwork,
+            tester.element(find.byType(WirdMark).first),
+          ),
+        );
+        await tester.pump();
         if (Platform.environment['WIRD_REVIEW_IMAGES'] == '1') {
           final render =
               boundary.currentContext!.findRenderObject()!
