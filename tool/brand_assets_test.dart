@@ -88,7 +88,12 @@ void main() {
       for (var i = 0; i < pixels.length; i += 4) {
         final warm = ((pixels[i] - pixels[i + 1] * .86) / 24).clamp(0.0, 1.0);
         final light = ((pixels[i] - 65) / 30).clamp(0.0, 1.0);
-        pixels[i + 3] = (pixels[i + 3] * warm * light).round();
+        // PixelFormat.rgba8888 requires premultiplied RGB. Scale all four
+        // channels together so removed teal pixels cannot create colour halos.
+        final coverage = warm * light;
+        for (var channel = 0; channel < 4; channel++) {
+          pixels[i + channel] = (pixels[i + channel] * coverage).round();
+        }
         if (pixels[i + 3] > 220) {
           visible++;
           final x = (i ~/ 4) % original.width;
@@ -103,6 +108,18 @@ void main() {
           );
         }
       }
+      var validPremultiplied = true;
+      for (var i = 0; i < pixels.length; i += 4) {
+        if (pixels[i] > pixels[i + 3] ||
+            pixels[i + 1] > pixels[i + 3] ||
+            pixels[i + 2] > pixels[i + 3])
+          validPremultiplied = false;
+      }
+      expect(
+        validPremultiplied,
+        isTrue,
+        reason: 'Native foreground alpha must not create halos',
+      );
       expect(visible, greaterThan(110000), reason: 'Missing calligraphy/leaf');
       expect(kasra, isTrue, reason: 'Supplied kasra must remain present');
       final decoded = Completer<ui.Image>();
