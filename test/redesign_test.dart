@@ -83,6 +83,8 @@ void main() {
       for (final language in ['ar', 'en']) {
         for (var theme = 0; theme < themes.length; theme++) {
           store.changeTheme(theme);
+          // Each theme starts at the top; preserve no previous scroll viewport.
+          await tester.pumpWidget(const SizedBox.shrink());
           await tester.pumpWidget(
             MaterialApp(
               locale: Locale(language),
