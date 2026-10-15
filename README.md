@@ -1,8 +1,10 @@
 # Wird — ورد
 
-Arabic-first, private, offline Flutter application for Android and iOS, expanded from the supplied starter.
+Arabic-first, offline Flutter application for Android and iOS, expanded from the supplied starter.
 
-**The preserved premium app and completed Athkar collections are under review on `redesign/premium-20261013`, in PR #1.** Fresh [workflow #44](https://github.com/Hmx77/Wird/actions/runs/38535771707) passed all 36 tests and analysis on both hosts, Android debug packaging/offline native checks, and unsigned iOS device/simulator builds with installation and launch. Download `wird-debug-apk` from its Artifacts list. See `docs/BUILD_STATUS_CONTENT_2026-10-14.md` for exact results, fixes, artifact identifiers and remaining production gates. The repository remains private; no merge or store publication has occurred.
+****Refinement review:** `redesign/refined-20261015` builds on the existing redesign with the newly supplied logo, seamless ivory launch surfaces, muted outlined home cards and refined navigation. See `docs/REFINED_REVIEW_2026-10-15.md` for scope, preservation and current verification status.
+
+The preserved premium app and completed Athkar collections are under review on `redesign/premium-20261013`, in PR #1.** Fresh [workflow #44](https://github.com/Hmx77/Wird/actions/runs/38535771707) passed all 36 tests and analysis on both hosts, Android debug packaging/offline native checks, and unsigned iOS device/simulator builds with installation and launch. Download `wird-debug-apk` from its Artifacts list. See `docs/BUILD_STATUS_CONTENT_2026-10-14.md` for exact results, fixes, artifact identifiers and remaining production gates. Repository visibility was observed as public on 15 October 2026 and is unchanged by this review; no merge or store publication has occurred.
 
 The redesign adds the approved original-artwork crop and separate kasra layer, a warm botanical opening, darker home cards, four navigation tabs with an owned sujood icon, Arabic names for all ten themes, licensed offline Arabic fonts and visual/native smoke checks. All 19 legacy content IDs and existing preference keys are preserved; the reference-based catalog now adds source-checked material and explicit review holds. The hidden calendar/activity interface retains its stored data. See `docs/REDESIGN_TRACEABILITY.md` for requirement mapping and acceptance gates.
 
