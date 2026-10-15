@@ -1,5 +1,6 @@
-// Reproducible Flutter rendering of the immutable original + vector kasra.
+// Reproducible rendering of supplied artwork and OS-masked native layers.
 // Run before native builds: flutter test tool/brand_assets_test.dart
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -71,6 +72,76 @@ void main() {
       font.addFont(rootBundle.load('assets/fonts/NotoSansArabic.ttf'));
       await font.load();
     });
+    late ui.Image foreground;
+    await tester.runAsync(() async {
+      final data = await rootBundle.load(wirdArtwork.assetName);
+      final codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
+      final original = (await codec.getNextFrame()).image;
+      final pixels = (await original.toByteData(
+        format: ui.ImageByteFormat.rawRgba,
+      ))!.buffer.asUint8List();
+      // Mechanical colour separation, never redraw the calligraphy or leaf.
+      // Supplied cream/gold RGB stays intact; teal moves to a full-bleed native
+      // layer. No baked rounded tile in the adaptive foreground.
+      var visible = 0;
+      var kasra = false;
+      for (var i = 0; i < pixels.length; i += 4) {
+        final warm = ((pixels[i] - pixels[i + 1] * .86) / 24).clamp(0.0, 1.0);
+        final light = ((pixels[i] - 65) / 30).clamp(0.0, 1.0);
+        pixels[i + 3] = (pixels[i + 3] * warm * light).round();
+        if (pixels[i + 3] > 220) {
+          visible++;
+          final x = (i ~/ 4) % original.width;
+          final y = (i ~/ 4) ~/ original.width;
+          if (y > 925) kasra = true;
+          final dx = (x - original.width / 2) * 82 / original.width;
+          final dy = (y - original.height / 2) * 82 / original.height;
+          expect(
+            dx * dx + dy * dy,
+            lessThanOrEqualTo(33 * 33),
+            reason: 'Artwork outside Android adaptive circular safe zone',
+          );
+        }
+      }
+      expect(visible, greaterThan(110000), reason: 'Missing calligraphy/leaf');
+      expect(kasra, isTrue, reason: 'Supplied kasra must remain present');
+      final decoded = Completer<ui.Image>();
+      ui.decodeImageFromPixels(
+        pixels,
+        original.width,
+        original.height,
+        ui.PixelFormat.rgba8888,
+        decoded.complete,
+      );
+      foreground = await decoded.future;
+      original.dispose();
+      codec.dispose();
+    });
+    addTearDown(foreground.dispose);
+    Widget nativeMark(double size, {bool transparent = false}) =>
+        SizedBox.square(
+          dimension: size,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: transparent
+                  ? null
+                  : const LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: [Color(0xFF07535A), Color(0xFF001B22)],
+                    ),
+            ),
+            child: Center(
+              child: SizedBox.square(
+                dimension: size * 82 / 108,
+                child: RawImage(
+                  image: foreground,
+                  filterQuality: FilterQuality.high,
+                ),
+              ),
+            ),
+          ),
+        );
     Future<void> render(
       String path,
       Size size,
@@ -90,9 +161,12 @@ void main() {
             supportedLocales: const [Locale('ar'), Locale('en')],
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
             theme: ThemeData(fontFamily: 'NotoSansArabic'),
-            home: Scaffold(backgroundColor: background, body: child),
+            home: ColoredBox(color: background, child: child),
           ),
         ),
+      );
+      await tester.runAsync(
+        () => precacheImage(wirdArtwork, key.currentContext!),
       );
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
@@ -140,7 +214,7 @@ void main() {
       await render(
         'android/app/src/main/res/mipmap-${item.key}/ic_launcher.png',
         const Size(108, 108),
-        const Center(child: WirdMark(size: 108)),
+        Center(child: nativeMark(108)),
         ratio: item.value / 108,
       );
     }
@@ -153,22 +227,18 @@ void main() {
     await render(
       'android/app/src/main/res/drawable-nodpi/wird_adaptive_foreground.png',
       const Size(108, 108),
-      const Center(child: WirdMark(size: 66)),
+      Center(child: nativeMark(108, transparent: true)),
+      background: Colors.transparent,
       ratio: 4,
     );
-    // Android reserves the outer 18 dp of each 108 dp layer for masks.
-    // Keep the original lettering, leaf and separate kasra inside its 66 dp
-    // circular safe zone, and preserve actual circular/squircle previews.
+    // OS-mask previews only; no masks are baked into native foregrounds.
     for (final round in [true, false]) {
       final preview = OverflowBox(
         minWidth: 108,
         maxWidth: 108,
         minHeight: 108,
         maxHeight: 108,
-        child: const ColoredBox(
-          color: Color(0xFF0B3437),
-          child: Center(child: WirdMark(size: 66)),
-        ),
+        child: nativeMark(108),
       );
       await render(
         'verification/screenshots/adaptive-${round ? "circle" : "squircle"}.png',
@@ -194,15 +264,16 @@ void main() {
       await render(
         '${icons.path}/${icon['filename']}',
         Size(dimension, dimension),
-        Center(child: WirdMark(size: dimension)),
+        Center(child: nativeMark(dimension)),
       );
     }
     for (final scale in [1, 2, 3]) {
       final suffix = scale == 1 ? '' : '@${scale}x';
       await render(
         'ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage$suffix.png',
-        const Size(360, 640),
-        const WirdOpening(),
+        const Size(128, 128),
+        const Center(child: WirdMark(size: 128)),
+        background: const Color(0xFFF3EEDF),
         ratio: scale.toDouble(),
       );
     }
