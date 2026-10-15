@@ -99,13 +99,21 @@ void main() {
             ),
           );
           await tester.pumpAndSettle();
-          expect(find.byKey(const Key('home-morning')), findsOneWidget);
-          expect(find.byKey(const Key('home-evening')), findsOneWidget);
-          expect(find.byKey(const Key('home-sleep')), findsOneWidget);
           expect(
             find.byTooltip(uiString('ابحث عن ذكر', language)),
             findsOneWidget,
           );
+          for (final section in DhikrSection.values) {
+            final card = find.byKey(Key('home-${section.name}'));
+            await tester.scrollUntilVisible(
+              card,
+              180,
+              scrollable: find.byType(Scrollable).last,
+            );
+            await tester.pumpAndSettle();
+            expect(card, findsOneWidget);
+            expect(tester.takeException(), isNull);
+          }
           expect(find.text('لحظات من السكينة'), findsNothing);
           expect(
             tester.takeException(),
