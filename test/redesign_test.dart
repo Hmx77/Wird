@@ -88,7 +88,7 @@ void main() {
               locale: Locale(language),
               supportedLocales: const [Locale('ar'), Locale('en')],
               localizationsDelegates: GlobalMaterialLocalizations.delegates,
-              theme: ThemeData(fontFamily: 'NotoSansArabic'),
+              theme: wirdTheme(store.palette),
               builder: (context, child) => MediaQuery(
                 data: MediaQuery.of(
                   context,
@@ -147,7 +147,7 @@ void main() {
               locale: Locale(language),
               supportedLocales: const [Locale('ar'), Locale('en')],
               localizationsDelegates: GlobalMaterialLocalizations.delegates,
-              theme: ThemeData(fontFamily: 'NotoSansArabic'),
+              theme: wirdTheme(store.palette),
               builder: (context, child) => MediaQuery(
                 data: MediaQuery.of(
                   context,
@@ -211,10 +211,7 @@ void main() {
             locale: Locale(language),
             supportedLocales: const [Locale('ar'), Locale('en')],
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
-            theme: ThemeData(
-              fontFamily: 'NotoSansArabic',
-              scaffoldBackgroundColor: store.palette.background,
-            ),
+            theme: wirdTheme(store.palette),
             home: WirdShell(store: store),
           ),
         ),
@@ -236,6 +233,14 @@ void main() {
         });
       }
 
+      await tester.runAsync(
+        () => precacheImage(
+          wirdArtwork,
+          tester.element(find.byType(WirdMark).first),
+        ),
+      );
+      await tester.pump();
+      await capture('home-regular');
       await tester.tap(find.byKey(const Key('home-morning')));
       await tester.pumpAndSettle();
       await capture('reader');
