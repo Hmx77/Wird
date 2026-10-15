@@ -98,12 +98,16 @@ adb shell am start -W -n ae.wird.app/.MainActivity
 wird_wait_for_home window
 adb exec-out screencap -p > verification/device/android-home-offline.png
 adb shell am force-stop ae.wird.app
-adb shell screenrecord --time-limit 8 /sdcard/wird-startup.mp4 &
+adb shell screenrecord --time-limit 30 /sdcard/wird-startup.mp4 &
 record_pid=$!
 sleep 1
 adb shell am start -W -n ae.wird.app/.MainActivity
 wait "$record_pid"
 adb pull /sdcard/wird-startup.mp4 verification/device/startup.mp4
+if command -v ffmpeg >/dev/null 2>&1; then
+  ffmpeg -hide_banner -loglevel error -i verification/device/startup.mp4 \
+    -vf fps=1/4 verification/device/android-startup-%02d.png
+fi
 adb shell wm size 720x1280
 adb shell wm density 320
 adb shell settings put system font_scale 1.5
