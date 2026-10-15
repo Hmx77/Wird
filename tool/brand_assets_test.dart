@@ -177,6 +177,15 @@ void main() {
         final rgba = (await image.toByteData(
           format: ui.ImageByteFormat.rawRgba,
         ))!.buffer.asUint8List();
+        if (path.endsWith('wird_adaptive_foreground.png') ||
+            path.endsWith('wird_splash_icon.png') ||
+            path.endsWith('/wird_logo.png')) {
+          expect(
+            rgba[3],
+            0,
+            reason: 'No baked tile outside original artwork: $path',
+          );
+        }
         var unexpectedRed = false;
         for (var i = 0; i < rgba.length; i += 4) {
           if (rgba[i] > 150 && rgba[i + 1] < 60 && rgba[i + 2] < 90) {
@@ -223,6 +232,16 @@ void main() {
       const Size(108, 108),
       const Center(child: WirdMark(size: 108)),
       ratio: 4,
+      background: Colors.transparent,
+    );
+    // Android 12+ allocates a 288dp icon surface without an icon background.
+    // Center the same 128dp mark used by Flutter instead of scaling it up.
+    await render(
+      'android/app/src/main/res/drawable-nodpi/wird_splash_icon.png',
+      const Size(288, 288),
+      const Center(child: WirdMark(size: 128)),
+      ratio: 3,
+      background: Colors.transparent,
     );
     await render(
       'android/app/src/main/res/drawable-nodpi/wird_adaptive_foreground.png',
