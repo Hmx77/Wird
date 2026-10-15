@@ -525,40 +525,53 @@ class _WirdShellState extends State<WirdShell> {
       NawafilPage(store: store),
       SettingsPage(store: store),
     ];
-    return Scaffold(
-      body: SafeArea(
-        child: IndexedStack(index: page, children: screens),
+    final darkSurface = page == 0 || p.dark;
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: darkSurface
+            ? Brightness.light
+            : Brightness.dark,
+        statusBarBrightness: darkSurface ? Brightness.dark : Brightness.light,
+        systemNavigationBarColor: p.homeBackground,
+        systemNavigationBarIconBrightness: Brightness.light,
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: page,
-        onDestinationSelected: (index) => setState(() => page = index),
-        backgroundColor: p.homeBackground,
-        indicatorColor: p.homeAccent.withOpacity(.12),
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.home_outlined),
-            selectedIcon: const Icon(Icons.home_outlined),
-            label: tr(context, 'الرئيسية'),
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.auto_stories_outlined),
-            selectedIcon: const Icon(Icons.auto_stories_outlined),
-            label: tr(context, 'الأذكار'),
-          ),
-          NavigationDestination(
-            icon: const SujoodIcon(),
-            selectedIcon: const SujoodIcon(selected: true),
-            label: tr(context, 'النوافل'),
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.tune_outlined),
-            selectedIcon: const Icon(Icons.tune),
-            label: tr(context, 'الإعدادات'),
-          ),
-        ],
+      child: Scaffold(
+        backgroundColor: page == 0 ? p.homeBackground : p.background,
+        body: SafeArea(
+          child: IndexedStack(index: page, children: screens),
+        ),
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: page,
+          onDestinationSelected: (index) => setState(() => page = index),
+          backgroundColor: p.homeBackground,
+          indicatorColor: p.homeAccent.withOpacity(.12),
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          destinations: [
+            NavigationDestination(
+              icon: const Icon(Icons.home_outlined),
+              selectedIcon: const Icon(Icons.home_outlined),
+              label: tr(context, 'الرئيسية'),
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.auto_stories_outlined),
+              selectedIcon: const Icon(Icons.auto_stories_outlined),
+              label: tr(context, 'الأذكار'),
+            ),
+            NavigationDestination(
+              icon: const SujoodIcon(),
+              selectedIcon: const SujoodIcon(selected: true),
+              label: tr(context, 'النوافل'),
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.tune_outlined),
+              selectedIcon: const Icon(Icons.tune),
+              label: tr(context, 'الإعدادات'),
+            ),
+          ],
+        ),
       ),
     );
   }
