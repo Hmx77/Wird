@@ -1,7 +1,9 @@
 part of 'main.dart';
 
-/// Original artwork stays immutable. Only its excess canvas is clipped and the
-/// owner-requested single kasra is composed as a separate vector layer.
+/// Both uploaded originals are immutable. The new artwork already has its kasra.
+const wirdArtwork = AssetImage('assets/brand/wird_artwork_20261015.png');
+const openingIvory = Color(0xFFF3EEDF);
+
 class WirdMark extends StatelessWidget {
   const WirdMark({super.key, this.size = 104});
   final double size;
@@ -12,48 +14,22 @@ class WirdMark extends StatelessWidget {
     child: ExcludeSemantics(
       child: SizedBox.square(
         dimension: size,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(size * .225),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              const ColoredBox(color: Color(0xFF0B3437)),
-              Transform.translate(
-                offset: Offset(0, size * .016),
-                child: Transform.scale(
-                  scale: 1.92,
-                  child: Image.asset(
-                    'assets/brand/wird_logo.png',
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-              const CustomPaint(painter: _KasraPainter()),
-            ],
+        child: ClipRect(
+          child: Transform.scale(
+            // Remove only the supplied transparent outer canvas. No new mask,
+            // painted lettering, kasra overlay, tint or calligraphy recreation.
+            scale: 1.17,
+            child: Image(
+              image: wirdArtwork,
+              fit: BoxFit.contain,
+              filterQuality: FilterQuality.high,
+              gaplessPlayback: true,
+            ),
           ),
         ),
       ),
     ),
   );
-}
-
-class _KasraPainter extends CustomPainter {
-  const _KasraPainter();
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFFF8F4E6)
-      ..strokeWidth = size.width * .016
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(
-      Offset(size.width * .77, size.height * .87),
-      Offset(size.width * .85, size.height * .84),
-      paint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_KasraPainter oldDelegate) => false;
 }
 
 class SujoodIcon extends StatelessWidget {
@@ -86,20 +62,42 @@ class _SujoodPainter extends CustomPainter {
       ..strokeWidth = selected ? 2.5 : 2
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
-    // Bent torso, kneeling legs and forehead resting at ground level.
+    // Original side-view: tucked feet at left, bent knees, rounded back,
+    // forearms and hands on the ground, forehead touching the prayer mat.
     canvas.drawPath(
       Path()
-        ..moveTo(5, 22)
-        ..lineTo(10, 21)
-        ..lineTo(8, 14)
-        ..quadraticBezierTo(7, 11, 11, 9)
-        ..quadraticBezierTo(14, 9, 18, 17)
-        ..lineTo(20, 22)
-        ..lineTo(15, 22),
+        ..moveTo(3, 23)
+        ..lineTo(5, 19)
+        ..lineTo(9, 21)
+        ..lineTo(13, 21)
+        ..lineTo(7, 16)
+        ..quadraticBezierTo(5, 13, 8, 10)
+        ..quadraticBezierTo(11, 7, 14, 10)
+        ..lineTo(20, 17),
       p,
     );
-    canvas.drawCircle(const Offset(24, 23), 2, p);
-    canvas.drawLine(const Offset(3, 25), const Offset(26, 25), p);
+    canvas.drawPath(
+      Path()
+        ..moveTo(16, 14)
+        ..lineTo(15, 20)
+        ..quadraticBezierTo(15, 23, 18, 23)
+        ..lineTo(20, 23),
+      p,
+    );
+    canvas.drawCircle(
+      const Offset(23, 20.5),
+      2.5,
+      Paint()
+        ..color = color
+        ..style = PaintingStyle.fill,
+    );
+    canvas.drawLine(
+      const Offset(2, 26),
+      const Offset(26, 26),
+      p
+        ..strokeWidth = 1
+        ..color = color.withOpacity(.45),
+    );
     canvas.restore();
   }
 
@@ -112,44 +110,47 @@ class WirdOpening extends StatelessWidget {
   const WirdOpening({super.key});
   @override
   Widget build(BuildContext context) => ColoredBox(
-    color: const Color(0xFFF3EEDF),
-    child: Stack(
-      fit: StackFit.expand,
-      children: [
-        const CustomPaint(painter: _BotanicalPainter()),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.all(32),
+    color: openingIvory,
+    child: LayoutBuilder(
+      builder: (context, bounds) => Stack(
+        fit: StackFit.expand,
+        children: [
+          const CustomPaint(painter: _BotanicalPainter()),
+          const Center(child: WirdMark(size: 128)),
+          Positioned(
+            top: bounds.maxHeight / 2 + 88,
+            left: 24,
+            right: 24,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const WirdMark(size: 136),
-                const SizedBox(height: 24),
                 const Text(
-                  'W I R D',
+                  'WIRD',
+                  textDirection: TextDirection.ltr,
                   style: TextStyle(
                     color: Color(0xFF0B3437),
-                    fontSize: 14,
-                    letterSpacing: 5,
+                    fontSize: 13,
+                    letterSpacing: 7,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(height: 24),
-                Container(width: 32, height: 1, color: const Color(0xFFB49D63)),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
+                Container(width: 28, height: 1, color: const Color(0xFFB49D63)),
+                const SizedBox(height: 16),
                 const UiText(
                   'ذِكْرٌ يُرَافِقُ يَوْمَكَ',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Color(0xFF355650),
-                    fontSize: 16,
+                    fontSize: 14,
                     height: 1.9,
                   ),
                 ),
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }
@@ -159,7 +160,7 @@ class _BotanicalPainter extends CustomPainter {
   const _BotanicalPainter();
   @override
   void paint(Canvas c, Size s) {
-    final leaf = Paint()..color = const Color(0xFF6B8068).withOpacity(.21);
+    final leaf = Paint()..color = const Color(0xFF6B8068).withOpacity(.07);
     for (final flip in [false, true]) {
       c.save();
       if (flip) {
@@ -177,7 +178,7 @@ class _BotanicalPainter extends CustomPainter {
       c.drawPath(
         stem,
         Paint()
-          ..color = const Color(0xFF6B8068).withOpacity(.3)
+          ..color = const Color(0xFF6B8068).withOpacity(.12)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1.4,
       );
@@ -196,14 +197,7 @@ class _BotanicalPainter extends CustomPainter {
       }
       c.restore();
     }
-    final crescent = Paint()..color = const Color(0xFFB49D63).withOpacity(.65);
-    c.drawCircle(Offset(s.width * .5, s.height * .15), 17, crescent);
-    c.drawCircle(
-      Offset(s.width * .5 - 8, s.height * .15 - 5),
-      17,
-      Paint()..color = const Color(0xFFF3EEDF),
-    );
-    final skyline = Paint()..color = const Color(0xFF315958).withOpacity(.13);
+    final skyline = Paint()..color = const Color(0xFF315958).withOpacity(.035);
     final base = s.height * .93;
     c.drawRect(Rect.fromLTRB(0, base, s.width, s.height), skyline);
     final dome = Path()
@@ -260,12 +254,12 @@ class HomePage extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 760),
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(22, 24, 22, 28),
+            padding: const EdgeInsets.fromLTRB(22, 22, 22, 28),
             children: [
               Row(
                 children: [
-                  const WirdMark(size: 68),
-                  const SizedBox(width: 14),
+                  const WirdMark(size: 46),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,67 +268,56 @@ class HomePage extends StatelessWidget {
                           'وردك اليومي',
                           style: TextStyle(
                             color: cream,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 19,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         UiText(
                           'ذِكْرٌ يُرَافِقُ يَوْمَكَ',
                           style: TextStyle(
-                            color: cream.withOpacity(.65),
+                            color: cream.withOpacity(.62),
                             fontSize: 11,
-                            height: 1.7,
+                            height: 1.9,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  IconButton(
+                  IconButton.outlined(
                     tooltip: tr(context, 'ابحث عن ذكر'),
+                    style: IconButton.styleFrom(
+                      foregroundColor: cream,
+                      side: BorderSide(color: p.homeOutline),
+                    ),
                     onPressed: () => browse(context),
-                    icon: const Icon(Icons.search_rounded, color: cream),
+                    icon: const Icon(Icons.search_rounded, size: 22),
                   ),
                 ],
               ),
-              const SizedBox(height: 32),
-              Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: p.homeSurface,
-                  borderRadius: BorderRadius.circular(28),
-                  border: Border.all(color: gold.withOpacity(.25)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.spa_outlined, color: gold, size: 24),
-                    const SizedBox(height: 14),
-                    const UiText(
-                      'لحظات من السكينة',
-                      style: TextStyle(
-                        color: cream,
-                        fontSize: 25,
-                        fontWeight: FontWeight.w500,
-                        height: 1.6,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    UiText(
-                      'اختر وردك وابدأ القراءة',
-                      style: TextStyle(
-                        color: cream.withOpacity(.7),
-                        fontSize: 13,
-                        height: 1.8,
-                      ),
-                    ),
-                  ],
+              const SizedBox(height: 34),
+              const UiText(
+                'الأذكار',
+                style: TextStyle(
+                  color: cream,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w500,
+                  height: 1.8,
                 ),
               ),
-              const SizedBox(height: 26),
+              UiText(
+                'اختر وردك وابدأ القراءة',
+                style: TextStyle(
+                  color: cream.withOpacity(.65),
+                  fontSize: 12,
+                  height: 1.9,
+                ),
+              ),
+              const SizedBox(height: 22),
+              // Content-height cards retain their full labels at large text.
+              // Three equal rows avoid an unbalanced empty fourth grid cell.
               ...DhikrSection.values.map((section) {
                 final count = inSection(section).length;
-                final completed =
-                    store.completed(section) == count && count > 0;
+                final done = store.completed(section);
                 final icon = switch (section) {
                   DhikrSection.morning => Icons.wb_sunny_outlined,
                   DhikrSection.evening => Icons.nightlight_outlined,
@@ -342,31 +325,30 @@ class HomePage extends StatelessWidget {
                 };
                 final accent = switch (section) {
                   DhikrSection.morning => gold,
-                  DhikrSection.evening => const Color(0xFF87BCB5),
-                  DhikrSection.sleep => const Color(0xFFB4A4CD),
+                  DhikrSection.evening => p.homeAccent,
+                  DhikrSection.sleep => const Color(0xFFB8ACC3),
                 };
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: Material(
                     color: p.homeSurface,
-                    borderRadius: BorderRadius.circular(22),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      side: BorderSide(color: p.homeOutline),
+                    ),
+                    clipBehavior: Clip.antiAlias,
                     child: InkWell(
                       key: Key('home-${section.name}'),
-                      borderRadius: BorderRadius.circular(22),
                       onTap: () => openReader(context, store, section),
                       child: Padding(
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 18,
+                          vertical: 20,
+                        ),
                         child: Row(
                           children: [
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: accent.withOpacity(.12),
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Icon(icon, color: accent, size: 26),
-                            ),
-                            const SizedBox(width: 16),
+                            Icon(icon, color: accent, size: 25),
+                            const SizedBox(width: 18),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -375,34 +357,46 @@ class HomePage extends StatelessWidget {
                                     sectionLabel(section),
                                     style: const TextStyle(
                                       color: cream,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                      height: 1.7,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w500,
+                                      height: 1.8,
                                     ),
                                   ),
-                                  const SizedBox(height: 3),
+                                  const SizedBox(height: 4),
                                   UiText(
                                     '$count ذكر',
                                     style: TextStyle(
-                                      color: cream.withOpacity(.6),
-                                      fontSize: 12,
+                                      color: cream.withOpacity(.63),
+                                      fontSize: 11,
                                     ),
                                   ),
+                                  if (done > 0) ...[
+                                    const SizedBox(height: 10),
+                                    LinearProgressIndicator(
+                                      value: done / count,
+                                      minHeight: 2,
+                                      color: accent,
+                                      backgroundColor: cream.withOpacity(.07),
+                                      semanticsLabel: tr(
+                                        context,
+                                        sectionLabel(section),
+                                      ),
+                                      semanticsValue: '$done / $count',
+                                    ),
+                                  ],
                                 ],
                               ),
                             ),
+                            const SizedBox(width: 12),
                             Icon(
-                              completed
+                              done == count
                                   ? Icons.check_circle_outline
-                                  : (Localizations.localeOf(
-                                              context,
-                                            ).languageCode ==
-                                            'ar'
+                                  : (Directionality.of(context) ==
+                                            TextDirection.rtl
                                         ? Icons.chevron_left
                                         : Icons.chevron_right),
-                              color: completed
-                                  ? accent
-                                  : cream.withOpacity(.55),
+                              size: 20,
+                              color: cream.withOpacity(.5),
                             ),
                           ],
                         ),
@@ -411,31 +405,34 @@ class HomePage extends StatelessWidget {
                   ),
                 );
               }),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               OutlinedButton.icon(
                 onPressed: () => browse(context, favorites: true),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: cream,
-                  side: BorderSide(color: gold.withOpacity(.3)),
-                  padding: const EdgeInsets.all(16),
+                  foregroundColor: cream.withOpacity(.85),
+                  side: BorderSide(color: p.homeOutline),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  minimumSize: const Size(48, 52),
                 ),
-                icon: const Icon(Icons.bookmark_border),
+                icon: const Icon(Icons.bookmark_border_rounded, size: 20),
                 label: const UiText('المفضلة'),
               ),
-              const SizedBox(height: 22),
+              const SizedBox(height: 24),
               Row(
                 children: [
                   Icon(
                     Icons.wifi_off_rounded,
-                    size: 15,
-                    color: cream.withOpacity(.5),
+                    size: 14,
+                    color: cream.withOpacity(.55),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: UiText(
                       'أذكارك محفوظة دون اتصال',
                       style: TextStyle(
-                        color: cream.withOpacity(.5),
+                        color: cream.withOpacity(.55),
                         fontSize: 11,
                       ),
                     ),

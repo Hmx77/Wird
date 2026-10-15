@@ -18,8 +18,6 @@ part 'premium_ui.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Reminders.instance.initialize();
-  await AudioLibrary.instance.load();
   runApp(const WirdApp());
   LicenseRegistry.addLicense(() async* {
     final license = await rootBundle.loadString('assets/fonts/OFL.txt');
@@ -42,8 +40,12 @@ class WirdPalette {
   final String name;
   final Color background, card, primary, ink;
   final bool dark;
-  Color get homeBackground => Color.lerp(ink, const Color(0xFF071D22), .55)!;
-  Color get homeSurface => Color.lerp(homeBackground, primary, .12)!;
+  // A restrained slate foundation; every theme retains its original identity.
+  Color get homeBackground =>
+      Color.lerp(const Color(0xFF303A3F), primary, .07)!;
+  Color get homeSurface => Color.lerp(homeBackground, primary, .065)!;
+  Color get homeOutline => const Color(0xFFE3E0D5).withOpacity(.16);
+  Color get homeAccent => Color.lerp(primary, const Color(0xFFB5CBC3), .7)!;
 }
 
 const themes = <WirdPalette>[
@@ -369,12 +371,38 @@ class _WirdAppState extends State<WirdApp> with WidgetsBindingObserver {
   final WirdState store = WirdState();
   Timer? clock;
   String currentDay = dayKey();
+  bool servicesReady = false;
+  bool started = false;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    store.initialize();
     clock = Timer.periodic(const Duration(seconds: 30), (_) => refreshDay());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (started) return;
+    started = true;
+    // Hold the matching native launch surface only until the complete logo is
+    // decoded. No animation timer or minimum splash duration is introduced.
+    WidgetsBinding.instance.deferFirstFrame();
+    unawaited(prepareOpening());
+  }
+
+  Future<void> prepareOpening() async {
+    try {
+      await precacheImage(wirdArtwork, context);
+    } finally {
+      WidgetsBinding.instance.allowFirstFrame();
+    }
+    await Future.wait([
+      store.initialize(),
+      Reminders.instance.initialize(),
+      AudioLibrary.instance.load(),
+    ]);
+    if (mounted) setState(() => servicesReady = true);
   }
 
   void refreshDay() {
@@ -415,6 +443,9 @@ class _WirdAppState extends State<WirdApp> with WidgetsBindingObserver {
           useMaterial3: true,
           fontFamily: 'NotoSansArabic',
           navigationBarTheme: NavigationBarThemeData(
+            height: 76,
+            elevation: 0,
+            surfaceTintColor: Colors.transparent,
             backgroundColor: p.homeBackground,
             labelTextStyle: const WidgetStatePropertyAll(
               TextStyle(color: Color(0xFFF3EEDF), fontSize: 12),
@@ -435,7 +466,7 @@ class _WirdAppState extends State<WirdApp> with WidgetsBindingObserver {
             elevation: 0,
           ),
         ),
-        home: store.ready
+        home: store.ready && servicesReady
             ? WirdShell(store: store)
             : const Scaffold(body: Center(child: WirdOpening())),
       );
@@ -499,17 +530,19 @@ class _WirdShellState extends State<WirdShell> {
         selectedIndex: page,
         onDestinationSelected: (index) => setState(() => page = index),
         backgroundColor: p.homeBackground,
-        indicatorColor: p.primary.withOpacity(.17),
+        indicatorColor: p.homeAccent.withOpacity(.12),
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         destinations: [
           NavigationDestination(
             icon: const Icon(Icons.home_outlined),
-            selectedIcon: const Icon(Icons.home),
+            selectedIcon: const Icon(Icons.home_outlined),
             label: tr(context, 'الرئيسية'),
           ),
           NavigationDestination(
             icon: const Icon(Icons.auto_stories_outlined),
-            selectedIcon: const Icon(Icons.auto_stories),
+            selectedIcon: const Icon(Icons.auto_stories_outlined),
             label: tr(context, 'الأذكار'),
           ),
           NavigationDestination(
