@@ -178,7 +178,17 @@ void main() {
             supportedLocales: const [Locale('ar'), Locale('en')],
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
             theme: ThemeData(fontFamily: 'NotoSansArabic'),
-            home: ColoredBox(color: background, child: child),
+            home: ColoredBox(
+              color: background,
+              child: DefaultTextStyle(
+                style: const TextStyle(
+                  fontFamily: 'NotoSansArabic',
+                  fontSize: 14,
+                  color: Color(0xFF0B3437),
+                ),
+                child: child,
+              ),
+            ),
           ),
         ),
       );
