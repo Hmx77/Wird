@@ -90,13 +90,47 @@ PYVIEW
   echo "Wird home did not become visible for $wird_view_stage." >&2
   return 1
 }
+# Validate every capture; adb can return success with an empty PNG during boot.
+wird_capture() {
+  local target="$1"
+  local attempt
+  for attempt in 1 2 3 4 5; do
+    if timeout 20 adb exec-out screencap -p > "$target" &&
+       python3 - "$target" <<'PYPNG'
+import pathlib, struct, sys, zlib
+raw = pathlib.Path(sys.argv[1]).read_bytes()
+assert raw[:8] == bytes([137,80,78,71,13,10,26,10]), 'Missing PNG signature'
+pos = 8
+seen = set()
+while pos < len(raw):
+    length = struct.unpack('>I', raw[pos:pos+4])[0]
+    kind = raw[pos+4:pos+8]
+    payload = raw[pos+8:pos+8+length]
+    crc = raw[pos+8+length:pos+12+length]
+    assert len(crc) == 4 and zlib.crc32(kind + payload) == struct.unpack('>I', crc)[0], 'Truncated PNG'
+    seen.add(kind)
+    if kind == b'IHDR':
+        width, height = struct.unpack('>II', payload[:8])
+        assert width > 0 and height > 0
+    pos += length + 12
+assert {b'IHDR', b'IDAT', b'IEND'} <= seen and pos == len(raw), 'Incomplete PNG'
+PYPNG
+    then
+      echo "PASS: valid screenshot $target"
+      return 0
+    fi
+    sleep 2
+  done
+  echo "No valid screenshot for $target" >&2
+  return 1
+}
 adb shell input keyevent KEYCODE_HOME
 adb shell input swipe 540 1900 540 350 600
 sleep 2
-adb exec-out screencap -p > verification/device/android-launcher.png
+wird_capture verification/device/android-launcher.png
 adb shell am start -W -n ae.wird.app/.MainActivity
 wird_wait_for_home window
-adb exec-out screencap -p > verification/device/android-home-offline.png
+wird_capture verification/device/android-home-offline.png
 adb shell am force-stop ae.wird.app
 adb shell screenrecord --time-limit 30 /sdcard/wird-startup.mp4 &
 record_pid=$!
@@ -114,14 +148,14 @@ adb shell settings put system font_scale 1.5
 adb shell am force-stop ae.wird.app
 adb shell am start -W -n ae.wird.app/.MainActivity
 wird_wait_for_home small-large-font
-adb exec-out screencap -p > verification/device/android-small-large-font.png
+wird_capture verification/device/android-small-large-font.png
 adb shell wm size 1600x2560
 adb shell wm density 240
 adb shell settings put system font_scale 1
 adb shell am force-stop ae.wird.app
 adb shell am start -W -n ae.wird.app/.MainActivity
 wird_wait_for_home tablet
-adb exec-out screencap -p > verification/device/android-tablet.png
+wird_capture verification/device/android-tablet.png
 adb logcat -d -s AndroidRuntime:E flutter:E > verification/device/runtime-errors.log
 if grep -Eq 'FATAL EXCEPTION|Unhandled Exception' verification/device/runtime-errors.log; then
   echo 'Native runtime error captured.' >&2; exit 1
