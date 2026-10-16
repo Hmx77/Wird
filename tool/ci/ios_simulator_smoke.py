@@ -42,9 +42,19 @@ for attempt in range(2):
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=20)
 
 j = json.loads((out/'available-devices.json').read_text())
-sim = next((d['udid'] for runtime, devices in j['devices'].items() if 'iOS-26' in runtime
-            for d in devices if d.get('isAvailable') and d['name'].startswith('iPhone')), None)
-if not sim: raise RuntimeError('No preinstalled iOS 26 iPhone simulator is available; no runtime or license was added.')
+candidates = [(runtime, d) for runtime, devices in j['devices'].items()
+              if 'iOS-26' in runtime for d in devices
+              if d.get('isAvailable') and d['name'].startswith('iPhone')
+              and d.get('deviceTypeIdentifier')]
+if not candidates:
+    raise RuntimeError('No installed iOS 26 iPhone template; no runtime or license was added.')
+runtime, template = sorted(candidates, key=lambda item: item[0], reverse=True)[0]
+# A new disposable device avoids inherited simulator data from the runner image.
+# Use only an installed runtime and device type; keep network isolation intact.
+sim = run(['xcrun', 'simctl', 'create', 'Wird-CI-review',
+           template['deviceTypeIdentifier'], runtime]).strip()
+(out/'selected-simulator.txt').write_text(sim + '\n' + runtime + '\n')
+
 try:
     run(['xcrun','simctl','boot',sim], seconds=120)
     run(['xcrun','simctl','bootstatus',sim,'-b'], seconds=300)
