@@ -124,9 +124,33 @@ PYPNG
   echo "No valid screenshot for $target" >&2
   return 1
 }
-adb shell input keyevent KEYCODE_HOME
-adb shell input swipe 540 1900 540 350 600
-sleep 2
+# Wait for the installed app label in the launcher drawer, not just wallpaper.
+wird_launcher_ready=false
+for attempt in 1 2 3 4 5; do
+  adb shell input keyevent KEYCODE_HOME
+  sleep 2
+  adb shell input swipe 540 2200 540 500 600
+  sleep 2
+  if timeout 15 adb shell uiautomator dump /sdcard/wird-launcher.xml >/dev/null 2>&1 &&
+     adb pull /sdcard/wird-launcher.xml verification/device/launcher.xml >/dev/null 2>&1 &&
+     python3 - <<'PYLAUNCHER'
+import unicodedata, xml.etree.ElementTree as ET
+nodes = list(ET.parse('verification/device/launcher.xml').getroot().iter('node'))
+labels = ' '.join(n.get('text', '') + ' ' + n.get('content-desc', '') for n in nodes)
+labels = ''.join(c for c in unicodedata.normalize('NFD', labels) if unicodedata.category(c) != 'Mn')
+assert any('launcher' in n.get('package', '').lower() for n in nodes), 'Launcher not foreground'
+assert 'wird' in labels.lower() or 'ورد' in labels, 'Installed Wird icon not visible'
+PYLAUNCHER
+  then
+    wird_launcher_ready=true
+    break
+  fi
+done
+if [ "$wird_launcher_ready" != true ]; then
+  echo 'Installed Wird launcher icon was not found.' >&2
+  exit 1
+fi
+echo 'PASS: installed Wird icon visible in launcher drawer'
 wird_capture verification/device/android-launcher.png
 adb shell am start -W -n ae.wird.app/.MainActivity
 wird_wait_for_home window
