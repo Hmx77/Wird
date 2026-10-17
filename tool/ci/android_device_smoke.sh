@@ -183,6 +183,9 @@ adb pull /sdcard/wird-startup.mp4 verification/device/startup.mp4
 test -s verification/device/startup.mp4
 ffmpeg -hide_banner -loglevel error -i verification/device/startup.mp4 \
   -vf fps=2 verification/device/android-startup-%02d.png
+ffmpeg -hide_banner -loglevel error -i verification/device/startup.mp4 \
+  -vf fps=10,scale=32:72,format=rgb24 -f rawvideo verification/device/startup-rgb.raw
+python3 tool/ci/check_startup_frames.py
 printf '%s\n' 'PASS: first cold launch recorded from actual launcher tap; no interaction after entry'
 adb shell wm size 720x1280
 adb shell wm density 320
