@@ -234,7 +234,9 @@ jobs:
           assert pathlib.Path('docs/review-images/home-ar-430.png').is_file()
           for folder, label in [('reviewed-native', 'android-native'),
                                 ('reviewed-ios/verification/ios-device', 'ios-native')]:
-              for source in pathlib.Path(folder).glob('*.png'):
+              for source in pathlib.Path(folder).glob('*'):
+                  if source.suffix != '.png' and source.name not in ['startup.mp4', 'startup-timeline.json']:
+                      continue
                   assert source.is_file() and not source.is_symlink()
                   target = pathlib.Path('docs/review-images') / label / source.name
                   target.parent.mkdir(parents=True, exist_ok=True)
