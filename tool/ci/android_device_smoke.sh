@@ -153,6 +153,10 @@ fi
 echo 'PASS: installed Wird icon visible in launcher drawer'
 wird_capture verification/device/android-launcher.png
 # Record the FIRST launch, with no taps: launcher -> native -> Flutter -> home.
+if ! command -v ffmpeg >/dev/null; then
+  sudo apt-get update -qq
+  sudo apt-get install -y --no-install-recommends ffmpeg
+fi
 command -v ffmpeg >/dev/null
 adb shell screenrecord --time-limit 12 /sdcard/wird-startup.mp4 &
 record_pid=$!
