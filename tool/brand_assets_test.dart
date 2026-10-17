@@ -192,9 +192,11 @@ void main() {
           ),
         ),
       );
-      await tester.runAsync(
-        () => precacheImage(wirdArtwork, key.currentContext!),
-      );
+      await tester.runAsync(() => Future.wait([
+        precacheImage(wirdArtwork, key.currentContext!),
+        precacheImage(wirdWordmark, key.currentContext!),
+        precacheImage(wirdSanctuary, key.currentContext!),
+      ]));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       final boundary =
