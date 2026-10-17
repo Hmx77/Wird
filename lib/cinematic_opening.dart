@@ -26,6 +26,10 @@ class _WirdStartupState extends State<WirdStartup>
       vsync: this,
       duration: const Duration(milliseconds: 350),
     );
+    if (widget.ready) _beginHold();
+  }
+
+  void _beginHold() {
     _hold = Timer(const Duration(milliseconds: 1200), () {
       _elapsed = true;
       _tryExit();
@@ -35,6 +39,7 @@ class _WirdStartupState extends State<WirdStartup>
   @override
   void didUpdateWidget(WirdStartup oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (widget.ready && _hold == null && !_elapsed) _beginHold();
     _tryExit();
   }
 
@@ -91,7 +96,7 @@ class WirdOpening extends StatelessWidget {
         systemNavigationBarColor: openingTeal,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
-      child: ColoredBox(
+      child: Material(
         key: const Key('cinematic-splash'),
         color: openingTeal,
         child: TweenAnimationBuilder<double>(
