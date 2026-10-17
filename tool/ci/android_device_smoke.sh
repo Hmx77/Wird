@@ -152,20 +152,20 @@ if [ "$wird_launcher_ready" != true ]; then
 fi
 echo 'PASS: installed Wird icon visible in launcher drawer'
 wird_capture verification/device/android-launcher.png
-adb shell am start -W -n ae.wird.app/.MainActivity
-wird_wait_for_home window
-wird_capture verification/device/android-home-offline.png
-adb shell am force-stop ae.wird.app
-adb shell screenrecord --time-limit 30 /sdcard/wird-startup.mp4 &
+# Record the FIRST launch, with no taps: launcher -> native -> Flutter -> home.
+command -v ffmpeg >/dev/null
+adb shell screenrecord --time-limit 12 /sdcard/wird-startup.mp4 &
 record_pid=$!
 sleep 1
 adb shell am start -W -n ae.wird.app/.MainActivity
+wird_wait_for_home window
+wird_capture verification/device/android-home-offline.png
 wait "$record_pid"
 adb pull /sdcard/wird-startup.mp4 verification/device/startup.mp4
-if command -v ffmpeg >/dev/null 2>&1; then
-  ffmpeg -hide_banner -loglevel error -i verification/device/startup.mp4 \
-    -vf fps=1/4 verification/device/android-startup-%02d.png
-fi
+test -s verification/device/startup.mp4
+ffmpeg -hide_banner -loglevel error -i verification/device/startup.mp4 \
+  -vf fps=2 verification/device/android-startup-%02d.png
+printf '%s\n' 'PASS: first cold launch recorded without touch input'
 adb shell wm size 720x1280
 adb shell wm density 320
 adb shell settings put system font_scale 1.5
@@ -187,3 +187,4 @@ fi
 adb shell dumpsys package ae.wird.app > verification/device/package.txt
 adb emu kill
 printf '%s\n' 'PASS: Android 36 emulator offline startup, large-font/small/tablet captures; no fatal runtime errors.'
+
