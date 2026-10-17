@@ -319,7 +319,7 @@ void main() {
         'ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage$suffix.png',
         const Size(128, 128),
         const Center(child: WirdMark(size: 128)),
-        background: const Color(0xFFF3EEDF),
+        background: const Color(0xFF00242C),
         ratio: scale.toDouble(),
       );
     }
@@ -338,3 +338,4 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 }
+
