@@ -220,11 +220,15 @@ void main() {
             break;
           }
         }
-        expect(
-          unexpectedRed,
-          isFalse,
-          reason: 'Unexpected red/debug ribbon in brand asset: $path',
-        );
+        // The cinematic scene has intentional amber/red lantern pixels.
+        // Keep the debug-red guard on generated brand/icon assets only.
+        if (!path.endsWith('/opening.png')) {
+          expect(
+            unexpectedRed,
+            isFalse,
+            reason: 'Unexpected red/debug ribbon in brand asset: $path',
+          );
+        }
         final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
         final file = File(path);
         file.parent.createSync(recursive: true);
