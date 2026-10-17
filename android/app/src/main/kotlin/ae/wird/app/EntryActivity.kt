@@ -24,30 +24,35 @@ class EntryActivity : Activity() {
             contentDescription = "وِرد"
         }
         setContentView(scene)
-        if (Build.VERSION.SDK_INT >= 31) {
-            splashScreen.setOnExitAnimationListener { it.remove() }
-        }
-        scene.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
-            override fun onPreDraw(): Boolean {
-                scene.viewTreeObserver.removeOnPreDrawListener(this)
-                // Let the compositor present the scene before engine startup
-                // occupies the main thread. No user input or artificial intro.
-                scene.postDelayed({
-                    if (!isFinishing && !isDestroyed) {
-                        val next = Intent(this@EntryActivity, MainActivity::class.java).apply {
-                            action = intent.action
-                            data = intent.data
-                            intent.extras?.let { putExtras(it) }
-                            addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION or
-                                Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                        }
-                        startActivity(next)
-                        overridePendingTransition(0, 0)
-                        finish()
-                    }
-                }, 80)
-                return true
+        fun enterFlutter() {
+            if (isFinishing || isDestroyed) return
+            val next = Intent(this, MainActivity::class.java).apply {
+                action = intent.action
+                data = intent.data
+                intent.extras?.let { putExtras(it) }
+                addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION or
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
             }
-        })
+            startActivity(next)
+            overridePendingTransition(0, 0)
+            finish()
+        }
+        if (Build.VERSION.SDK_INT >= 29) {
+            // Wait for the hardware-rendered native frame to be committed.
+            // A pre-draw callback fires too early and can transfer Android's
+            // starting window into the Flutter activity before the scene shows.
+            scene.viewTreeObserver.registerFrameCommitCallback {
+                scene.post { enterFlutter() }
+            }
+        } else {
+            scene.viewTreeObserver.addOnDrawListener(object : ViewTreeObserver.OnDrawListener {
+                override fun onDraw() {
+                    scene.post {
+                        scene.viewTreeObserver.removeOnDrawListener(this)
+                        scene.postDelayed({ enterFlutter() }, 80)
+                    }
+                }
+            })
+        }
     }
 }
