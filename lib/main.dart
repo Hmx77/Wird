@@ -19,7 +19,7 @@ part 'cinematic_opening.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const WirdApp());
+  runApp(WirdApp(firstFrameRasterized: WidgetsBinding.instance.waitUntilFirstFrameRasterized));
   LicenseRegistry.addLicense(() async* {
     final license = await rootBundle.loadString('assets/fonts/OFL.txt');
     yield LicenseEntryWithLineBreaks(['Noto Sans Arabic'], license);
@@ -392,7 +392,8 @@ ThemeData wirdTheme(WirdPalette p) => ThemeData(
 );
 
 class WirdApp extends StatefulWidget {
-  const WirdApp({super.key});
+  const WirdApp({super.key, this.firstFrameRasterized});
+  final Future<void>? firstFrameRasterized;
   @override
   State<WirdApp> createState() => _WirdAppState();
 }
@@ -402,10 +403,15 @@ class _WirdAppState extends State<WirdApp> with WidgetsBindingObserver {
   Timer? clock;
   String currentDay = dayKey();
   bool servicesReady = false;
+  bool firstFrameReady = false;
   bool started = false;
   @override
   void initState() {
     super.initState();
+    firstFrameReady = widget.firstFrameRasterized == null;
+    widget.firstFrameRasterized?.then((_) {
+      if (mounted) setState(() => firstFrameReady = true);
+    });
     WidgetsBinding.instance.addObserver(this);
     clock = Timer.periodic(const Duration(seconds: 30), (_) => refreshDay());
   }
@@ -475,7 +481,7 @@ class _WirdAppState extends State<WirdApp> with WidgetsBindingObserver {
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         theme: wirdTheme(p),
         home: WirdStartup(
-          ready: store.ready && servicesReady,
+          ready: store.ready && servicesReady && firstFrameReady,
           child: store.ready && servicesReady
               ? WirdShell(store: store)
               : const ColoredBox(color: openingTeal),
