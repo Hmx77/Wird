@@ -260,14 +260,9 @@ void main() {
         ratio: item.value / 108,
       );
     }
-    // The splash uses the exact mechanically separated supplied wordmark.
-    await render(
-      'assets/brand/wird_wordmark.png',
-      const Size(180, 180),
-      RawImage(image: foreground, filterQuality: FilterQuality.high),
-      background: Colors.transparent,
-      ratio: 3,
-    );
+    // Keep the committed transparent wordmark stable while rendering both
+    // native and Flutter openings. Rewriting a bundled asset mid-test would
+    // make the native snapshot use a stale cached image and cause a size jump.
     await render(
       'android/app/src/main/res/drawable-nodpi/wird_logo.png',
       const Size(108, 108),
@@ -276,7 +271,7 @@ void main() {
       background: Colors.transparent,
     );
     // Android 12+ allocates a 288dp icon surface without an icon background.
-    // Center the same 128dp mark used by Flutter instead of scaling it up.
+    // No launcher tile: dismiss the system surface as soon as the scene draws.
     await render(
       'android/app/src/main/res/drawable-nodpi/wird_splash_icon.png',
       const Size(288, 288),
