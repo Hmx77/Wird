@@ -42,6 +42,8 @@ main = (ROOT / 'lib/main.dart').read_text(encoding='utf-8')
 require(len(re.findall(r"WirdPalette\(\s*'", main)) == 10, 'Ten theme palettes required')
 require('int themeIndex = 8' in main, 'Wrong default theme')
 require(hashlib.sha256((ROOT / 'assets/brand/wird_logo.png').read_bytes()).hexdigest() == audit['logoSHA256'], 'Brand source changed')
+brand = json.loads((ROOT / 'docs/branding-source.json').read_text())
+require(hashlib.sha256((ROOT / brand['file']).read_bytes()).hexdigest() == brand['sha256'], 'New owner artwork changed')
 for file in ROOT.rglob('*.xml'):
     ET.parse(file)
 for file in ROOT.rglob('*.plist'):

@@ -15,12 +15,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'content.dart';
 import 'quran_text.dart';
 part 'premium_ui.dart';
+part 'cinematic_opening.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Reminders.instance.initialize();
-  await AudioLibrary.instance.load();
-  runApp(const WirdApp());
+  runApp(WirdApp(firstFrameRasterized: WidgetsBinding.instance.waitUntilFirstFrameRasterized));
   LicenseRegistry.addLicense(() async* {
     final license = await rootBundle.loadString('assets/fonts/OFL.txt');
     yield LicenseEntryWithLineBreaks(['Noto Sans Arabic'], license);
@@ -42,8 +41,12 @@ class WirdPalette {
   final String name;
   final Color background, card, primary, ink;
   final bool dark;
-  Color get homeBackground => Color.lerp(ink, const Color(0xFF071D22), .55)!;
-  Color get homeSurface => Color.lerp(homeBackground, primary, .12)!;
+  // A restrained slate foundation; every theme retains its original identity.
+  Color get homeBackground =>
+      Color.lerp(const Color(0xFF303A3F), primary, .07)!;
+  Color get homeSurface => Color.lerp(homeBackground, primary, .065)!;
+  Color get homeOutline => const Color(0xFFE3E0D5).withOpacity(.16);
+  Color get homeAccent => Color.lerp(primary, const Color(0xFFB5CBC3), .7)!;
 }
 
 const themes = <WirdPalette>[
@@ -359,8 +362,38 @@ class WirdState extends ChangeNotifier {
   }
 }
 
+/// Shared by the running app and visual regression captures.
+ThemeData wirdTheme(WirdPalette p) => ThemeData(
+  useMaterial3: true,
+  fontFamily: 'NotoSansArabic',
+  navigationBarTheme: NavigationBarThemeData(
+    height: 76,
+    elevation: 0,
+    surfaceTintColor: Colors.transparent,
+    backgroundColor: p.homeBackground,
+    labelTextStyle: const WidgetStatePropertyAll(
+      TextStyle(color: Color(0xFFF3EEDF), fontSize: 12),
+    ),
+    iconTheme: const WidgetStatePropertyAll(
+      IconThemeData(color: Color(0xFFF3EEDF)),
+    ),
+  ),
+  brightness: p.dark ? Brightness.dark : Brightness.light,
+  scaffoldBackgroundColor: p.background,
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: p.primary,
+    brightness: p.dark ? Brightness.dark : Brightness.light,
+  ),
+  appBarTheme: AppBarTheme(
+    backgroundColor: p.background,
+    foregroundColor: p.ink,
+    elevation: 0,
+  ),
+);
+
 class WirdApp extends StatefulWidget {
-  const WirdApp({super.key});
+  const WirdApp({super.key, this.firstFrameRasterized});
+  final Future<void>? firstFrameRasterized;
   @override
   State<WirdApp> createState() => _WirdAppState();
 }
@@ -369,12 +402,47 @@ class _WirdAppState extends State<WirdApp> with WidgetsBindingObserver {
   final WirdState store = WirdState();
   Timer? clock;
   String currentDay = dayKey();
+  bool servicesReady = false;
+  bool firstFrameReady = false;
+  bool started = false;
   @override
   void initState() {
     super.initState();
+    firstFrameReady = widget.firstFrameRasterized == null;
+    widget.firstFrameRasterized?.then((_) {
+      if (mounted) setState(() => firstFrameReady = true);
+    });
     WidgetsBinding.instance.addObserver(this);
-    store.initialize();
     clock = Timer.periodic(const Duration(seconds: 30), (_) => refreshDay());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (started) return;
+    started = true;
+    // Decode the scene before the first Flutter frame; keep native startup dark.
+    WidgetsBinding.instance.deferFirstFrame();
+    unawaited(prepareOpening());
+  }
+
+  Future<void> prepareOpening() async {
+    try {
+      await Future.wait([
+        precacheImage(wirdWordmark, context),
+        precacheImage(wirdSanctuary, context),
+      ]).timeout(const Duration(seconds: 2));
+    } catch (_) {
+      // The dark fallback and original logo remain usable if image decoding fails.
+    } finally {
+      WidgetsBinding.instance.allowFirstFrame();
+    }
+    await Future.wait([
+      store.initialize(),
+      Reminders.instance.initialize(),
+      AudioLibrary.instance.load(),
+    ]);
+    if (mounted) setState(() => servicesReady = true);
   }
 
   void refreshDay() {
@@ -411,33 +479,13 @@ class _WirdAppState extends State<WirdApp> with WidgetsBindingObserver {
         locale: Locale(store.languageCode),
         supportedLocales: const [Locale('ar'), Locale('en')],
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        theme: ThemeData(
-          useMaterial3: true,
-          fontFamily: 'NotoSansArabic',
-          navigationBarTheme: NavigationBarThemeData(
-            backgroundColor: p.homeBackground,
-            labelTextStyle: const WidgetStatePropertyAll(
-              TextStyle(color: Color(0xFFF3EEDF), fontSize: 12),
-            ),
-            iconTheme: const WidgetStatePropertyAll(
-              IconThemeData(color: Color(0xFFF3EEDF)),
-            ),
-          ),
-          brightness: p.dark ? Brightness.dark : Brightness.light,
-          scaffoldBackgroundColor: p.background,
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: p.primary,
-            brightness: p.dark ? Brightness.dark : Brightness.light,
-          ),
-          appBarTheme: AppBarTheme(
-            backgroundColor: p.background,
-            foregroundColor: p.ink,
-            elevation: 0,
-          ),
+        theme: wirdTheme(p),
+        home: WirdStartup(
+          ready: store.ready && servicesReady && firstFrameReady,
+          child: store.ready && servicesReady
+              ? WirdShell(store: store)
+              : const ColoredBox(color: openingTeal),
         ),
-        home: store.ready
-            ? WirdShell(store: store)
-            : const Scaffold(body: Center(child: WirdOpening())),
       );
     },
   );
@@ -491,38 +539,53 @@ class _WirdShellState extends State<WirdShell> {
       NawafilPage(store: store),
       SettingsPage(store: store),
     ];
-    return Scaffold(
-      body: SafeArea(
-        child: IndexedStack(index: page, children: screens),
+    final darkSurface = page == 0 || p.dark;
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: darkSurface
+            ? Brightness.light
+            : Brightness.dark,
+        statusBarBrightness: darkSurface ? Brightness.dark : Brightness.light,
+        systemNavigationBarColor: p.homeBackground,
+        systemNavigationBarIconBrightness: Brightness.light,
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: page,
-        onDestinationSelected: (index) => setState(() => page = index),
-        backgroundColor: p.homeBackground,
-        indicatorColor: p.primary.withOpacity(.17),
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.home_outlined),
-            selectedIcon: const Icon(Icons.home),
-            label: tr(context, 'الرئيسية'),
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.auto_stories_outlined),
-            selectedIcon: const Icon(Icons.auto_stories),
-            label: tr(context, 'الأذكار'),
-          ),
-          NavigationDestination(
-            icon: const SujoodIcon(),
-            selectedIcon: const SujoodIcon(selected: true),
-            label: tr(context, 'النوافل'),
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.tune_outlined),
-            selectedIcon: const Icon(Icons.tune),
-            label: tr(context, 'الإعدادات'),
-          ),
-        ],
+      child: Scaffold(
+        backgroundColor: page == 0 ? p.homeBackground : p.background,
+        body: SafeArea(
+          child: IndexedStack(index: page, children: screens),
+        ),
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: page,
+          onDestinationSelected: (index) => setState(() => page = index),
+          backgroundColor: p.homeBackground,
+          indicatorColor: p.homeAccent.withOpacity(.12),
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          destinations: [
+            NavigationDestination(
+              icon: const Icon(Icons.home_outlined),
+              selectedIcon: const Icon(Icons.home_outlined),
+              label: tr(context, 'الرئيسية'),
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.auto_stories_outlined),
+              selectedIcon: const Icon(Icons.auto_stories_outlined),
+              label: tr(context, 'الأذكار'),
+            ),
+            NavigationDestination(
+              icon: const SujoodIcon(),
+              selectedIcon: const SujoodIcon(selected: true),
+              label: tr(context, 'النوافل'),
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.tune_outlined),
+              selectedIcon: const Icon(Icons.tune),
+              label: tr(context, 'الإعدادات'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1669,3 +1732,4 @@ class SettingsPage extends StatelessWidget {
     );
   }
 }
+

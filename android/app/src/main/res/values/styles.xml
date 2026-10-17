@@ -13,6 +13,17 @@
 
          This Theme is only used starting with V2 of Flutter's Android embedding. -->
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
-        <item name="android:windowBackground">@color/wird_opening_background</item>
+        <item name="android:windowBackground">@drawable/launch_background</item>
+        <item name="android:windowDisablePreview">true</item>
+    </style>
+    <!-- Only the short native entry host is translucent. The Flutter activity
+         stays opaque. Avoid Android's separate icon/solid-colour preview. -->
+    <style name="EntryTheme" parent="@android:style/Theme.Translucent.NoTitleBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@drawable/launch_background</item>
+        <item name="android:windowAnimationStyle">@null</item>
     </style>
 </resources>
+

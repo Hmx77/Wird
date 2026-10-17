@@ -1,7 +1,7 @@
 name: wird
 description: Wird — ورد, private offline Arabic Athkar.
 publish_to: none
-version: 0.4.0+4
+version: 0.4.0+10
 environment:
   sdk: '>=3.9.0 <4.0.0'
 dependencies:
@@ -32,9 +32,13 @@ flutter:
   assets:
     - assets/fonts/OFL.txt
     - assets/brand/wird_logo.png
+    - assets/brand/wird_artwork_20261015.png
+    - assets/brand/wird_sanctuary_20261017.png
+    - assets/brand/wird_wordmark.png
     - assets/audio/
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: assets/brand/wird_logo.png
+  image_path: assets/brand/wird_artwork_20261015.png
   remove_alpha_ios: true
+

@@ -76,7 +76,7 @@ void main() {
         final logo = tester.widget<Image>(find.byType(Image).first);
         expect(
           (logo.image as AssetImage).assetName,
-          'assets/brand/wird_logo.png',
+          'assets/brand/wird_artwork_20261015.png',
         );
         expect(logo.fit, BoxFit.contain);
         expect(tester.takeException(), isNull);
