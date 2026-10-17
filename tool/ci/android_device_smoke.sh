@@ -152,7 +152,7 @@ if [ "$wird_launcher_ready" != true ]; then
 fi
 echo 'PASS: installed Wird icon visible in launcher drawer'
 wird_capture verification/device/android-launcher.png
-# Record the FIRST launch, with no taps: launcher -> native -> Flutter -> home.
+# Record the actual launcher tap and first cold launch through real home.
 if ! command -v ffmpeg >/dev/null; then
   sudo apt-get update -qq
   sudo apt-get install -y --no-install-recommends ffmpeg
@@ -161,7 +161,21 @@ command -v ffmpeg >/dev/null
 adb shell screenrecord --time-limit 12 /sdcard/wird-startup.mp4 &
 record_pid=$!
 sleep 1
-adb shell am start -W -n ae.wird.app/.MainActivity
+read -r wird_tap_x wird_tap_y < <(python3 - <<'PYTAP'
+import re, unicodedata, xml.etree.ElementTree as ET
+for node in ET.parse('verification/device/launcher.xml').getroot().iter('node'):
+    label = node.get('text', '') + ' ' + node.get('content-desc', '')
+    label = ''.join(c for c in unicodedata.normalize('NFD', label) if unicodedata.category(c) != 'Mn')
+    if 'wird' in label.lower() or 'ورد' in label:
+        x1,y1,x2,y2 = map(int, re.findall(r'\d+', node.attrib['bounds']))
+        print((x1+x2)//2, (y1+y2)//2)
+        break
+else:
+    raise SystemExit('No visible launcher target')
+PYTAP
+)
+adb shell settings put system show_touches 1
+adb shell input tap "$wird_tap_x" "$wird_tap_y"
 wird_wait_for_home window
 wird_capture verification/device/android-home-offline.png
 wait "$record_pid"
@@ -169,7 +183,7 @@ adb pull /sdcard/wird-startup.mp4 verification/device/startup.mp4
 test -s verification/device/startup.mp4
 ffmpeg -hide_banner -loglevel error -i verification/device/startup.mp4 \
   -vf fps=2 verification/device/android-startup-%02d.png
-printf '%s\n' 'PASS: first cold launch recorded without touch input'
+printf '%s\n' 'PASS: first cold launch recorded from actual launcher tap; no interaction after entry'
 adb shell wm size 720x1280
 adb shell wm density 320
 adb shell settings put system font_scale 1.5
