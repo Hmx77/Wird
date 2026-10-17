@@ -222,7 +222,9 @@ void main() {
         }
         // The cinematic scene has intentional amber/red lantern pixels.
         // Keep the debug-red guard on generated brand/icon assets only.
-        if (!path.endsWith('/opening.png')) {
+        if (!path.endsWith('/opening.png') &&
+            !path.endsWith('/wird_launch_scene.png') &&
+            !path.contains('/LaunchImage.imageset/')) {
           expect(
             unexpectedRed,
             isFalse,
@@ -258,6 +260,14 @@ void main() {
         ratio: item.value / 108,
       );
     }
+    // The splash uses the exact mechanically separated supplied wordmark.
+    await render(
+      'assets/brand/wird_wordmark.png',
+      const Size(180, 180),
+      RawImage(image: foreground, filterQuality: FilterQuality.high),
+      background: Colors.transparent,
+      ratio: 3,
+    );
     await render(
       'android/app/src/main/res/drawable-nodpi/wird_logo.png',
       const Size(108, 108),
@@ -270,7 +280,7 @@ void main() {
     await render(
       'android/app/src/main/res/drawable-nodpi/wird_splash_icon.png',
       const Size(288, 288),
-      const Center(child: WirdMark(size: 128)),
+      const SizedBox.shrink(),
       ratio: 3,
       background: Colors.transparent,
     );
@@ -321,12 +331,18 @@ void main() {
       final suffix = scale == 1 ? '' : '@${scale}x';
       await render(
         'ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage$suffix.png',
-        const Size(128, 128),
-        const Center(child: WirdMark(size: 128)),
+        const Size(430, 932),
+        const WirdOpening(),
         background: const Color(0xFF00242C),
         ratio: scale.toDouble(),
       );
     }
+    await render(
+      'android/app/src/main/res/drawable-nodpi/wird_launch_scene.png',
+      const Size(430, 932),
+      const WirdOpening(),
+      ratio: 2,
+    );
     await render(
       'verification/screenshots/brand-kasra.png',
       const Size(108, 108),
