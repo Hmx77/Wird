@@ -8,12 +8,21 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.ImageView
+import java.lang.ref.WeakReference
 
 /** Draw the owned scene before loading the Flutter engine. Both windows use
  * the same scene, so this is one visual opening, followed by the real home. */
 class EntryActivity : Activity() {
+    companion object {
+        private var active: WeakReference<EntryActivity>? = null
+        fun dismiss() {
+            active?.get()?.finish()
+            active = null
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        active = WeakReference(this)
         window.statusBarColor = Color.TRANSPARENT
         window.navigationBarColor = Color.rgb(0, 36, 44)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
@@ -35,7 +44,7 @@ class EntryActivity : Activity() {
             }
             startActivity(next)
             overridePendingTransition(0, 0)
-            finish()
+            // The real host dismisses this window after committing its scene.
         }
         if (Build.VERSION.SDK_INT >= 29) {
             // Wait for the hardware-rendered native frame to be committed.
@@ -54,5 +63,9 @@ class EntryActivity : Activity() {
                 }
             })
         }
+    }
+    override fun onDestroy() {
+        if (active?.get() === this) active = null
+        super.onDestroy()
     }
 }

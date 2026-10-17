@@ -61,13 +61,13 @@ class MainActivity : FragmentActivity(), FlutterUiDisplayListener, FlutterEngine
             fragment.onPostResume()
         }
         if (Build.VERSION.SDK_INT >= 29) {
-            root.viewTreeObserver.registerFrameCommitCallback { root.post { startFlutter() } }
+            root.viewTreeObserver.registerFrameCommitCallback { root.post { EntryActivity.dismiss(); startFlutter() } }
         } else {
             root.viewTreeObserver.addOnDrawListener(object : ViewTreeObserver.OnDrawListener {
                 override fun onDraw() {
                     root.post {
                         root.viewTreeObserver.removeOnDrawListener(this)
-                        root.postDelayed({ startFlutter() }, 32)
+                        root.postDelayed({ EntryActivity.dismiss(); startFlutter() }, 32)
                     }
                 }
             })
@@ -81,6 +81,7 @@ class MainActivity : FragmentActivity(), FlutterUiDisplayListener, FlutterEngine
     override fun cleanUpFlutterEngine(engine: FlutterEngine) {}
 
     override fun onFlutterUiDisplayed() {
+        EntryActivity.dismiss()
         opening?.let { (it.parent as? ViewGroup)?.removeView(it) }
         opening = null
     }
@@ -90,13 +91,13 @@ class MainActivity : FragmentActivity(), FlutterUiDisplayListener, FlutterEngine
         super.onNewIntent(intent)
         setIntent(intent)
         flutter?.onNewIntent(intent)
+        EntryActivity.dismiss()
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         flutter?.onActivityResult(requestCode, resultCode, data)
     }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         flutter?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
     override fun onUserLeaveHint() { super.onUserLeaveHint(); flutter?.onUserLeaveHint() }
