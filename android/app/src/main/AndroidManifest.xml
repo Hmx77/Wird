@@ -24,8 +24,8 @@
               />
 
         </activity>
-        <activity android:name=".EntryActivity" android:exported="true"
-            android:theme="@style/LaunchTheme" android:noHistory="true">
+        <activity android:name=".EntryActivity" android:exported="true" android:hardwareAccelerated="true"
+            android:theme="@style/EntryTheme" android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
