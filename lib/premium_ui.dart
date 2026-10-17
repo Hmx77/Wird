@@ -2,7 +2,7 @@ part of 'main.dart';
 
 /// Both uploaded originals are immutable. The new artwork already has its kasra.
 const wirdArtwork = AssetImage('assets/brand/wird_artwork_20261015.png');
-const openingIvory = Color(0xFFF3EEDF);
+const openingTeal = Color(0xFF00242C);
 
 class WirdMark extends StatelessWidget {
   const WirdMark({super.key, this.size = 104});
@@ -105,129 +105,6 @@ class _SujoodPainter extends CustomPainter {
   @override
   bool shouldRepaint(_SujoodPainter old) =>
       old.color != color || old.selected != selected;
-}
-
-class WirdOpening extends StatelessWidget {
-  const WirdOpening({super.key});
-  @override
-  Widget build(BuildContext context) => ColoredBox(
-    color: openingIvory,
-    child: LayoutBuilder(
-      builder: (context, bounds) => Stack(
-        fit: StackFit.expand,
-        children: [
-          const CustomPaint(painter: _BotanicalPainter()),
-          const Center(child: WirdMark(size: 128)),
-          Positioned(
-            top: bounds.maxHeight / 2 + 88,
-            left: 24,
-            right: 24,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'WIRD',
-                  textDirection: TextDirection.ltr,
-                  style: TextStyle(
-                    color: Color(0xFF0B3437),
-                    fontSize: 13,
-                    letterSpacing: 7,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Container(width: 28, height: 1, color: const Color(0xFFB49D63)),
-                const SizedBox(height: 16),
-                const UiText(
-                  'ذِكْرٌ يُرَافِقُ يَوْمَكَ',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xFF355650),
-                    fontSize: 14,
-                    height: 1.9,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-/// Original vector composition; no competitor art or external stock assets.
-class _BotanicalPainter extends CustomPainter {
-  const _BotanicalPainter();
-  @override
-  void paint(Canvas c, Size s) {
-    final leaf = Paint()..color = const Color(0xFF6B8068).withOpacity(.07);
-    for (final flip in [false, true]) {
-      c.save();
-      if (flip) {
-        c.translate(s.width, 0);
-        c.scale(-1, 1);
-      }
-      final stem = Path()
-        ..moveTo(-16, -10)
-        ..quadraticBezierTo(
-          s.width * .16,
-          s.height * .08,
-          s.width * .13,
-          s.height * .26,
-        );
-      c.drawPath(
-        stem,
-        Paint()
-          ..color = const Color(0xFF6B8068).withOpacity(.12)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.4,
-      );
-      for (var i = 0; i < 5; i++) {
-        c.save();
-        c.translate(s.width * .09, s.height * (.025 + i * .04));
-        c.rotate(i.isEven ? -.7 : .7);
-        c.drawPath(
-          Path()
-            ..moveTo(0, 0)
-            ..quadraticBezierTo(35, -28, 58, -6)
-            ..quadraticBezierTo(31, 17, 0, 0),
-          leaf,
-        );
-        c.restore();
-      }
-      c.restore();
-    }
-    final skyline = Paint()..color = const Color(0xFF315958).withOpacity(.035);
-    final base = s.height * .93;
-    c.drawRect(Rect.fromLTRB(0, base, s.width, s.height), skyline);
-    final dome = Path()
-      ..moveTo(s.width * .25, base)
-      ..lineTo(s.width * .25, base - 28)
-      ..quadraticBezierTo(s.width * .26, base - 60, s.width * .5, base - 106)
-      ..quadraticBezierTo(s.width * .74, base - 60, s.width * .75, base - 28)
-      ..lineTo(s.width * .75, base)
-      ..close();
-    c.drawPath(dome, skyline);
-    for (final x in [.12, .87]) {
-      final center = s.width * x;
-      c.drawRect(
-        Rect.fromLTRB(center - 8, base - 136, center + 8, base),
-        skyline,
-      );
-      c.drawPath(
-        Path()
-          ..moveTo(center - 13, base - 136)
-          ..lineTo(center, base - 167)
-          ..lineTo(center + 13, base - 136)
-          ..close(),
-        skyline,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_BotanicalPainter old) => false;
 }
 
 class HomePage extends StatelessWidget {
@@ -447,3 +324,4 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+

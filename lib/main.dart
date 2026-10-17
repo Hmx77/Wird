@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'content.dart';
 import 'quran_text.dart';
 part 'premium_ui.dart';
+part 'cinematic_opening.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -414,15 +415,19 @@ class _WirdAppState extends State<WirdApp> with WidgetsBindingObserver {
     super.didChangeDependencies();
     if (started) return;
     started = true;
-    // Hold the matching native launch surface only until the complete logo is
-    // decoded. No animation timer or minimum splash duration is introduced.
+    // Decode the scene before the first Flutter frame; keep native startup dark.
     WidgetsBinding.instance.deferFirstFrame();
     unawaited(prepareOpening());
   }
 
   Future<void> prepareOpening() async {
     try {
-      await precacheImage(wirdArtwork, context);
+      await Future.wait([
+        precacheImage(wirdArtwork, context),
+        precacheImage(wirdSanctuary, context),
+      ]).timeout(const Duration(seconds: 2));
+    } catch (_) {
+      // The dark fallback and original logo remain usable if image decoding fails.
     } finally {
       WidgetsBinding.instance.allowFirstFrame();
     }
@@ -469,9 +474,12 @@ class _WirdAppState extends State<WirdApp> with WidgetsBindingObserver {
         supportedLocales: const [Locale('ar'), Locale('en')],
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         theme: wirdTheme(p),
-        home: store.ready && servicesReady
-            ? WirdShell(store: store)
-            : const Scaffold(body: Center(child: WirdOpening())),
+        home: WirdStartup(
+          ready: store.ready && servicesReady,
+          child: store.ready && servicesReady
+              ? WirdShell(store: store)
+              : const ColoredBox(color: openingTeal),
+        ),
       );
     },
   );
@@ -1718,3 +1726,4 @@ class SettingsPage extends StatelessWidget {
     );
   }
 }
+
