@@ -65,7 +65,16 @@ try:
     record=subprocess.Popen(['xcrun','simctl','io',sim,'recordVideo','--codec=h264',str(out/'startup.mp4')],
                             stdout=record_log,stderr=subprocess.STDOUT,start_new_session=True)
     try:
-        run(['xcrun','simctl','launch','--terminate-running-process',sim,'ae.wird.app'])
+        for attempt in range(2):
+            try:
+                run(['xcrun','simctl','launch','--terminate-running-process',sim,'ae.wird.app'],
+                    seconds=180, save=out/f'launch-attempt-{attempt+1}.log')
+                break
+            except RuntimeError:
+                if attempt: raise
+                print('One bounded retry after simulator launch stalled; no app change or account access.', flush=True)
+                run(['xcrun','simctl','io',sim,'screenshot',str(out/'ios-launch-retry.png')],seconds=30)
+                run(['xcrun','simctl','bootstatus',sim,'-b'],seconds=120)
         time.sleep(10)
     finally:
         if record.poll() is None:
@@ -89,3 +98,4 @@ try:
 finally:
     try: run(['xcrun','simctl','shutdown',sim],seconds=30)
     except RuntimeError as error: print('Simulator cleanup:', error, flush=True)
+
