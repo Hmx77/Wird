@@ -13,6 +13,9 @@ void main() {
     expect(find.byType(ElevatedButton), findsNothing);
     expect(find.byType(TextButton), findsNothing);
     expect(find.text('ابدأ وردك'), findsNothing);
+    final openingStyle = DefaultTextStyle.of(tester.element(find.text('WIRD'))).style;
+    expect((openingStyle.decoration ?? TextDecoration.none).contains(TextDecoration.underline), isFalse,
+      reason: 'Runtime opening must never inherit MaterialApp debug underlines');
     await tester.pump(const Duration(milliseconds: 1200));
     await tester.pump(const Duration(milliseconds: 400));
     await tester.pump();
@@ -30,6 +33,8 @@ void main() {
     await tester.pump(const Duration(seconds: 2));
     expect(find.byKey(const Key('cinematic-splash')), findsOneWidget);
     await tester.pumpWidget(app(true));
+    expect(find.byKey(const Key('cinematic-splash')), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 1200));
     await tester.pump(const Duration(milliseconds: 400));
     await tester.pump();
     expect(find.byKey(const Key('cinematic-splash')), findsNothing);
