@@ -423,7 +423,7 @@ class _WirdAppState extends State<WirdApp> with WidgetsBindingObserver {
   Future<void> prepareOpening() async {
     try {
       await Future.wait([
-        precacheImage(wirdArtwork, context),
+        precacheImage(wirdWordmark, context),
         precacheImage(wirdSanctuary, context),
       ]).timeout(const Duration(seconds: 2));
     } catch (_) {

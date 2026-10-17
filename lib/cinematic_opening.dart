@@ -1,5 +1,7 @@
 part of 'main.dart';
 
+const wirdWordmark = AssetImage('assets/brand/wird_wordmark.png');
+
 const wirdSanctuary = AssetImage('assets/brand/wird_sanctuary_20261017.png');
 
 /// A bounded, automatic overlay over the real shell, never a screenshot route.
@@ -26,7 +28,7 @@ class _WirdStartupState extends State<WirdStartup>
       vsync: this,
       duration: const Duration(milliseconds: 350),
     );
-    if (widget.ready) _beginHold();
+    _beginHold();
   }
 
   void _beginHold() {
@@ -39,7 +41,6 @@ class _WirdStartupState extends State<WirdStartup>
   @override
   void didUpdateWidget(WirdStartup oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.ready && _hold == null && !_elapsed) _beginHold();
     _tryExit();
   }
 
@@ -109,7 +110,7 @@ class WirdOpening extends StatelessWidget {
               children: [
                 RepaintBoundary(
                   child: Transform.scale(
-                    scale: 1.018 - value * .018,
+                    scale: 1,
                     child: Image(
                       image: wirdSanctuary,
                       fit: BoxFit.cover,
@@ -144,13 +145,19 @@ class WirdOpening extends StatelessWidget {
                   child: SafeArea(
                     top: false,
                     child: Opacity(
-                      opacity: .35 + .65 * value,
+                      opacity: 1,
                       child: Transform.scale(
-                        scale: .97 + .03 * value,
+                        scale: 1 + .006 * value,
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const WirdMark(size: 124),
+                            const Image(
+                              key: Key('splash-wordmark'),
+                              image: wirdWordmark,
+                              width: 150, height: 150,
+                              filterQuality: FilterQuality.high,
+                              semanticLabel: 'وِرد',
+                            ),
                             const SizedBox(height: 14),
                             const Text(
                               'WIRD',
