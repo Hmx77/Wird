@@ -187,6 +187,19 @@ ffmpeg -hide_banner -loglevel error -i verification/device/startup.mp4 \
   -vf fps=10,scale=32:72,format=rgb24 -f rawvideo verification/device/startup-rgb.raw
 python3 tool/ci/check_startup_frames.py
 printf '%s\n' 'PASS: first cold launch recorded from actual launcher tap; no interaction after entry'
+# Returning launcher activation must reuse the existing Flutter activity.
+adb shell input keyevent KEYCODE_HOME
+adb shell monkey -p ae.wird.app -c android.intent.category.LAUNCHER 1 >/dev/null
+wird_wait_for_home warm-launch
+wird_capture verification/device/android-warm-home.png
+adb shell dumpsys activity activities > verification/device/warm-activities.txt
+python3 - <<'PYWARM'
+import pathlib, re
+text = pathlib.Path('verification/device/warm-activities.txt').read_text()
+instances = re.findall(r'Hist\s+#\d+:\s+ActivityRecord\{[^\n]*ae\.wird\.app/(?:ae\.wird\.app)?\.MainActivity', text)
+assert len(instances) == 1, f'Expected one reusable Flutter activity, found {len(instances)}'
+print('PASS: returning launcher activation reuses one Flutter activity')
+PYWARM
 adb shell wm size 720x1280
 adb shell wm density 320
 adb shell settings put system font_scale 1.5
