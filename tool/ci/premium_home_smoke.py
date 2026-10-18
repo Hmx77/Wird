@@ -87,8 +87,10 @@ tap('تسبيح +')
 expect('1')
 checks.append('personal-counter')
 adb('shell','input','keyevent','KEYCODE_BACK')
+expect('وردك اليومي')
+time.sleep(1)  # Dismissed bottom-sheet barrier must finish before the next tap.
 capture('android-home-shortcuts.png')
-tap('النوافل',scroll=True)
+tap('السنن والنوافل',scroll=True)
 expect('السنن الرواتب الاثنتا عشرة')
 capture('android-nawafil-navigation.png')
 checks.append('nawafil-shortcut-and-sujood-navigation')
@@ -157,7 +159,13 @@ def setting_switch(label, value, change=True):
             return
         adb('shell','input','swipe',str(width//2),str(int(height*.76)),str(width//2),str(int(height*.37)),'450')
     raise AssertionError('Missing setting switch: '+label)
-adb('shell','pm','grant','ae.wird.app','android.permission.POST_NOTIFICATIONS')
+adb('shell','pm','grant','--user','0','ae.wird.app','android.permission.POST_NOTIFICATIONS')
+adb('shell','appops','set','--user','0','ae.wird.app','POST_NOTIFICATION','allow')
+permission_state=adb('shell','dumpsys','package','ae.wird.app')
+(out/'settings-permission-package.txt').write_text(permission_state)
+assert 'android.permission.POST_NOTIFICATIONS: granted=true' in permission_state, 'Test OS notification permission was not granted'
+(out/'timezone-at-settings.txt').write_text(adb('shell','getprop','persist.sys.timezone'))
+(out/'notification-permission-at-settings.txt').write_text(adb('shell','appops','get','ae.wird.app','POST_NOTIFICATION'))
 for label in ['تذكير أذكار الصباح','تذكير أذكار المساء','تذكير أذكار النوم']:
     setting_switch(label,True)
 (out/'settings-alarms-enabled.txt').write_text(adb('shell','dumpsys','alarm'))

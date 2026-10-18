@@ -28,8 +28,13 @@ fi
 "$ANDROID_HOME/emulator/emulator" -avd wird-review -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -memory 3072 -cores 2 -accel "$accel" >verification/device/emulator.log 2>&1 &
 wird_emulator_pid=$!
 wird_cleanup() {
+  # Preserve diagnostics already collected before an intentional emulator shutdown.
+  if [ "$(timeout 5 "$ANDROID_HOME/platform-tools/adb" get-state 2>/dev/null || true)" != device ]; then
+    kill "$wird_emulator_pid" 2>/dev/null || true
+    return
+  fi
   timeout 12 "$ANDROID_HOME/platform-tools/adb" logcat -d -s AndroidRuntime:E flutter:I > verification/device/runtime-diagnostics.log 2>/dev/null || true
-  timeout 12 "$ANDROID_HOME/platform-tools/adb" shell dumpsys package ae.wird.app > verification/device/package.txt 2>/dev/null || true
+  timeout 12 "$ANDROID_HOME/platform-tools/adb" shell dumpsys package ae.wird.app > verification/device/package-diagnostics.txt 2>/dev/null || true
   timeout 12 "$ANDROID_HOME/platform-tools/adb" shell getprop persist.sys.timezone > verification/device/timezone.txt 2>/dev/null || true
   timeout 12 "$ANDROID_HOME/platform-tools/adb" shell appops get ae.wird.app POST_NOTIFICATION > verification/device/notification-permission.txt 2>/dev/null || true
   kill "$wird_emulator_pid" 2>/dev/null || true
@@ -258,6 +263,9 @@ if grep -Eq 'FATAL EXCEPTION|Unhandled Exception' verification/device/runtime-er
   echo 'Native runtime error captured.' >&2; exit 1
 fi
 adb shell dumpsys package ae.wird.app > verification/device/package.txt
+adb shell getprop persist.sys.timezone > verification/device/timezone.txt
+adb shell appops get ae.wird.app POST_NOTIFICATION > verification/device/notification-permission.txt
+adb logcat -d -s AndroidRuntime:E flutter:I > verification/device/runtime-diagnostics.log
 adb emu kill
 printf '%s\n' 'PASS: Android 36 emulator offline feature checks, large-font/small/tablet captures; no fatal runtime errors.'
 # An opening guard failure remains a real nonzero job result, never a green pass.
