@@ -234,7 +234,7 @@ jobs:
           assert pathlib.Path('docs/review-images/home-ar-430.png').is_file()
           for name in ['lib/settings_ui.dart', 'lib/feature_panels.dart', 'lib/ui_strings.dart',
                        'test/settings_premium_test.dart', 'test/redesign_test.dart']:
-              source = root / 'verification/settings-source' / name
+              source = root / 'verification/settings-source' / (name + '.txt')
               assert source.is_file() and not source.is_symlink(), 'Missing tested formatted Settings source'
               shutil.copyfile(source, pathlib.Path(name))
           for folder, label in [('reviewed-native', 'android-native'),
