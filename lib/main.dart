@@ -429,6 +429,11 @@ class _WirdAppState extends State<WirdApp> with WidgetsBindingObserver {
   }
 
   Future<void> prepareOpening() async {
+    // Start the existing local Home art in parallel with the approved opening.
+    // Its ready flag must not reveal an unillustrated Home while decoding.
+    final homeArtworkReady = Future.wait<void>(
+      homeArt.values.map((image) => precacheImage(image, context)),
+    );
     try {
       await Future.wait([
         precacheImage(wirdWordmark, context),
@@ -443,6 +448,7 @@ class _WirdAppState extends State<WirdApp> with WidgetsBindingObserver {
       store.initialize(),
       Reminders.instance.initialize(),
       AudioLibrary.instance.load(),
+      homeArtworkReady.then<void>((_) {}),
     ]);
     if (mounted) setState(() => servicesReady = true);
   }
