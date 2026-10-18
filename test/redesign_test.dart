@@ -171,10 +171,10 @@ void main() {
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         await tester.runAsync(
-          () => precacheImage(
-            wirdWordmark,
-            tester.element(find.byKey(const Key('home-wordmark'))),
-          ),
+          () => Future.wait([
+            precacheImage(wirdWordmark, tester.element(find.byKey(const Key('home-wordmark')))),
+            ...homeArt.values.map((art) => precacheImage(art, tester.element(find.byKey(const Key('home-wordmark'))))),
+          ]),
         );
         await tester.pump();
         if (Platform.environment['WIRD_REVIEW_IMAGES'] == '1') {
@@ -244,10 +244,10 @@ void main() {
       }
 
       await tester.runAsync(
-        () => precacheImage(
-          wirdWordmark,
-          tester.element(find.byKey(const Key('home-wordmark'))),
-        ),
+        () => Future.wait([
+          precacheImage(wirdWordmark, tester.element(find.byKey(const Key('home-wordmark')))),
+          ...homeArt.values.map((art) => precacheImage(art, tester.element(find.byKey(const Key('home-wordmark'))))),
+        ]),
       );
       await tester.pump();
       await capture('home-regular');

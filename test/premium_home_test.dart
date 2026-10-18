@@ -51,6 +51,14 @@ void main() {
       expect(find.text(uiString('18 ذكر',language)),findsOneWidget);
       expect(find.text(uiString('15 ذكر',language)),findsOneWidget);
       expect(find.text(uiString('16 ذكر',language)),findsOneWidget);
+      final arrow = find.descendant(of: find.byKey(const Key('home-morning')),
+        matching: find.byIcon(language == 'ar' ? Icons.chevron_left_rounded : Icons.chevron_right_rounded));
+      expect(tester.widget<Icon>(arrow).textDirection, TextDirection.ltr,
+        reason: 'Explicit icon direction prevents RTL auto-mirroring twice');
+      final shortcut = tester.getRect(find.byKey(const Key('home-all')));
+      final navigation = tester.getRect(find.byType(NavigationBar));
+      expect(shortcut.bottom, lessThanOrEqualTo(navigation.top),
+        reason: 'All four normal-size shortcuts must be fully above bottom navigation');
       for(final section in DhikrSection.values) {
         await tapHome(tester,'home-${section.name}');
         expect(tester.widget<ReaderPage>(find.byType(ReaderPage)).section,section);
