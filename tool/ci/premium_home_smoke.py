@@ -136,10 +136,36 @@ tap('الإعدادات',bottom=True)
 expect('المظهر والقراءة والخصوصية')
 checks.append('settings-navigation')
 capture('android-settings-top.png')
+def setting_switch(label, value):
+    for attempt in range(10):
+        nodes=snapshot()
+        for node in nodes:
+            if normal(label) not in normal(node.get('text','')+' '+node.get('content-desc','')) or node.get('checkable')!='true':
+                continue
+            x1,y1,x2,y2=map(int,re.findall(r'\d+',node.get('bounds','')))
+            if y2>height*.88 or y2<=y1:
+                continue
+            if node.get('checked')!=str(value).lower():
+                adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
+            checked(label,value)
+            return
+        adb('shell','input','swipe',str(width//2),str(int(height*.76)),str(width//2),str(int(height*.37)),'450')
+    raise AssertionError('Missing setting switch: '+label)
+adb('shell','pm','grant','ae.wird.app','android.permission.POST_NOTIFICATIONS')
+for label in ['تذكير أذكار الصباح','تذكير أذكار المساء','تذكير أذكار النوم']:
+    setting_switch(label,True)
+(out/'settings-alarms-enabled.txt').write_text(adb('shell','dumpsys','alarm'))
+capture('android-settings-reminders-enabled.png')
+for _ in range(3):
+    adb('shell','input','swipe',str(width//2),str(int(height*.3)),str(width//2),str(int(height*.8)),'350')
 # Inspect reminder picker without changing the existing reminder policy.
 tap('7:00',scroll=True)
 expect('إلغاء')
 tap('إلغاء')
+for _ in range(3):
+    adb('shell','input','swipe',str(width//2),str(int(height*.3)),str(width//2),str(int(height*.8)),'350')
+for label in ['تذكير أذكار الصباح','تذكير أذكار المساء','تذكير أذكار النوم']:
+    setting_switch(label,False)
 # Existing font preference receives the real slider changes in widget tests.
 tap('تسبيح +',scroll=True)
 expect('2')
@@ -153,6 +179,9 @@ expect('3')
 capture('android-settings-persisted.png')
 tap('إعادة',scroll=True)
 expect('0')
+setting_switch('اهتزاز خفيف عند العد',False)
+setting_switch('الانتقال تلقائيًا بعد إكمال الذكر',True)
+capture('android-settings-reading-preferences.png')
 tap('التفاصيل والمصادر',scroll=True)
 expect('لا حسابات ولا إعلانات')
 capture('android-settings-bottom.png')
@@ -164,7 +193,7 @@ tap('تراخيص البرمجيات',scroll=True)
 expect('ورد — Wird')
 adb('shell','input','keyevent','KEYCODE_BACK')
 checks.append('settings-time-picker-counter-restart-reset-privacy-cancel-and-licenses')
-(out/'settings-interactions.json').write_text(json.dumps({'passed':True,'counter_values':[1,2,3,0],'restart_persistence':True,'time_picker':'opened and cancelled; scheduling policy unchanged','privacy':'expanded; delete cancelled; licenses opened','offline':True},ensure_ascii=False,indent=2)+'\n')
+(out/'settings-interactions.json').write_text(json.dumps({'passed':True,'counter_values':[1,2,3,0],'restart_persistence':True,'time_picker':'opened and cancelled; scheduling policy unchanged','reminder_switches':'all three enabled and disabled with notification permission; alarm dump retained','reading_switches':'haptics disabled; auto advance enabled','privacy':'expanded; delete cancelled; licenses opened','offline':True},ensure_ascii=False,indent=2)+'\n')
 tap('الرئيسية',bottom=True)
 # Restore the home to the top for later captures and comparisons.
 adb('shell','input','swipe',str(width//2),str(int(height*.3)),str(width//2),str(int(height*.79)),'450')
