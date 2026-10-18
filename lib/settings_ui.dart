@@ -51,9 +51,9 @@ class SettingsPage extends StatelessWidget {
             ])),
             const SizedBox(height:12),
             SettingsPanel(child:Column(children:[
-              _SettingsControl(icon:Icons.vibration_rounded,title:'اهتزاز خفيف عند العد',control:Switch(key:const Key('haptics-switch'),value:store.haptics,onChanged:(v)=>store.preferences(feedback:v))),
+              _SettingsControl(icon:Icons.vibration_rounded,title:'اهتزاز خفيف عند العد',control:Semantics(label:tr(context,'اهتزاز خفيف عند العد'),child:Switch(key:const Key('haptics-switch'),value:store.haptics,onChanged:(v)=>store.preferences(feedback:v)))),
               const Divider(height:18,color:Color(0x335F9D92)),
-              _SettingsControl(icon:Icons.skip_next_rounded,title:'الانتقال تلقائيًا بعد إكمال الذكر',control:Switch(key:const Key('auto-advance-switch'),value:store.autoAdvance,onChanged:(v)=>store.preferences(advance:v))),
+              _SettingsControl(icon:Icons.skip_next_rounded,title:'الانتقال تلقائيًا بعد إكمال الذكر',control:Semantics(label:tr(context,'الانتقال تلقائيًا بعد إكمال الذكر'),child:Switch(key:const Key('auto-advance-switch'),value:store.autoAdvance,onChanged:(v)=>store.preferences(advance:v)))),
             ])),
             const SizedBox(height:12),
             SettingsPanel(highlighted:true,child:Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
@@ -71,10 +71,10 @@ class SettingsPage extends StatelessWidget {
     ));
   });
 
-  Future<void> _appearance(BuildContext context) => showModalBottomSheet<void>(context:context,isScrollControlled:true,backgroundColor:store.palette.homeSurface,showDragHandle:true,builder:(c)=>SettingsStyle(palette:store.palette,child:SafeArea(child:ConstrainedBox(constraints:BoxConstraints(maxHeight:MediaQuery.sizeOf(c).height*.8),child:ListView(shrinkWrap:true,padding:const EdgeInsets.fromLTRB(20,0,20,24),children:[
+  Future<void> _appearance(BuildContext context) => showModalBottomSheet<void>(context:context,isScrollControlled:true,backgroundColor:store.palette.homeSurface,showDragHandle:true,builder:(c)=>SettingsStyle(palette:store.palette,child:SafeArea(child:ConstrainedBox(constraints:BoxConstraints(maxHeight:MediaQuery.sizeOf(c).height*.8),child:SingleChildScrollView(padding:const EdgeInsets.fromLTRB(20,0,20,24),child:Column(children:[
     const SettingsHeading('المظهر',icon:Icons.palette_outlined),const SizedBox(height:12),
     ...themes.indexed.map((e)=>RadioListTile<int>(key:Key('settings-theme-${e.$1}'),value:e.$1,groupValue:store.themeIndex,activeColor:homeGold,secondary:Container(width:36,height:36,decoration:BoxDecoration(color:e.$2.primary,borderRadius:BorderRadius.circular(12),border:Border.all(color:homeGold.withOpacity(.5)))),title:UiText(e.$2.name,style:const TextStyle(color:homeCream,fontSize:14)),onChanged:(i){if(i!=null)store.changeTheme(i);Navigator.pop(c);})),
-  ])))));
+  ]))))));
 
   Future<void> _erase(BuildContext context) async {
     final confirmed=await showDialog<bool>(context:context,builder:(c)=>AlertDialog(
@@ -113,7 +113,7 @@ class SettingsPanel extends StatelessWidget {
     borderRadius:BorderRadius.circular(24),border:Border.all(color:highlighted?homeGold.withOpacity(.6):const Color(0x665F9D92)),
     gradient:LinearGradient(begin:Alignment.topRight,end:Alignment.bottomLeft,colors:[Theme.of(context).colorScheme.surface, const Color(0xFF002C2C)]),
     boxShadow:[BoxShadow(color:Colors.black.withOpacity(.15),blurRadius:18,offset:const Offset(0,6))],
-  ),child:child);
+  ),child:CustomPaint(painter:highlighted?const _SettingsOrnament():null,child:child));
 }
 
 class SettingsHeading extends StatelessWidget {
@@ -159,4 +159,24 @@ class _SettingsHeader extends StatelessWidget {
     Positioned.fill(child:DecoratedBox(decoration:BoxDecoration(gradient:LinearGradient(begin:Alignment.topCenter,end:Alignment.bottomCenter,colors:[palette.homeBackground.withOpacity(.25),palette.homeBackground])))),
     Padding(padding:const EdgeInsets.fromLTRB(24,32,24,26),child:Row(children:[Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const UiText('الإعدادات',style:TextStyle(color:homeGold,fontSize:34,height:1.5,fontWeight:FontWeight.w500)),const SizedBox(height:4),UiText('المظهر والقراءة والخصوصية',style:TextStyle(color:homeCream.withOpacity(.85),fontSize:14,height:1.8))])),const SizedBox(width:12),const Icon(Icons.spa_outlined,color:homeGold,size:31)])),
   ]);
+}
+
+// Decorative only: light interlaced squares, clipped inside each card.
+class _SettingsOrnament extends CustomPainter {
+  const _SettingsOrnament();
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint=Paint()..color=homeGold.withOpacity(.065)..style=PaintingStyle.stroke..strokeWidth=.7;
+    canvas.save();canvas.clipRect(Offset.zero & size);
+    for(var row=0;row<3;row++) {
+      for(var col=0;col<3;col++) {
+        canvas.save();canvas.translate(col*24.0-12,row*24.0-12);
+        canvas.drawRect(const Rect.fromLTWH(-14,-14,28,28),paint);
+        canvas.rotate(.7853981634);canvas.drawRect(const Rect.fromLTWH(-14,-14,28,28),paint);canvas.restore();
+      }
+    }
+    canvas.restore();
+  }
+  @override
+  bool shouldRepaint(covariant _SettingsOrnament oldDelegate)=>false;
 }

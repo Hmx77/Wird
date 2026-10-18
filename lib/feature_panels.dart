@@ -119,12 +119,12 @@ class _ReminderPanelState extends State<ReminderPanel> {
             Icon([Icons.wb_sunny_outlined, Icons.wb_twilight_rounded, Icons.nightlight_round][section.index],color:homeGold,size:22),
             const SizedBox(width:10), Expanded(child: UiText(sectionLabel(section),style:TextStyle(color:homeCream.withOpacity(enabled?1:.72),fontSize:15,height:1.7))),
           ]);
-          final controls = Row(mainAxisSize:MainAxisSize.min,children: [
+          final controls = Wrap(crossAxisAlignment:WrapCrossAlignment.center,alignment:WrapAlignment.end,spacing:4,runSpacing:4,children: [
             OutlinedButton(key:Key('reminder-time-${section.name}'),onPressed:busy?null:() async {
               final selected=await showTimePicker(context:context,initialTime:time);
               if(selected!=null) await update(section,enabled,selected);
             },child:Text(time.format(context),style:TextStyle(color:homeCream.withOpacity(enabled?1:.7),fontSize:13))),
-            Switch(key:Key('reminder-switch-${section.name}'),value:enabled,onChanged:busy?null:(v)=>update(section,v,time)),
+            Semantics(label: '${tr(context, 'تذكير')} ${tr(context, sectionLabel(section))}',child:Switch(key:Key('reminder-switch-${section.name}'),value:enabled,onChanged:busy?null:(v)=>update(section,v,time))),
           ]);
           return Container(margin:const EdgeInsets.only(top:7),padding:const EdgeInsets.symmetric(horizontal:10,vertical:6),decoration:BoxDecoration(borderRadius:BorderRadius.circular(20),border:Border.all(color:homeGold.withOpacity(enabled ? .3 : .12))),child:LayoutBuilder(builder:(context,c) {
             if(c.maxWidth<300 || MediaQuery.textScalerOf(context).scale(1)>1.3) return Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[title,Align(alignment:AlignmentDirectional.centerEnd,child:controls)]);

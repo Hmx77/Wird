@@ -14,6 +14,7 @@ const themeArabic = <String, String>{
 };
 
 const uiEnglish = <String, String>{
+  'تذكير': 'Reminder',
   'اختر لغة التطبيق': 'Choose your app language',
   'التفاصيل والمصادر': 'Details and sources',
   'تحفظ المتابعة على جهازك.': 'Your progress is stored on your device.',
