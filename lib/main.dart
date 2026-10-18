@@ -43,7 +43,7 @@ class WirdPalette {
   final bool dark;
   // A restrained slate foundation; every theme retains its original identity.
   Color get homeBackground =>
-      Color.lerp(const Color(0xFF303A3F), primary, .07)!;
+      Color.lerp(const Color(0xFF002C32), primary, .09)!;
   Color get homeSurface => Color.lerp(homeBackground, primary, .065)!;
   Color get homeOutline => const Color(0xFFE3E0D5).withOpacity(.16);
   Color get homeAccent => Color.lerp(primary, const Color(0xFFB5CBC3), .7)!;
@@ -534,7 +534,7 @@ class _WirdShellState extends State<WirdShell> {
     final store = widget.store;
     final p = store.palette;
     final screens = [
-      HomePage(store: store),
+      HomePage(store: store, onNavigate: (index) => setState(() => page = index)),
       LibraryPage(store: store),
       NawafilPage(store: store),
       SettingsPage(store: store),
@@ -555,36 +555,49 @@ class _WirdShellState extends State<WirdShell> {
         body: SafeArea(
           child: IndexedStack(index: page, children: screens),
         ),
-        bottomNavigationBar: NavigationBar(
+        bottomNavigationBar: Container(
+          margin: const EdgeInsets.fromLTRB(10, 4, 10, 5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(29),
+            border: Border.all(color: p.homeAccent.withOpacity(.3)),
+            gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
+              colors: [p.homeSurface, p.homeBackground]),
+          ),
+          child: ClipRRect(borderRadius: BorderRadius.circular(29), child: NavigationBar(
           selectedIndex: page,
           onDestinationSelected: (index) => setState(() => page = index),
-          backgroundColor: p.homeBackground,
-          indicatorColor: p.homeAccent.withOpacity(.12),
+          backgroundColor: Colors.transparent,
+          indicatorColor: const Color(0xFFE4C47E).withOpacity(.18),
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           destinations: [
             NavigationDestination(
+              key: const Key('nav-home'),
               icon: const Icon(Icons.home_outlined),
-              selectedIcon: const Icon(Icons.home_outlined),
+              selectedIcon: const Icon(Icons.home_rounded, color: homeGold),
               label: tr(context, 'الرئيسية'),
             ),
             NavigationDestination(
+              key: const Key('nav-library'),
               icon: const Icon(Icons.auto_stories_outlined),
               selectedIcon: const Icon(Icons.auto_stories_outlined),
               label: tr(context, 'الأذكار'),
             ),
             NavigationDestination(
+              key: const Key('nav-nawafil'),
               icon: const SujoodIcon(),
-              selectedIcon: const SujoodIcon(selected: true),
+              selectedIcon: const IconTheme(data: IconThemeData(color: homeGold), child: SujoodIcon(selected: true)),
               label: tr(context, 'النوافل'),
             ),
             NavigationDestination(
-              icon: const Icon(Icons.tune_outlined),
-              selectedIcon: const Icon(Icons.tune),
+              key: const Key('nav-settings'),
+              icon: const Icon(Icons.settings_outlined),
+              selectedIcon: const Icon(Icons.settings, color: homeGold),
               label: tr(context, 'الإعدادات'),
             ),
           ],
+        )),
         ),
       ),
     );

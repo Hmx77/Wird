@@ -14,6 +14,12 @@ const themeArabic = <String, String>{
 };
 
 const uiEnglish = <String, String>{
+  'متابعة القراءة': 'Continue reading',
+  'تقدم اليوم': 'Today’s progress',
+  'التسبيح': 'Tasbih',
+  'عداد رقمي': 'Personal counter',
+  'جميع الأذكار': 'All Athkar',
+  'كل الأقسام': 'All collections',
   'عدد التكرار': 'Repetition count',
   'نص القرآن — Tanzil': 'Quran text — Tanzil',
   'آية قرآنية': 'Quranic verse',
@@ -168,3 +174,4 @@ class UiText extends StatelessWidget {
     );
   }
 }
+
