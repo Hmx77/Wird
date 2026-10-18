@@ -353,21 +353,21 @@ class HomePage extends StatelessWidget {
                     art: homeArt['serenity']!, radius: 23,
                     onTap: () => resume(context), actionKey: const Key('home-resume'),
                     child: Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(18, 18, 16, 16),
+                      padding: const EdgeInsetsDirectional.fromSTEB(18, 13, 16, 12),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         const Align(alignment: AlignmentDirectional.centerStart,
-                          child: Icon(Icons.spa_outlined, size: 23, color: homeGold)),
-                        const SizedBox(height: 8),
+                          child: Icon(Icons.spa_outlined, size: 20, color: homeGold)),
+                        const SizedBox(height: 4),
                         Align(alignment: AlignmentDirectional.centerStart,
                           child: FractionallySizedBox(widthFactor: wideText ? .95 : .7,
                             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                               const UiText('لحظات من السكينة', style: TextStyle(
-                                color: homeCream, fontSize: 21, height: 1.5, fontWeight: FontWeight.w700)),
+                                color: homeCream, fontSize: 20, height: 1.4, fontWeight: FontWeight.w700)),
                               const SizedBox(height: 4),
                               const UiText('اختر وردك وابدأ القراءة', style: TextStyle(
-                                color: homeCream, fontSize: 11, height: 1.7)),
-                              const SizedBox(height: 12),
-                              Container(padding: const EdgeInsets.all(9),
+                                color: homeCream, fontSize: 11, height: 1.5)),
+                              const SizedBox(height: 8),
+                              Container(padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(color: const Color(0xD0083035),
                                   borderRadius: BorderRadius.circular(24),
                                   border: Border.all(color: const Color(0x5585BCB2))),
@@ -383,7 +383,7 @@ class HomePage extends StatelessWidget {
                                       color: const Color(0xFF7DDBCA), backgroundColor: const Color(0xFF31565A),
                                       semanticsLabel: tr(context, 'تقدم اليوم'), semanticsValue: '$done / ${entries.length}'),
                                     const SizedBox(height: 3),
-                                    UiText('$done / ${entries.length} مكتمل', style: const TextStyle(
+                                    UiText('$done / ${entries.length} مكتمل', textDirection: TextDirection.ltr, style: const TextStyle(
                                       color: homeCream, fontSize: 9)),
                                   ])),
                                   const SizedBox(width: 8),
@@ -432,22 +432,42 @@ class HomePage extends StatelessWidget {
       art: homeArt[section.name]!, radius: 21,
       actionKey: Key('home-${section.name}'), onTap: () => openReader(context, store, section),
       shade: true,
-      child: Padding(padding: const EdgeInsets.all(13),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      child: Padding(padding: EdgeInsets.all(wide ? 16 : 13),
+        child: wide ? Row(children: [
           Container(padding: const EdgeInsets.all(7),
             decoration: BoxDecoration(color: badge, borderRadius: BorderRadius.circular(13),
               border: Border.all(color: const Color(0x55E9D8AE))),
-            child: Icon(icon, color: homeCream, size: wide ? 25 : 29)),
-          SizedBox(height: wide ? 6 : 12),
+            child: Icon(icon, color: homeCream, size: 25)),
+          const SizedBox(width: 12),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            UiText(sectionLabel(section), style: const TextStyle(color: homeCream,
+              fontSize: 18, fontWeight: FontWeight.w700, height: 1.5)),
+            const SizedBox(height: 3),
+            UiText('$count ذكر', style: const TextStyle(color: homeCream, fontSize: 11)),
+            if (done > 0) ...[
+              const SizedBox(height: 6),
+              LinearProgressIndicator(value: done / count, minHeight: 3,
+                color: homeGold, backgroundColor: Colors.white12,
+                semanticsLabel: tr(context, sectionLabel(section)), semanticsValue: '$done / $count'),
+            ],
+          ])),
+          const SizedBox(width: 8),
+          _HomeArrow(size: 28, complete: done == count),
+        ]) : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Container(padding: const EdgeInsets.all(7),
+            decoration: BoxDecoration(color: badge, borderRadius: BorderRadius.circular(13),
+              border: Border.all(color: const Color(0x55E9D8AE))),
+            child: Icon(icon, color: homeCream, size: 29)),
+          const SizedBox(height: 12),
           Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              UiText(sectionLabel(section), style: TextStyle(color: homeCream,
-                fontSize: wide ? 18 : 16, fontWeight: FontWeight.w700, height: 1.5)),
+              UiText(sectionLabel(section), style: const TextStyle(color: homeCream,
+                fontSize: 16, fontWeight: FontWeight.w700, height: 1.5)),
               const SizedBox(height: 3),
               UiText('$count ذكر', style: const TextStyle(color: homeCream, fontSize: 11)),
             ])),
             const SizedBox(width: 5),
-            _HomeArrow(size: wide ? 28 : 24, complete: done == count),
+            _HomeArrow(size: 24, complete: done == count),
           ]),
           if (done > 0) ...[
             const SizedBox(height: 8),
@@ -475,11 +495,11 @@ class _HomeHeader extends StatelessWidget {
       colors: [store.palette.homeBackground.withOpacity(.35), store.palette.homeBackground.withOpacity(.82), store.palette.homeBackground])))),
     Padding(padding: const EdgeInsets.fromLTRB(0, 5, 0, 16), child: Column(children: [
       Stack(alignment: Alignment.topCenter, children: [
-        SizedBox(height: 104, child: Semantics(label: tr(context, 'شعار ورد'), image: true,
+        SizedBox(height: 96, child: Semantics(label: tr(context, 'شعار ورد'), image: true,
           child: ExcludeSemantics(child: ClipRect(child: Transform.scale(scale: 1.5,
-            child: const Image(key: Key('home-wordmark'), image: wirdWordmark, width: 146, height: 104,
+            child: const Image(key: Key('home-wordmark'), image: wirdWordmark, width: 146, height: 96,
               fit: BoxFit.contain, gaplessPlayback: true)))))),
-        Align(alignment: AlignmentDirectional.topEnd, child: Row(mainAxisSize: MainAxisSize.min, children: [
+        Align(alignment: AlignmentDirectional.topEnd, child: Row(mainAxisSize: MainAxisSize.min, textDirection: TextDirection.ltr, children: [
           IconButton.outlined(key: const Key('home-settings'), tooltip: tr(context, 'الإعدادات'),
             onPressed: onSettings, icon: const Icon(Icons.settings_outlined, size: 21),
             style: IconButton.styleFrom(foregroundColor: homeCream, backgroundColor: const Color(0x30002C32),
@@ -523,7 +543,7 @@ class _HomeIllustratedSurface extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius),
         side: BorderSide(color: Theme.of(context).colorScheme.primary.withOpacity(.65), width: 1)),
       child: Stack(children: [
-        Positioned.fill(child: Image(image: art, fit: BoxFit.cover, excludeFromSemantics: true,
+        Positioned.fill(child: Image(image: art, fit: BoxFit.cover, alignment: Alignment.topCenter, excludeFromSemantics: true,
           gaplessPlayback: true, filterQuality: FilterQuality.medium)),
         if (shade) Positioned.fill(child: DecoratedBox(decoration: BoxDecoration(gradient: LinearGradient(
           begin: Alignment.topCenter, end: Alignment.bottomCenter,
@@ -547,7 +567,7 @@ class _HomeArrow extends StatelessWidget {
       border: Border.all(color: homeGold.withOpacity(.75))),
     child: Icon(complete ? Icons.check_rounded : Directionality.of(context) == TextDirection.rtl
       ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
-      size: size * .7, color: filled ? const Color(0xFF143D3D) : homeCream)));
+      textDirection: TextDirection.ltr, size: size * .7, color: filled ? const Color(0xFF143D3D) : homeCream)));
 }
 
 class _HomeShortcut extends StatelessWidget {
@@ -571,10 +591,10 @@ class _HomeShortcut extends StatelessWidget {
             child: Center(child: symbol ?? Icon(icon, color: accent, size: 31)))),
           const SizedBox(height: 9),
           UiText(label, textAlign: TextAlign.center, style: const TextStyle(
-            color: homeCream, fontSize: 12, height: 1.6, fontWeight: FontWeight.w600)),
+            color: homeCream, fontSize: 13, height: 1.6, fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
           UiText(subtitle, textAlign: TextAlign.center, style: const TextStyle(
-            color: Color(0xFFCAD9D3), fontSize: 9, height: 1.6)),
+            color: Color(0xFFCAD9D3), fontSize: 10, height: 1.6)),
         ])))),
   );
 }
