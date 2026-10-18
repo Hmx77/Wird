@@ -539,7 +539,7 @@ class _WirdShellState extends State<WirdShell> {
       HomePage(store: store, onNavigate: (index) => setState(() => page = index)),
       LibraryPage(store: store),
       NawafilPage(store: store),
-      SettingsPage(store: store),
+      DeferredSettingsPage(store: store, active: page == 3),
     ];
     final darkSurface = page == 0 || page == 2 || page == 3 || p.dark;
     return AnnotatedRegion<SystemUiOverlayStyle>(
