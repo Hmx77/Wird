@@ -164,7 +164,7 @@ jobs:
       - name: Android emulator offline native smoke test
         run: bash tool/ci/android_device_smoke.sh
       - name: Upload verified debug APK on native recheck
-        if: ${{ !inputs.build_android && inputs.reuse_android_run != '' }}
+        if: ${{ always() && !inputs.build_android && inputs.reuse_android_run != '' }}
         uses: actions/upload-artifact@v4
         with:
           name: wird-debug-apk
@@ -210,9 +210,11 @@ jobs:
           run-id: ${{ inputs.reuse_ios_run || github.run_id }}
           github-token: ${{ github.token }}
       - name: Preserve verified native artwork and visual review images
+        env:
+          WIRD_COPY_FORMATTED: ${{ needs.android.result == 'success' && 'true' || 'false' }}
         shell: python
         run: |
-          import pathlib, shutil
+          import pathlib, shutil, os
           root = pathlib.Path('reviewed-output')
           patterns = ['assets/brand/wird_wordmark.png', 'android/app/src/main/res/mipmap-*/ic_launcher.png',
                       'android/app/src/main/res/drawable-nodpi/wird*.png',
@@ -232,11 +234,12 @@ jobs:
               target.parent.mkdir(parents=True, exist_ok=True)
               shutil.copyfile(source, target)
           assert pathlib.Path('docs/review-images/home-ar-430.png').is_file()
-          for name in ['lib/settings_ui.dart', 'lib/feature_panels.dart', 'lib/ui_strings.dart',
-                       'test/settings_premium_test.dart', 'test/redesign_test.dart']:
-              source = root / 'verification/settings-source' / (name + '.txt')
-              assert source.is_file() and not source.is_symlink(), 'Missing tested formatted Settings source'
-              shutil.copyfile(source, pathlib.Path(name))
+          if os.environ['WIRD_COPY_FORMATTED'] == 'true':
+            for name in ['lib/settings_ui.dart', 'lib/feature_panels.dart', 'lib/ui_strings.dart',
+                         'test/settings_premium_test.dart', 'test/redesign_test.dart']:
+                source = root / 'verification/settings-source' / (name + '.txt')
+                assert source.is_file() and not source.is_symlink(), 'Missing tested formatted Settings source'
+                shutil.copyfile(source, pathlib.Path(name))
           for folder, label in [('reviewed-native', 'android-native'),
                                 ('reviewed-ios/verification/ios-device', 'ios-native')]:
               destination = pathlib.Path('docs/review-images') / label
