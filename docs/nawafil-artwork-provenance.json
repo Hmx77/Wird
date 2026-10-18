@@ -1,0 +1,17 @@
+{
+  "asset": "assets/home/botanical-serenity.webp",
+  "origin": "Original artwork created for Wird using built-in image generation; no third-party photo or audio",
+  "mode": "built-in imagegen",
+  "prompt": "Botanical Serenity: midnight teal, olive-like leaves and cream blossoms framing upper edges, warm soft sunrise over misty ridges, dark center negative space, lower fade to deep teal; no mosque, arch, person, text, logo, interface or watermark.",
+  "optimized_size": [
+    1200,
+    800
+  ],
+  "sha256": "f64a9f71f27f540a2abe88b7120355ba29d7317a1ad1c2dc896931399c077a3e",
+  "religious_copy_preserved_verbatim": [
+    "أربع قبل الظهر وركعتان قبل الفجر: البخاري 1182. ركعتان بعد الظهر والمغرب والعشاء: البخاري 1180–1181. وفضل اثنتي عشرة ركعة في يوم وليلة: مسلم 728a. توجد روايات صحيحة أخرى؛ هذا عرض لإحدى صور التتبع.",
+    "ركعتان من الضحى تجزئان عن صدقة المفاصل؛ صحيح مسلم 720.",
+    "صلاة الليل مثنى مثنى، وإذا خشي الصبح أوتر بواحدة؛ صحيح البخاري 990.",
+    "تصلّى ركعتين ركعتين؛ صحيح البخاري 990. التسجيل اختياري ولا يفرض عددًا."
+  ]
+}
