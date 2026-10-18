@@ -208,8 +208,16 @@ ffmpeg -hide_banner -loglevel error -i android/app/src/main/res/drawable-nodpi/w
   -vf scale=32:72,format=rgb24 -frames:v 1 -f rawvideo verification/device/startup-reference.raw
 ffmpeg -hide_banner -loglevel error -i verification/device/android-home-offline.png \
   -vf scale=32:72,format=rgb24 -frames:v 1 -f rawvideo verification/device/startup-home-reference.raw
-python3 tool/ci/check_startup_frames.py
-printf '%s\n' 'PASS: first cold launch recorded from actual launcher tap; no interaction after entry'
+# Keep the opening guard strict, but do not discard independent feature checks
+# merely because a transient Home artwork-loading frame fails classification.
+wird_startup_guard=0
+python3 tool/ci/check_startup_frames.py || wird_startup_guard=$?
+printf '%s\n' "$wird_startup_guard" > verification/device/startup-guard-exit-code.txt
+if [ "$wird_startup_guard" -eq 0 ]; then
+  printf '%s\n' 'PASS: first cold launch recorded from actual launcher tap; no interaction after entry'
+else
+  echo 'Startup frame guard failed; preserving failure while continuing independent feature checks.' >&2
+fi
 # Returning launcher activation must reuse the existing Flutter activity.
 adb shell input keyevent KEYCODE_HOME
 adb shell monkey -p ae.wird.app -c android.intent.category.LAUNCHER 1 >/dev/null
@@ -244,5 +252,7 @@ if grep -Eq 'FATAL EXCEPTION|Unhandled Exception' verification/device/runtime-er
 fi
 adb shell dumpsys package ae.wird.app > verification/device/package.txt
 adb emu kill
-printf '%s\n' 'PASS: Android 36 emulator offline startup, large-font/small/tablet captures; no fatal runtime errors.'
+printf '%s\n' 'PASS: Android 36 emulator offline feature checks, large-font/small/tablet captures; no fatal runtime errors.'
+# An opening guard failure remains a real nonzero job result, never a green pass.
+exit "$wird_startup_guard"
 
