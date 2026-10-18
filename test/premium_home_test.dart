@@ -75,7 +75,7 @@ void main() {
       expect(store.tasbih,1);expect(find.text('1'),findsOneWidget);
       await tester.tap(find.byType(BackButton));await tester.pumpAndSettle();
       await tapHome(tester,'home-nawafil');
-      expect(find.text(uiString('السنن والنوافل',language)),findsOneWidget);
+      expect(find.text(uiString('السُّنن والنوافل',language)),findsOneWidget);
       await tester.tap(find.byKey(const Key('nav-home')));await tester.pumpAndSettle();
       await tapHome(tester,'home-all');
       expect(find.text(uiString('ابحث واقرأ واحفظ أذكارك المفضلة',language)),findsOneWidget);
