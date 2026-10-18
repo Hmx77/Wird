@@ -204,6 +204,7 @@ instances = re.findall(r'Hist\s+#\d+:\s+ActivityRecord\{[^\n]*ae\.wird\.app/(?:a
 assert len(instances) == 1, f'Expected one reusable Flutter activity, found {len(instances)}'
 print('PASS: returning launcher activation reuses one Flutter activity')
 PYWARM
+python3 tool/ci/premium_home_smoke.py
 adb shell wm size 720x1280
 adb shell wm density 320
 adb shell settings put system font_scale 1.5
