@@ -170,6 +170,7 @@ for label in ['تذكير أذكار الصباح','تذكير أذكار الم
     setting_switch(label,True)
 (out/'settings-alarms-enabled.txt').write_text(adb('shell','dumpsys','alarm'))
 capture('android-settings-reminders-enabled.png')
+print('PASS: all three reminder switches enabled with verified OS permission',flush=True)
 for _ in range(3):
     adb('shell','input','swipe',str(width//2),str(int(height*.3)),str(width//2),str(int(height*.8)),'350')
 # Change a real reminder using the Material input picker, then prove storage
@@ -185,9 +186,11 @@ for index,value in enumerate(['8','15']):
     node=fields[index]
     x1,y1,x2,y2=map(int,re.findall(r'\d+',node.get('bounds','')))
     adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
-    adb('shell','input','keyevent','KEYCODE_MOVE_END')
-    for _ in range(3): adb('shell','input','keyevent','KEYCODE_DEL')
+    adb('shell','input','keycombination','KEYCODE_CTRL_LEFT','KEYCODE_A')
     adb('shell','input','text',value)
+    entered=[n for n in snapshot() if n.get('class')=='android.widget.EditText']
+    actual=entered[index].get('text','').strip()
+    assert actual.isdigit() and int(actual)==int(value), f'Test input mismatch: field {index}: {actual!r}, wanted {value}'
 buttons=snapshot()
 confirm=next((n for n in buttons if any(normal(n.get(k,'')).strip() in ['حسنا','موافق','OK'] for k in ['text','content-desc'])),None)
 assert confirm is not None, 'Missing localized time confirmation button'
@@ -203,6 +206,7 @@ expect('8:15')
 for label in ['تذكير أذكار الصباح','تذكير أذكار المساء','تذكير أذكار النوم']:
     setting_switch(label,True,change=False)
 capture('android-settings-reminders-persisted.png')
+print('PASS: morning time changed to 08:15; three reminder switches and time survived process restart',flush=True)
 for _ in range(3):
     adb('shell','input','swipe',str(width//2),str(int(height*.3)),str(width//2),str(int(height*.8)),'350')
 for label in ['تذكير أذكار الصباح','تذكير أذكار المساء','تذكير أذكار النوم']:
@@ -223,6 +227,7 @@ expect('0')
 setting_switch('اهتزاز خفيف عند العد',False)
 setting_switch('الانتقال تلقائيًا بعد إكمال الذكر',True)
 capture('android-settings-reading-preferences.png')
+print('PASS: personal counter survived restart and reset; haptics and auto-advance switches responded',flush=True)
 tap('التفاصيل والمصادر',scroll=True)
 expect('لا حسابات ولا إعلانات')
 capture('android-settings-bottom.png')
@@ -234,6 +239,7 @@ tap('تراخيص البرمجيات',scroll=True)
 expect('ورد — Wird')
 adb('shell','input','keyevent','KEYCODE_BACK')
 checks.append('settings-time-picker-counter-restart-reset-privacy-cancel-and-licenses')
+print('PASS: expandable privacy, cancelled deletion and real software licenses',flush=True)
 (out/'settings-interactions.json').write_text(json.dumps({'passed':True,'counter_values':[1,2,3,0],'restart_persistence':True,'time_picker':'morning changed 07:00 to 08:15 through actual picker; persisted after process restart','reminder_switches':'all three enabled and disabled with notification permission; alarm dump retained','reading_switches':'haptics disabled; auto advance enabled','privacy':'expanded; delete cancelled; licenses opened','offline':True},ensure_ascii=False,indent=2)+'\n')
 tap('الرئيسية',bottom=True)
 # Restore the home to the top for later captures and comparisons.
