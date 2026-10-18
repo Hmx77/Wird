@@ -136,7 +136,7 @@ tap('الإعدادات',bottom=True)
 expect('المظهر والقراءة والخصوصية')
 checks.append('settings-navigation')
 capture('android-settings-top.png')
-def setting_switch(label, value):
+def setting_switch(label, value, change=True):
     for attempt in range(10):
         nodes=snapshot()
         for node in nodes:
@@ -146,6 +146,7 @@ def setting_switch(label, value):
             if y2>height*.88 or y2<=y1:
                 continue
             if node.get('checked')!=str(value).lower():
+                assert change, 'Setting did not persist: '+label
                 adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
             checked(label,value)
             return
@@ -158,10 +159,36 @@ for label in ['تذكير أذكار الصباح','تذكير أذكار الم
 capture('android-settings-reminders-enabled.png')
 for _ in range(3):
     adb('shell','input','swipe',str(width//2),str(int(height*.3)),str(width//2),str(int(height*.8)),'350')
-# Inspect reminder picker without changing the existing reminder policy.
+# Change a real reminder using the Material input picker, then prove storage
+# survives a real process restart. Only disposable emulator preferences change.
 tap('7:00',scroll=True)
 expect('إلغاء')
-tap('إلغاء')
+capture('android-settings-time-picker.png')
+(out/'settings-time-picker.xml').write_text(adb('shell','cat','/sdcard/wird-home-review.xml'))
+tap('إدخال')
+fields=[n for n in snapshot() if n.get('class')=='android.widget.EditText']
+assert len(fields)==2, 'Expected separate hour and minute text fields'
+for node,value in zip(fields,['8','15']):
+    x1,y1,x2,y2=map(int,re.findall(r'\d+',node.get('bounds','')))
+    adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
+    adb('shell','input','keyevent','KEYCODE_MOVE_END')
+    for _ in range(3): adb('shell','input','keyevent','KEYCODE_DEL')
+    adb('shell','input','text',value)
+buttons=snapshot()
+confirm=next((n for n in buttons if any(normal(n.get(k,'')).strip() in ['حسنا','موافق','OK'] for k in ['text','content-desc'])),None)
+assert confirm is not None, 'Missing localized time confirmation button'
+x1,y1,x2,y2=map(int,re.findall(r'\d+',confirm.get('bounds','')))
+adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
+expect('8:15')
+capture('android-settings-time-saved.png')
+adb('shell','am','force-stop','ae.wird.app')
+adb('shell','am','start','-W','-n','ae.wird.app/.MainActivity')
+expect('الرئيسية')
+tap('الإعدادات',bottom=True)
+expect('8:15')
+for label in ['تذكير أذكار الصباح','تذكير أذكار المساء','تذكير أذكار النوم']:
+    setting_switch(label,True,change=False)
+capture('android-settings-reminders-persisted.png')
 for _ in range(3):
     adb('shell','input','swipe',str(width//2),str(int(height*.3)),str(width//2),str(int(height*.8)),'350')
 for label in ['تذكير أذكار الصباح','تذكير أذكار المساء','تذكير أذكار النوم']:
@@ -193,7 +220,7 @@ tap('تراخيص البرمجيات',scroll=True)
 expect('ورد — Wird')
 adb('shell','input','keyevent','KEYCODE_BACK')
 checks.append('settings-time-picker-counter-restart-reset-privacy-cancel-and-licenses')
-(out/'settings-interactions.json').write_text(json.dumps({'passed':True,'counter_values':[1,2,3,0],'restart_persistence':True,'time_picker':'opened and cancelled; scheduling policy unchanged','reminder_switches':'all three enabled and disabled with notification permission; alarm dump retained','reading_switches':'haptics disabled; auto advance enabled','privacy':'expanded; delete cancelled; licenses opened','offline':True},ensure_ascii=False,indent=2)+'\n')
+(out/'settings-interactions.json').write_text(json.dumps({'passed':True,'counter_values':[1,2,3,0],'restart_persistence':True,'time_picker':'morning changed 07:00 to 08:15 through actual picker; persisted after process restart','reminder_switches':'all three enabled and disabled with notification permission; alarm dump retained','reading_switches':'haptics disabled; auto advance enabled','privacy':'expanded; delete cancelled; licenses opened','offline':True},ensure_ascii=False,indent=2)+'\n')
 tap('الرئيسية',bottom=True)
 # Restore the home to the top for later captures and comparisons.
 adb('shell','input','swipe',str(width//2),str(int(height*.3)),str(width//2),str(int(height*.79)),'450')
