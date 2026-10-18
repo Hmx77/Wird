@@ -1,7 +1,8 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
-import 'package:timezone/data/latest.dart' as tzdata;
+import 'package:timezone/data/latest_all.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 import '../content.dart';
 import '../ui_strings.dart';
@@ -37,7 +38,8 @@ class Reminders {
           ?.notificationResponse
           ?.payload;
       ready = true;
-    } catch (_) {
+    } catch (e) {
+      if (kDebugMode) debugPrint('Wird reminder initialization failed: $e');
       error = 'تعذر تجهيز التذكيرات على هذا الجهاز.';
     }
   }
