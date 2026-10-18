@@ -1,5 +1,6 @@
 """Actual emulator navigation checks using observed accessibility node bounds."""
 import json
+import math
 from pathlib import Path
 import re
 import subprocess
@@ -183,19 +184,26 @@ tap('7:00',scroll=True)
 expect('إلغاء')
 capture('android-settings-time-picker.png')
 (out/'settings-time-picker.xml').write_text(adb('shell','cat','/sdcard/wird-home-review.xml'))
-tap('إدخال')
-for index,value in enumerate(['8','15']):
-    # Clock digits retain hour:minute layout even when Arabic semantics walks right first.
-    fields=sorted([n for n in snapshot() if n.get('class')=='android.widget.EditText'],key=lambda n:int(re.findall(r'\d+',n.get('bounds',''))[0]))
-    assert len(fields)==2, 'Expected separate hour and minute text fields'
-    node=fields[index]
-    x1,y1,x2,y2=map(int,re.findall(r'\d+',node.get('bounds','')))
-    adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
-    adb('shell','input','keycombination','KEYCODE_CTRL_LEFT','KEYCODE_A')
-    adb('shell','input','text',value)
-    entered=sorted([n for n in snapshot() if n.get('class')=='android.widget.EditText'],key=lambda n:int(re.findall(r'\d+',n.get('bounds',''))[0]))
-    actual=entered[index].get('text','').strip()
-    assert actual.isdigit() and int(actual)==int(value), f'Test input mismatch: field {index}: {actual!r}, wanted {value}'
+# Select from the actual visible dial. Arabic accessibility traversal order
+# does not describe the left-to-right hour:minute text-field layout.
+def choose_clock_value(label, value, steps):
+    for attempt in range(6):
+        matches=[n for n in snapshot() if normal((n.get('text','')+' '+n.get('content-desc','')).strip())==normal(label)]
+        if matches:
+            x1,y1,x2,y2=map(int,re.findall(r'\d+',matches[0].get('bounds','')))
+            cx,cy=(x1+x2)/2,(y1+y2)/2
+            radius=min(x2-x1,y2-y1)*.39
+            angle=value*2*math.pi/steps
+            adb('shell','input','tap',str(round(cx+math.sin(angle)*radius)),str(round(cy-math.cos(angle)*radius)))
+            return
+        time.sleep(.5)
+    raise AssertionError('Clock dial mode unavailable: '+label)
+choose_clock_value('اختيار الساعات',8,12)
+expect('اختيار الساعات 8')
+choose_clock_value('اختيار الدقائق',15,60)
+expect('اختيار الدقائق 15')
+capture('android-settings-time-selected.png')
+print('PASS: selected 08:15 on the visible clock dial',flush=True)
 buttons=snapshot()
 confirm=next((n for n in buttons if any(normal(n.get(k,'')).strip() in ['حسنا','موافق','OK'] for k in ['text','content-desc'])),None)
 assert confirm is not None, 'Missing localized time confirmation button'
