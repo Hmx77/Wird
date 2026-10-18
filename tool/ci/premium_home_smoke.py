@@ -55,7 +55,11 @@ def expect(label):
     for _ in range(6):
         nodes = snapshot()
         value = ' '.join(n.get('text','') + ' ' + n.get('content-desc','') for n in nodes)
-        if normal(label) in normal(value):
+        if label.isdecimal():
+            matched=any(part.strip()==label for n in nodes for key in ['text','content-desc'] for part in n.get(key,'').splitlines())
+        else:
+            matched=normal(label) in normal(value)
+        if matched:
             return
         time.sleep(1)
     raise AssertionError(f'Destination missing: {label}')
@@ -181,14 +185,15 @@ capture('android-settings-time-picker.png')
 (out/'settings-time-picker.xml').write_text(adb('shell','cat','/sdcard/wird-home-review.xml'))
 tap('إدخال')
 for index,value in enumerate(['8','15']):
-    fields=[n for n in snapshot() if n.get('class')=='android.widget.EditText']
+    # Clock digits retain hour:minute layout even when Arabic semantics walks right first.
+    fields=sorted([n for n in snapshot() if n.get('class')=='android.widget.EditText'],key=lambda n:int(re.findall(r'\d+',n.get('bounds',''))[0]))
     assert len(fields)==2, 'Expected separate hour and minute text fields'
     node=fields[index]
     x1,y1,x2,y2=map(int,re.findall(r'\d+',node.get('bounds','')))
     adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
     adb('shell','input','keycombination','KEYCODE_CTRL_LEFT','KEYCODE_A')
     adb('shell','input','text',value)
-    entered=[n for n in snapshot() if n.get('class')=='android.widget.EditText']
+    entered=sorted([n for n in snapshot() if n.get('class')=='android.widget.EditText'],key=lambda n:int(re.findall(r'\d+',n.get('bounds',''))[0]))
     actual=entered[index].get('text','').strip()
     assert actual.isdigit() and int(actual)==int(value), f'Test input mismatch: field {index}: {actual!r}, wanted {value}'
 buttons=snapshot()
@@ -221,6 +226,7 @@ expect('الرئيسية')
 tap('الإعدادات',bottom=True)
 tap('تسبيح +',scroll=True)
 expect('3')
+(out/'settings-counter-after-restart.xml').write_text(adb('shell','cat','/sdcard/wird-home-review.xml'))
 capture('android-settings-persisted.png')
 tap('إعادة',scroll=True)
 expect('0')
