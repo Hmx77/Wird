@@ -33,7 +33,7 @@ wird_cleanup() {
     kill "$wird_emulator_pid" 2>/dev/null || true
     return
   fi
-  timeout 12 "$ANDROID_HOME/platform-tools/adb" logcat -d -s AndroidRuntime:E flutter:I > verification/device/runtime-diagnostics.log 2>/dev/null || true
+  timeout 12 "$ANDROID_HOME/platform-tools/adb" logcat -d -s AndroidRuntime:E flutter:I | sed -E 's~https?://[^[:space:]]+~[redacted-url]~g' > verification/device/runtime-diagnostics.log 2>/dev/null || true
   timeout 12 "$ANDROID_HOME/platform-tools/adb" shell dumpsys package ae.wird.app > verification/device/package-diagnostics.txt 2>/dev/null || true
   timeout 12 "$ANDROID_HOME/platform-tools/adb" shell getprop persist.sys.timezone > verification/device/timezone.txt 2>/dev/null || true
   timeout 12 "$ANDROID_HOME/platform-tools/adb" shell appops get ae.wird.app POST_NOTIFICATION > verification/device/notification-permission.txt 2>/dev/null || true
@@ -265,7 +265,7 @@ fi
 adb shell dumpsys package ae.wird.app > verification/device/package.txt
 adb shell getprop persist.sys.timezone > verification/device/timezone.txt
 adb shell appops get ae.wird.app POST_NOTIFICATION > verification/device/notification-permission.txt
-adb logcat -d -s AndroidRuntime:E flutter:I > verification/device/runtime-diagnostics.log
+adb logcat -d -s AndroidRuntime:E flutter:I | sed -E 's~https?://[^[:space:]]+~[redacted-url]~g' > verification/device/runtime-diagnostics.log
 adb emu kill
 printf '%s\n' 'PASS: Android 36 emulator offline feature checks, large-font/small/tablet captures; no fatal runtime errors.'
 # An opening guard failure remains a real nonzero job result, never a green pass.
