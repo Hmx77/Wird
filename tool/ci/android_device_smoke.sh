@@ -163,7 +163,9 @@ fi
 echo 'PASS: installed Wird icon visible in launcher drawer'
 wird_capture verification/device/android-launcher.png
 # Record the actual launcher tap and first cold launch through real home.
-adb shell screenrecord --time-limit 12 /sdcard/wird-startup.mp4 &
+# Preserve the whole bounded cold launch on a slow hosted emulator. Stop only
+# after actual interactive Home has been observed, with the frame guard intact.
+adb shell screenrecord --time-limit 100 /sdcard/wird-startup.mp4 &
 record_pid=$!
 sleep 1
 read -r wird_tap_x wird_tap_y < <(python3 - <<'PYTAP'
@@ -186,13 +188,16 @@ if ! wird_wait_for_home window; then
   adb shell dumpsys window > verification/device/startup-window-state.txt || true
   adb shell dumpsys activity activities > verification/device/startup-activities.txt || true
   adb logcat -d -s AndroidRuntime:E flutter:E > verification/device/startup-runtime-errors.log || true
+  adb shell pkill -2 screenrecord || true
   wait "$record_pid" || true
   adb pull /sdcard/wird-startup.mp4 verification/device/startup.mp4 || true
   echo 'Cold launcher activation failed; actual screen, movie and runtime diagnostics preserved.' >&2
   exit 1
 fi
 wird_capture verification/device/android-home-offline.png
-wait "$record_pid"
+sleep 2
+adb shell pkill -2 screenrecord || true
+wait "$record_pid" || true
 adb pull /sdcard/wird-startup.mp4 verification/device/startup.mp4
 test -s verification/device/startup.mp4
 ffmpeg -hide_banner -loglevel error -i verification/device/startup.mp4 \
