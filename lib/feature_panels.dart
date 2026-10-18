@@ -69,6 +69,9 @@ class _ReminderPanelState extends State<ReminderPanel> {
     if (busy) return;
     setState(() => busy = true);
     try {
+      if (!Reminders.instance.ready) {
+        throw StateError(Reminders.instance.error ?? 'التذكيرات غير متاحة');
+      }
       if (enabled && !await Reminders.instance.requestPermission()) {
         throw StateError('يرجى السماح بالإشعارات من إعدادات الجهاز.');
       }

@@ -15,6 +15,8 @@ const themeArabic = <String, String>{
 
 const uiEnglish = <String, String>{
   'تذكير': 'Reminder',
+  'تعذر تجهيز التذكيرات على هذا الجهاز.': 'Reminders could not be initialized on this device.',
+  'التذكيرات غير متاحة': 'Reminders are unavailable',
   'اختر لغة التطبيق': 'Choose your app language',
   'التفاصيل والمصادر': 'Details and sources',
   'تحفظ المتابعة على جهازك.': 'Your progress is stored on your device.',
