@@ -63,7 +63,7 @@ class NawafilPage extends StatelessWidget {
                       ]),
                     ),
                     const SizedBox(height: 24),
-                    const Row(children: [Icon(Icons.spa_outlined, color: homeGold, size: 26), SizedBox(width: 10), UiText('نوافل أخرى', style: TextStyle(color: homeGold, fontSize: 23, fontWeight: FontWeight.w700)), SizedBox(width: 18), Expanded(child: Divider(color: Color(0x665F9D92)))]),
+                    const Row(children: [Icon(Icons.spa_outlined, color: homeGold, size: 26), SizedBox(width: 10), Expanded(child: UiText('نوافل أخرى', style: TextStyle(color: homeGold, fontSize: 23, fontWeight: FontWeight.w700))), SizedBox(width: 12), SizedBox(width: 30, child: Divider(color: Color(0x665F9D92)))]),
                     const SizedBox(height: 13),
                     ...otherPractices.indexed.map((entry) {
                       final r = entry.$2;
@@ -111,24 +111,32 @@ class _NawafilSummary extends StatelessWidget {
   final WirdPalette palette;
   final int groups, rakahs;
   @override
-  Widget build(BuildContext context) => _NawafilPanel(
-    key: const Key('nawafil-summary'), palette: palette, highlighted: true,
-    child: Row(children: [
-      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const UiText('السنن الرواتب الاثنتا عشرة', style: TextStyle(color: homeGold, fontSize: 20, height: 1.6, fontWeight: FontWeight.w700)),
-        const SizedBox(height: 6),
-        UiText('$groups / 5 مجموعات سُجّلت اليوم', style: const TextStyle(color: homeCream, fontSize: 12, height: 1.8)),
-      ])),
-      const SizedBox(width: 12),
-      Semantics(label: uiString('ركعات سُجّلت اليوم', Localizations.localeOf(context).languageCode), value: '$rakahs / 12', child: SizedBox(width: 74, height: 74, child: Stack(alignment: Alignment.center, children: [
+  Widget build(BuildContext context) {
+    final scale = MediaQuery.textScalerOf(context).scale(1);
+    final large = scale > 1.3;
+    final diameter = 80.0 * scale.clamp(1.0, 2.5);
+    final copy = Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      const UiText('السنن الرواتب الاثنتا عشرة', style: TextStyle(color: homeGold, fontSize: 20, height: 1.6, fontWeight: FontWeight.w700)),
+      const SizedBox(height: 6),
+      UiText('$groups / 5 مجموعات سُجّلت اليوم', style: const TextStyle(color: homeCream, fontSize: 12, height: 1.8)),
+    ]);
+    final ring = Semantics(
+      label: uiString('ركعات سُجّلت اليوم', Localizations.localeOf(context).languageCode), value: '$rakahs / 12',
+      child: SizedBox(width: diameter, height: diameter, child: Stack(alignment: Alignment.center, children: [
         Positioned.fill(child: CircularProgressIndicator(value: rakahs / 12, strokeWidth: 5, color: homeGold, backgroundColor: const Color(0xFF27595E))),
         Column(mainAxisSize: MainAxisSize.min, children: [
-          Text('$rakahs/12', textDirection: TextDirection.ltr, style: const TextStyle(color: homeCream, fontSize: 18, fontWeight: FontWeight.w600)),
-          const UiText('ركعات', style: TextStyle(color: homeCream, fontSize: 10)),
+          Text('$rakahs/12', textDirection: TextDirection.ltr, style: const TextStyle(color: homeCream, fontSize: 18, fontWeight: FontWeight.w600, height: 1.4)),
+          const UiText('ركعات', style: TextStyle(color: homeCream, fontSize: 10, height: 1.5)),
         ]),
-      ]))),
-    ]),
-  );
+      ])),
+    );
+    return _NawafilPanel(
+      key: const Key('nawafil-summary'), palette: palette, highlighted: true,
+      child: large
+        ? Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [copy, const SizedBox(height: 18), Align(child: ring)])
+        : Row(children: [Expanded(child: copy), const SizedBox(width: 12), ring]),
+    );
+  }
 }
 
 class _NawafilPanel extends StatelessWidget {
