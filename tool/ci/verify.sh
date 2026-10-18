@@ -7,8 +7,10 @@ flutter doctor -v
 flutter pub get
 dart format lib test tool
 mkdir -p verification/settings-source/lib verification/settings-source/test
-cp lib/settings_ui.dart lib/feature_panels.dart lib/ui_strings.dart verification/settings-source/lib/
-cp test/settings_premium_test.dart test/redesign_test.dart verification/settings-source/test/
+for wird_source in lib/settings_ui.dart lib/feature_panels.dart lib/ui_strings.dart test/settings_premium_test.dart test/redesign_test.dart
+do
+  cp "$wird_source" "verification/settings-source/$wird_source.txt"
+done
 dart format --output=none --set-exit-if-changed lib test tool
 dart tool/content_check.dart
 mkdir -p verification/content

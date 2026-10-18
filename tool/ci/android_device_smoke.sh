@@ -27,7 +27,14 @@ if [ -e /dev/kvm ]; then
 fi
 "$ANDROID_HOME/emulator/emulator" -avd wird-review -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -memory 3072 -cores 2 -accel "$accel" >verification/device/emulator.log 2>&1 &
 wird_emulator_pid=$!
-trap 'kill "$wird_emulator_pid" 2>/dev/null || true' EXIT
+wird_cleanup() {
+  timeout 12 "$ANDROID_HOME/platform-tools/adb" logcat -d -s AndroidRuntime:E flutter:I > verification/device/runtime-diagnostics.log 2>/dev/null || true
+  timeout 12 "$ANDROID_HOME/platform-tools/adb" shell dumpsys package ae.wird.app > verification/device/package.txt 2>/dev/null || true
+  timeout 12 "$ANDROID_HOME/platform-tools/adb" shell getprop persist.sys.timezone > verification/device/timezone.txt 2>/dev/null || true
+  timeout 12 "$ANDROID_HOME/platform-tools/adb" shell appops get ae.wird.app POST_NOTIFICATION > verification/device/notification-permission.txt 2>/dev/null || true
+  kill "$wird_emulator_pid" 2>/dev/null || true
+}
+trap wird_cleanup EXIT
 export PATH="$ANDROID_HOME/platform-tools:$PATH"
 wird_boot_deadline=$((SECONDS + 600))
 until [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = 1 ]; do

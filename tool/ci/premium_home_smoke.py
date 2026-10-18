@@ -96,9 +96,14 @@ checks.append('nawafil-shortcut-and-sujood-navigation')
 # checked states, UI progress, offline persistence and all lower prayer rows.
 capture('android-nawafil-header-rawatib.png')
 def checked(label, expected):
-    matches = [n for n in snapshot() if normal(label) in normal(n.get('text','')+' '+n.get('content-desc','')) and n.get('checkable') == 'true']
+    for attempt in range(5):
+        matches = [n for n in snapshot() if normal(label) in normal(n.get('text','')+' '+n.get('content-desc','')) and n.get('checkable') == 'true']
+        if any(n.get('checked') == str(expected).lower() for n in matches):
+            return
+        time.sleep(.5)
+    capture('android-settings-control-failure.png')
     assert matches, f'Missing accessible tracking control: {label}'
-    assert any(n.get('checked') == str(expected).lower() for n in matches), f'Wrong checked state: {label}'
+    raise AssertionError(f'Wrong checked state: {label}; expected {expected}')
 checked('الفجر — قبل الفريضة', False)
 tap('الفجر — قبل الفريضة', scroll=True)
 checked('الفجر — قبل الفريضة', True)
