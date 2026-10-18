@@ -14,6 +14,12 @@ const themeArabic = <String, String>{
 };
 
 const uiEnglish = <String, String>{
+  'متابعة القراءة': 'Continue reading',
+  'تقدم اليوم': 'Today’s progress',
+  'التسبيح': 'Tasbih',
+  'عداد رقمي': 'Personal counter',
+  'جميع الأذكار': 'All Athkar',
+  'كل الأقسام': 'All collections',
   'عدد التكرار': 'Repetition count',
   'نص القرآن — Tanzil': 'Quran text — Tanzil',
   'آية قرآنية': 'Quranic verse',
@@ -63,6 +69,10 @@ const uiEnglish = <String, String>{
   "تراجع عن ضغطة": "Undo one count",
   "السابق": "Previous",
   "التالي": "Next",
+  "السُّنن والنوافل": "Sunnah and voluntary prayers",
+  "المراجع والتنبيه": "Sources and context",
+  "ركعات سُجّلت اليوم": "Rakahs recorded today",
+  "ركعات": "Rakahs",
   "السنن والنوافل": "Sunnah and voluntary prayers",
   "تتبّع شخصي اختياري — دون إلزام أو تنبيهات ضاغطة":
       "Optional personal tracking, without pressure",
@@ -168,3 +178,4 @@ class UiText extends StatelessWidget {
     );
   }
 }
+

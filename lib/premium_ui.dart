@@ -1,7 +1,9 @@
 part of 'main.dart';
 
-/// Original artwork stays immutable. Only its excess canvas is clipped and the
-/// owner-requested single kasra is composed as a separate vector layer.
+/// Both uploaded originals are immutable. The new artwork already has its kasra.
+const wirdArtwork = AssetImage('assets/brand/wird_artwork_20261015.png');
+const openingTeal = Color(0xFF00242C);
+
 class WirdMark extends StatelessWidget {
   const WirdMark({super.key, this.size = 104});
   final double size;
@@ -12,440 +14,628 @@ class WirdMark extends StatelessWidget {
     child: ExcludeSemantics(
       child: SizedBox.square(
         dimension: size,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(size * .225),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              const ColoredBox(color: Color(0xFF0B3437)),
-              Transform.translate(
-                offset: Offset(0, size * .016),
-                child: Transform.scale(
-                  scale: 1.92,
-                  child: Image.asset(
-                    'assets/brand/wird_logo.png',
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-              const CustomPaint(painter: _KasraPainter()),
-            ],
-          ),
-        ),
-      ),
-    ),
-  );
-}
-
-class _KasraPainter extends CustomPainter {
-  const _KasraPainter();
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFFF8F4E6)
-      ..strokeWidth = size.width * .016
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(
-      Offset(size.width * .77, size.height * .87),
-      Offset(size.width * .85, size.height * .84),
-      paint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_KasraPainter oldDelegate) => false;
-}
-
-class SujoodIcon extends StatelessWidget {
-  const SujoodIcon({super.key, this.selected = false});
-  final bool selected;
-  @override
-  Widget build(BuildContext context) => SizedBox.square(
-    key: const Key('sujood-navigation-icon'),
-    dimension: 26,
-    child: CustomPaint(
-      painter: _SujoodPainter(
-        IconTheme.of(context).color ?? ThemeColors.of(context).ink,
-        selected,
-      ),
-    ),
-  );
-}
-
-class _SujoodPainter extends CustomPainter {
-  const _SujoodPainter(this.color, this.selected);
-  final Color color;
-  final bool selected;
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.save();
-    canvas.scale(size.width / 28, size.height / 28);
-    final p = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = selected ? 2.5 : 2
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
-    // Bent torso, kneeling legs and forehead resting at ground level.
-    canvas.drawPath(
-      Path()
-        ..moveTo(5, 22)
-        ..lineTo(10, 21)
-        ..lineTo(8, 14)
-        ..quadraticBezierTo(7, 11, 11, 9)
-        ..quadraticBezierTo(14, 9, 18, 17)
-        ..lineTo(20, 22)
-        ..lineTo(15, 22),
-      p,
-    );
-    canvas.drawCircle(const Offset(24, 23), 2, p);
-    canvas.drawLine(const Offset(3, 25), const Offset(26, 25), p);
-    canvas.restore();
-  }
-
-  @override
-  bool shouldRepaint(_SujoodPainter old) =>
-      old.color != color || old.selected != selected;
-}
-
-class WirdOpening extends StatelessWidget {
-  const WirdOpening({super.key});
-  @override
-  Widget build(BuildContext context) => ColoredBox(
-    color: const Color(0xFFF3EEDF),
-    child: Stack(
-      fit: StackFit.expand,
-      children: [
-        const CustomPaint(painter: _BotanicalPainter()),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.all(32),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const WirdMark(size: 136),
-                const SizedBox(height: 24),
-                const Text(
-                  'W I R D',
-                  style: TextStyle(
-                    color: Color(0xFF0B3437),
-                    fontSize: 14,
-                    letterSpacing: 5,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Container(width: 32, height: 1, color: const Color(0xFFB49D63)),
-                const SizedBox(height: 24),
-                const UiText(
-                  'ذِكْرٌ يُرَافِقُ يَوْمَكَ',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xFF355650),
-                    fontSize: 16,
-                    height: 1.9,
-                  ),
-                ),
-              ],
+        child: ClipRect(
+          child: Transform.scale(
+            // Remove only the supplied transparent outer canvas. No new mask,
+            // painted lettering, kasra overlay, tint or calligraphy recreation.
+            scale: 1.17,
+            child: Image(
+              image: wirdArtwork,
+              fit: BoxFit.contain,
+              filterQuality: FilterQuality.high,
+              gaplessPlayback: true,
             ),
           ),
         ),
-      ],
+      ),
     ),
   );
 }
 
-/// Original vector composition; no competitor art or external stock assets.
-class _BotanicalPainter extends CustomPainter {
-  const _BotanicalPainter();
+/// Filled vector traced from the owner's supplied prostration silhouette.
+/// Internal cutouts retain even-odd fill; no yoga-like stroke approximation.
+class SujoodIcon extends StatelessWidget {
+  const SujoodIcon({super.key, this.selected = false, this.size = 28});
+  final bool selected;
+  final double size;
   @override
-  void paint(Canvas c, Size s) {
-    final leaf = Paint()..color = const Color(0xFF6B8068).withOpacity(.21);
-    for (final flip in [false, true]) {
-      c.save();
-      if (flip) {
-        c.translate(s.width, 0);
-        c.scale(-1, 1);
-      }
-      final stem = Path()
-        ..moveTo(-16, -10)
-        ..quadraticBezierTo(
-          s.width * .16,
-          s.height * .08,
-          s.width * .13,
-          s.height * .26,
-        );
-      c.drawPath(
-        stem,
-        Paint()
-          ..color = const Color(0xFF6B8068).withOpacity(.3)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.4,
-      );
-      for (var i = 0; i < 5; i++) {
-        c.save();
-        c.translate(s.width * .09, s.height * (.025 + i * .04));
-        c.rotate(i.isEven ? -.7 : .7);
-        c.drawPath(
-          Path()
-            ..moveTo(0, 0)
-            ..quadraticBezierTo(35, -28, 58, -6)
-            ..quadraticBezierTo(31, 17, 0, 0),
-          leaf,
-        );
-        c.restore();
-      }
-      c.restore();
-    }
-    final crescent = Paint()..color = const Color(0xFFB49D63).withOpacity(.65);
-    c.drawCircle(Offset(s.width * .5, s.height * .15), 17, crescent);
-    c.drawCircle(
-      Offset(s.width * .5 - 8, s.height * .15 - 5),
-      17,
-      Paint()..color = const Color(0xFFF3EEDF),
-    );
-    final skyline = Paint()..color = const Color(0xFF315958).withOpacity(.13);
-    final base = s.height * .93;
-    c.drawRect(Rect.fromLTRB(0, base, s.width, s.height), skyline);
-    final dome = Path()
-      ..moveTo(s.width * .25, base)
-      ..lineTo(s.width * .25, base - 28)
-      ..quadraticBezierTo(s.width * .26, base - 60, s.width * .5, base - 106)
-      ..quadraticBezierTo(s.width * .74, base - 60, s.width * .75, base - 28)
-      ..lineTo(s.width * .75, base)
-      ..close();
-    c.drawPath(dome, skyline);
-    for (final x in [.12, .87]) {
-      final center = s.width * x;
-      c.drawRect(
-        Rect.fromLTRB(center - 8, base - 136, center + 8, base),
-        skyline,
-      );
-      c.drawPath(
-        Path()
-          ..moveTo(center - 13, base - 136)
-          ..lineTo(center, base - 167)
-          ..lineTo(center + 13, base - 136)
-          ..close(),
-        skyline,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_BotanicalPainter old) => false;
+  Widget build(BuildContext context) => SizedBox.square(
+    key: const Key('sujood-navigation-icon'), dimension: size,
+    child: CustomPaint(painter: _SujoodPainter(IconTheme.of(context).color ?? homeCream)),
+  );
 }
+class _SujoodPainter extends CustomPainter {
+  const _SujoodPainter(this.color);
+  final Color color;
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.save();
+    canvas.translate(0, size.height * .245);
+    canvas.scale(size.width / 100);
+    final path = Path()..fillType = PathFillType.evenOdd
+..moveTo(38.66, 0.00)
+..lineTo(47.44, 0.32)
+..lineTo(53.83, 1.76)
+..lineTo(55.11, 2.40)
+..lineTo(56.39, 2.56)
+..lineTo(57.35, 3.19)
+..lineTo(58.63, 3.35)
+..lineTo(59.11, 3.83)
+..lineTo(60.22, 3.99)
+..lineTo(61.02, 4.63)
+..lineTo(63.90, 5.59)
+..lineTo(64.22, 6.07)
+..lineTo(65.18, 6.23)
+..lineTo(69.65, 8.63)
+..lineTo(78.43, 14.54)
+..lineTo(85.46, 21.09)
+..lineTo(85.62, 21.73)
+..lineTo(86.10, 21.88)
+..lineTo(86.26, 22.52)
+..lineTo(87.70, 24.12)
+..lineTo(88.50, 25.88)
+..lineTo(88.98, 28.75)
+..lineTo(88.50, 30.99)
+..lineTo(88.98, 31.47)
+..lineTo(91.37, 31.63)
+..lineTo(95.21, 33.07)
+..lineTo(95.53, 33.55)
+..lineTo(96.49, 33.87)
+..lineTo(98.72, 36.26)
+..lineTo(99.68, 38.34)
+..lineTo(100.00, 41.69)
+..lineTo(99.52, 43.77)
+..lineTo(98.24, 45.85)
+..lineTo(95.69, 48.24)
+..lineTo(94.73, 48.56)
+..lineTo(93.77, 47.76)
+..lineTo(90.89, 42.49)
+..lineTo(88.34, 33.87)
+..lineTo(87.86, 33.87)
+..lineTo(86.90, 35.30)
+..lineTo(87.06, 36.90)
+..lineTo(89.30, 43.93)
+..lineTo(90.73, 46.81)
+..lineTo(92.17, 48.56)
+..lineTo(92.33, 49.52)
+..lineTo(91.85, 49.84)
+..lineTo(85.30, 49.84)
+..lineTo(82.91, 49.04)
+..lineTo(80.35, 47.44)
+..lineTo(78.27, 45.05)
+..lineTo(77.32, 42.65)
+..lineTo(77.32, 40.42)
+..lineTo(78.75, 39.30)
+..lineTo(79.07, 38.50)
+..lineTo(78.59, 37.86)
+..lineTo(72.04, 38.82)
+..lineTo(65.81, 38.82)
+..lineTo(63.26, 36.58)
+..lineTo(62.78, 36.58)
+..lineTo(61.98, 37.38)
+..lineTo(62.30, 38.50)
+..lineTo(68.37, 43.45)
+..lineTo(69.01, 44.41)
+..lineTo(61.66, 49.36)
+..lineTo(59.11, 48.24)
+..lineTo(55.43, 45.37)
+..lineTo(51.60, 41.21)
+..lineTo(50.64, 39.14)
+..lineTo(50.16, 38.82)
+..lineTo(49.52, 36.90)
+..lineTo(49.52, 34.50)
+..lineTo(50.16, 33.07)
+..lineTo(50.64, 32.91)
+..lineTo(51.76, 31.47)
+..lineTo(57.03, 28.59)
+..lineTo(63.74, 26.36)
+..lineTo(72.20, 24.60)
+..lineTo(72.52, 23.48)
+..lineTo(72.04, 22.84)
+..lineTo(66.45, 23.64)
+..lineTo(67.25, 19.01)
+..lineTo(66.29, 18.53)
+..lineTo(65.50, 19.01)
+..lineTo(63.90, 24.44)
+..lineTo(57.67, 26.20)
+..lineTo(52.24, 28.91)
+..lineTo(47.92, 27.48)
+..lineTo(44.09, 25.40)
+..lineTo(43.13, 25.24)
+..lineTo(38.18, 21.88)
+..lineTo(37.70, 21.88)
+..lineTo(37.06, 22.68)
+..lineTo(37.54, 23.96)
+..lineTo(40.58, 26.04)
+..lineTo(46.96, 29.23)
+..lineTo(49.84, 30.19)
+..lineTo(49.68, 30.99)
+..lineTo(48.56, 31.95)
+..lineTo(47.76, 33.39)
+..lineTo(47.44, 35.30)
+..lineTo(47.60, 37.22)
+..lineTo(48.56, 40.10)
+..lineTo(49.04, 40.42)
+..lineTo(50.00, 42.33)
+..lineTo(51.60, 44.41)
+..lineTo(54.79, 47.28)
+..lineTo(54.79, 48.08)
+..lineTo(52.88, 49.68)
+..lineTo(50.80, 50.48)
+..lineTo(48.40, 50.80)
+..lineTo(37.86, 50.96)
+..lineTo(32.27, 49.84)
+..lineTo(30.99, 49.20)
+..lineTo(29.55, 49.04)
+..lineTo(25.88, 47.60)
+..lineTo(24.60, 47.44)
+..lineTo(21.25, 46.01)
+..lineTo(19.97, 46.01)
+..lineTo(19.49, 46.49)
+..lineTo(19.49, 47.12)
+..lineTo(19.97, 47.76)
+..lineTo(23.00, 49.04)
+..lineTo(24.76, 49.36)
+..lineTo(25.24, 49.84)
+..lineTo(27.00, 50.00)
+..lineTo(27.64, 50.96)
+..lineTo(11.18, 50.96)
+..lineTo(9.42, 50.48)
+..lineTo(8.47, 43.29)
+..lineTo(7.99, 42.65)
+..lineTo(7.67, 41.05)
+..lineTo(6.39, 38.82)
+..lineTo(5.43, 37.86)
+..lineTo(4.95, 37.86)
+..lineTo(3.67, 36.90)
+..lineTo(4.31, 35.30)
+..lineTo(6.55, 33.71)
+..lineTo(11.02, 33.71)
+..lineTo(17.25, 35.78)
+..lineTo(22.04, 36.42)
+..lineTo(30.35, 36.42)
+..lineTo(35.30, 42.49)
+..lineTo(36.42, 42.81)
+..lineTo(37.06, 42.33)
+..lineTo(36.90, 41.05)
+..lineTo(35.14, 38.82)
+..lineTo(34.66, 38.66)
+..lineTo(32.75, 35.78)
+..lineTo(32.43, 35.78)
+..lineTo(30.51, 32.75)
+..lineTo(30.19, 32.75)
+..lineTo(27.64, 28.43)
+..lineTo(27.16, 28.12)
+..lineTo(27.00, 27.16)
+..lineTo(25.72, 25.24)
+..lineTo(23.48, 19.17)
+..lineTo(22.84, 15.34)
+..lineTo(22.84, 12.78)
+..lineTo(23.32, 10.06)
+..lineTo(24.28, 7.83)
+..lineTo(25.72, 5.75)
+..lineTo(27.64, 3.99)
+..lineTo(29.39, 2.72)
+..lineTo(32.27, 1.60)
+..lineTo(32.75, 1.12)
+..lineTo(38.66, 0.00)
+..close()
+..moveTo(2.56, 38.66)
+..lineTo(3.99, 38.98)
+..lineTo(5.43, 40.26)
+..lineTo(6.87, 43.77)
+..lineTo(6.87, 44.57)
+..lineTo(6.07, 45.21)
+..lineTo(4.79, 45.53)
+..lineTo(3.83, 47.12)
+..lineTo(4.15, 48.88)
+..lineTo(6.23, 49.36)
+..lineTo(6.71, 50.16)
+..lineTo(6.23, 50.64)
+..lineTo(1.12, 50.64)
+..lineTo(0.48, 50.32)
+..lineTo(0.00, 49.04)
+..lineTo(0.32, 46.49)
+..lineTo(1.28, 43.61)
+..lineTo(1.12, 39.62)
+..lineTo(1.60, 38.98)
+..lineTo(2.56, 38.66)
+..close()
+..moveTo(69.81, 46.49)
+..lineTo(73.16, 46.81)
+..lineTo(76.52, 47.76)
+..lineTo(79.39, 49.36)
+..lineTo(79.39, 50.32)
+..lineTo(78.75, 50.64)
+..lineTo(64.38, 50.64)
+..lineTo(64.22, 50.16)
+..lineTo(66.93, 47.76)
+..lineTo(67.73, 47.44)
+..lineTo(67.89, 46.96)
+..lineTo(69.81, 46.49)
+..close();
+    canvas.drawPath(path, Paint()..color = color);
+    canvas.restore();
+  }
+  @override
+  bool shouldRepaint(_SujoodPainter oldDelegate) => oldDelegate.color != color;
+}
+
+const homeCream = Color(0xFFF5EAD0);
+const homeGold = Color(0xFFE4C47E);
+const homeArt = <String, AssetImage>{
+  'morning': AssetImage('assets/home/morning.webp'),
+  'evening': AssetImage('assets/home/evening.webp'),
+  'sleep': AssetImage('assets/home/night.webp'),
+  'serenity': AssetImage('assets/home/serenity.webp'),
+};
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key, required this.store});
+  const HomePage({super.key, required this.store, this.onNavigate});
   final WirdState store;
+  final ValueChanged<int>? onNavigate;
+
   void browse(BuildContext context, {bool favorites = false}) => Navigator.push(
     context,
-    MaterialPageRoute(
-      builder: (_) => Scaffold(
-        appBar: AppBar(title: UiText(favorites ? 'المفضلة' : 'الأذكار')),
-        body: SafeArea(
-          child: LibraryPage(store: store, initialFavorites: favorites),
-        ),
-      ),
-    ),
+    MaterialPageRoute(builder: (_) => Scaffold(
+      appBar: AppBar(title: UiText(favorites ? 'المفضلة' : 'الأذكار')),
+      body: SafeArea(child: LibraryPage(store: store, initialFavorites: favorites)),
+    )),
   );
+
+  void destination(BuildContext context, int page) {
+    if (onNavigate != null) { onNavigate!(page); return; }
+    final screen = switch (page) {
+      1 => LibraryPage(store: store),
+      2 => NawafilPage(store: store),
+      _ => SettingsPage(store: store),
+    };
+    Navigator.push(context, MaterialPageRoute(builder: (_) => Scaffold(
+      appBar: AppBar(), body: SafeArea(child: screen),
+    )));
+  }
+
+  void resume(BuildContext context) {
+    // Prefer an unfinished entry already started today. Otherwise open the
+    // first incomplete entry in the current collection; no new storage keys.
+    final hour = DateTime.now().hour;
+    var section = hour < 12 ? DhikrSection.morning : hour < 21 ? DhikrSection.evening : DhikrSection.sleep;
+    for (final entry in entries) {
+      if (store.count(entry) > 0 && !store.isDone(entry)) {
+        section = entry.section;
+        openReader(context, store, section, initial: inSection(section).indexOf(entry));
+        return;
+      }
+    }
+    final list = inSection(section);
+    final index = list.indexWhere((e) => !store.isDone(e));
+    openReader(context, store, section, initial: index < 0 ? 0 : index);
+  }
+
   @override
-  Widget build(BuildContext context) {
-    final p = store.palette;
-    const cream = Color(0xFFF3EEDF);
-    const gold = Color(0xFFB49D63);
-    return ColoredBox(
-      color: p.homeBackground,
-      child: Center(
-        child: ConstrainedBox(
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: store,
+    builder: (context, _) {
+      final p = store.palette;
+      final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
+      final done = entries.where((e) => store.isDone(e)).length;
+      return ColoredBox(
+        color: p.homeBackground,
+        child: Center(child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 760),
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(22, 24, 22, 28),
-            children: [
-              Row(
-                children: [
-                  const WirdMark(size: 68),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const UiText(
-                          'وردك اليومي',
-                          style: TextStyle(
-                            color: cream,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        UiText(
-                          'ذِكْرٌ يُرَافِقُ يَوْمَكَ',
-                          style: TextStyle(
-                            color: cream.withOpacity(.65),
-                            fontSize: 11,
-                            height: 1.7,
-                          ),
-                        ),
-                      ],
-                    ),
+          child: LayoutBuilder(builder: (context, constraints) {
+            final wideText = scale > 1.4 && constraints.maxWidth < 650;
+            final padding = constraints.maxWidth < 360 ? 12.0 : 16.0;
+            final shortcuts = <Widget>[
+              _HomeShortcut(key: const Key('home-favorites'), label: 'المفضلة',
+                subtitle: '${store.favorites.length} ذكر', icon: Icons.favorite_border_rounded,
+                accent: homeGold, onTap: () => browse(context, favorites: true)),
+              _HomeShortcut(key: const Key('home-nawafil'), label: 'النوافل',
+                subtitle: 'السنن والنوافل', symbol: const SujoodIcon(size: 42),
+                accent: homeGold, onTap: () => destination(context, 2)),
+              _HomeShortcut(key: const Key('home-tasbih'), label: 'التسبيح',
+                subtitle: 'عداد رقمي', symbol: const SizedBox.square(dimension: 34,
+                  child: CustomPaint(painter: _BeadsPainter())),
+                accent: homeGold, onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => _HomeTasbihPage(store: store)))),
+              _HomeShortcut(key: const Key('home-all'), label: 'جميع الأذكار',
+                subtitle: 'كل الأقسام', icon: Icons.grid_view_rounded,
+                accent: const Color(0xFF86D8C8), onTap: () => destination(context, 1)),
+            ];
+            return SingleChildScrollView(
+              key: const PageStorageKey('premium-home-scroll'),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(padding, 0, padding, 18),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                  _HomeHeader(store: store, onSearch: () => browse(context),
+                    onSettings: () => destination(context, 3)),
+                  _HomeIllustratedSurface(
+                    art: homeArt['serenity']!, radius: 23,
+                    onTap: () => resume(context), actionKey: const Key('home-resume'),
+                    child: Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(18, 13, 16, 12),
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        const Align(alignment: AlignmentDirectional.centerStart,
+                          child: Icon(Icons.spa_outlined, size: 20, color: homeGold)),
+                        const SizedBox(height: 4),
+                        Align(alignment: AlignmentDirectional.centerStart,
+                          child: FractionallySizedBox(widthFactor: wideText ? .95 : .7,
+                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              const UiText('لحظات من السكينة', style: TextStyle(
+                                color: homeCream, fontSize: 20, height: 1.4, fontWeight: FontWeight.w700)),
+                              const SizedBox(height: 4),
+                              const UiText('اختر وردك وابدأ القراءة', style: TextStyle(
+                                color: homeCream, fontSize: 11, height: 1.5)),
+                              const SizedBox(height: 8),
+                              Container(padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(color: const Color(0xD0083035),
+                                  borderRadius: BorderRadius.circular(24),
+                                  border: Border.all(color: const Color(0x5585BCB2))),
+                                child: Row(children: [
+                                  const Icon(Icons.menu_book_outlined, color: homeGold, size: 21),
+                                  const SizedBox(width: 8),
+                                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                    const UiText('متابعة القراءة', style: TextStyle(color: homeCream, fontSize: 10)),
+                                    const SizedBox(height: 5),
+                                    LinearProgressIndicator(key: const Key('home-progress'),
+                                      value: done / entries.length, minHeight: 4,
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: const Color(0xFF7DDBCA), backgroundColor: const Color(0xFF31565A),
+                                      semanticsLabel: tr(context, 'تقدم اليوم'), semanticsValue: '$done / ${entries.length}'),
+                                    const SizedBox(height: 3),
+                                    UiText('$done / ${entries.length} مكتمل', textDirection: TextDirection.ltr, style: const TextStyle(
+                                      color: homeCream, fontSize: 9)),
+                                  ])),
+                                  const SizedBox(width: 8),
+                                  const _HomeArrow(filled: true, size: 30),
+                                ])),
+                            ]))),
+                      ])),
                   ),
-                  IconButton(
-                    tooltip: tr(context, 'ابحث عن ذكر'),
-                    onPressed: () => browse(context),
-                    icon: const Icon(Icons.search_rounded, color: cream),
-                  ),
-                ],
+                  const SizedBox(height: 10),
+                  if (wideText) ...[
+                    _category(context, DhikrSection.morning, wide: true),
+                    const SizedBox(height: 10),
+                    _category(context, DhikrSection.evening, wide: true),
+                  ] else Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Expanded(child: _category(context, DhikrSection.morning)),
+                    const SizedBox(width: 10),
+                    Expanded(child: _category(context, DhikrSection.evening)),
+                  ]),
+                  const SizedBox(height: 10),
+                  _category(context, DhikrSection.sleep, wide: true),
+                  const SizedBox(height: 10),
+                  LayoutBuilder(builder: (context, c) {
+                    final columns = wideText || c.maxWidth < 330 ? 2 : 4;
+                    return Wrap(spacing: 7, runSpacing: 8, children: shortcuts.map((card) => SizedBox(
+                      width: (c.maxWidth - 7 * (columns - 1)) / columns, child: card)).toList());
+                  }),
+                ]),
               ),
-              const SizedBox(height: 32),
-              Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: p.homeSurface,
-                  borderRadius: BorderRadius.circular(28),
-                  border: Border.all(color: gold.withOpacity(.25)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.spa_outlined, color: gold, size: 24),
-                    const SizedBox(height: 14),
-                    const UiText(
-                      'لحظات من السكينة',
-                      style: TextStyle(
-                        color: cream,
-                        fontSize: 25,
-                        fontWeight: FontWeight.w500,
-                        height: 1.6,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    UiText(
-                      'اختر وردك وابدأ القراءة',
-                      style: TextStyle(
-                        color: cream.withOpacity(.7),
-                        fontSize: 13,
-                        height: 1.8,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 26),
-              ...DhikrSection.values.map((section) {
-                final count = inSection(section).length;
-                final completed =
-                    store.completed(section) == count && count > 0;
-                final icon = switch (section) {
-                  DhikrSection.morning => Icons.wb_sunny_outlined,
-                  DhikrSection.evening => Icons.nightlight_outlined,
-                  DhikrSection.sleep => Icons.bedtime_outlined,
-                };
-                final accent = switch (section) {
-                  DhikrSection.morning => gold,
-                  DhikrSection.evening => const Color(0xFF87BCB5),
-                  DhikrSection.sleep => const Color(0xFFB4A4CD),
-                };
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Material(
-                    color: p.homeSurface,
-                    borderRadius: BorderRadius.circular(22),
-                    child: InkWell(
-                      key: Key('home-${section.name}'),
-                      borderRadius: BorderRadius.circular(22),
-                      onTap: () => openReader(context, store, section),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: accent.withOpacity(.12),
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Icon(icon, color: accent, size: 26),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  UiText(
-                                    sectionLabel(section),
-                                    style: const TextStyle(
-                                      color: cream,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                      height: 1.7,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 3),
-                                  UiText(
-                                    '$count ذكر',
-                                    style: TextStyle(
-                                      color: cream.withOpacity(.6),
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Icon(
-                              completed
-                                  ? Icons.check_circle_outline
-                                  : (Localizations.localeOf(
-                                              context,
-                                            ).languageCode ==
-                                            'ar'
-                                        ? Icons.chevron_left
-                                        : Icons.chevron_right),
-                              color: completed
-                                  ? accent
-                                  : cream.withOpacity(.55),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }),
-              const SizedBox(height: 12),
-              OutlinedButton.icon(
-                onPressed: () => browse(context, favorites: true),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: cream,
-                  side: BorderSide(color: gold.withOpacity(.3)),
-                  padding: const EdgeInsets.all(16),
-                ),
-                icon: const Icon(Icons.bookmark_border),
-                label: const UiText('المفضلة'),
-              ),
-              const SizedBox(height: 22),
-              Row(
-                children: [
-                  Icon(
-                    Icons.wifi_off_rounded,
-                    size: 15,
-                    color: cream.withOpacity(.5),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: UiText(
-                      'أذكارك محفوظة دون اتصال',
-                      style: TextStyle(
-                        color: cream.withOpacity(.5),
-                        fontSize: 11,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            );
+          }),
+        )),
+      );
+    },
+  );
+
+  Widget _category(BuildContext context, DhikrSection section, {bool wide = false}) {
+    final count = inSection(section).length;
+    final done = store.completed(section);
+    final icon = switch (section) {
+      DhikrSection.morning => Icons.wb_sunny_outlined,
+      DhikrSection.evening => Icons.nightlight_outlined,
+      DhikrSection.sleep => Icons.bedtime_outlined,
+    };
+    final badge = section == DhikrSection.morning ? const Color(0xAA507B70) : const Color(0xAA343D88);
+    return _HomeIllustratedSurface(
+      art: homeArt[section.name]!, radius: 21,
+      actionKey: Key('home-${section.name}'), onTap: () => openReader(context, store, section),
+      shade: true,
+      child: Padding(padding: EdgeInsets.all(wide ? 16 : 13),
+        child: wide ? Row(children: [
+          Container(padding: const EdgeInsets.all(7),
+            decoration: BoxDecoration(color: badge, borderRadius: BorderRadius.circular(13),
+              border: Border.all(color: const Color(0x55E9D8AE))),
+            child: Icon(icon, color: homeCream, size: 25)),
+          const SizedBox(width: 12),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            UiText(sectionLabel(section), style: const TextStyle(color: homeCream,
+              fontSize: 18, fontWeight: FontWeight.w700, height: 1.5)),
+            const SizedBox(height: 3),
+            UiText('$count ذكر', style: const TextStyle(color: homeCream, fontSize: 11)),
+            if (done > 0) ...[
+              const SizedBox(height: 6),
+              LinearProgressIndicator(value: done / count, minHeight: 3,
+                color: homeGold, backgroundColor: Colors.white12,
+                semanticsLabel: tr(context, sectionLabel(section)), semanticsValue: '$done / $count'),
             ],
-          ),
-        ),
-      ),
+          ])),
+          const SizedBox(width: 8),
+          _HomeArrow(size: 28, complete: done == count),
+        ]) : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Container(padding: const EdgeInsets.all(7),
+            decoration: BoxDecoration(color: badge, borderRadius: BorderRadius.circular(13),
+              border: Border.all(color: const Color(0x55E9D8AE))),
+            child: Icon(icon, color: homeCream, size: 29)),
+          const SizedBox(height: 12),
+          Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              UiText(sectionLabel(section), style: const TextStyle(color: homeCream,
+                fontSize: 16, fontWeight: FontWeight.w700, height: 1.5)),
+              const SizedBox(height: 3),
+              UiText('$count ذكر', style: const TextStyle(color: homeCream, fontSize: 11)),
+            ])),
+            const SizedBox(width: 5),
+            _HomeArrow(size: 24, complete: done == count),
+          ]),
+          if (done > 0) ...[
+            const SizedBox(height: 8),
+            LinearProgressIndicator(value: done / count, minHeight: 3,
+              color: homeGold, backgroundColor: Colors.white12,
+              semanticsLabel: tr(context, sectionLabel(section)), semanticsValue: '$done / $count'),
+          ],
+        ])),
     );
   }
+}
+
+class _HomeHeader extends StatelessWidget {
+  const _HomeHeader({required this.store, required this.onSearch, required this.onSettings});
+  final WirdState store;
+  final VoidCallback onSearch, onSettings;
+  @override
+  Widget build(BuildContext context) => Stack(children: [
+    Positioned.fill(child: ClipRect(child: Opacity(opacity: .48, child: Transform(
+      alignment: Alignment.center, transform: Matrix4.diagonal3Values(-1, 1, 1),
+      child: Image(image: homeArt['morning']!, fit: BoxFit.cover, alignment: Alignment.centerLeft,
+        excludeFromSemantics: true))))),
+    Positioned.fill(child: DecoratedBox(decoration: BoxDecoration(gradient: LinearGradient(
+      begin: Alignment.topCenter, end: Alignment.bottomCenter,
+      colors: [store.palette.homeBackground.withOpacity(.35), store.palette.homeBackground.withOpacity(.82), store.palette.homeBackground])))),
+    Padding(padding: const EdgeInsets.fromLTRB(0, 5, 0, 16), child: Column(children: [
+      Stack(alignment: Alignment.topCenter, children: [
+        SizedBox(height: 96, child: Semantics(label: tr(context, 'شعار ورد'), image: true,
+          child: ExcludeSemantics(child: ClipRect(child: Transform.scale(scale: 1.5,
+            child: const Image(key: Key('home-wordmark'), image: wirdWordmark, width: 146, height: 96,
+              fit: BoxFit.contain, gaplessPlayback: true)))))),
+        Align(alignment: AlignmentDirectional.topEnd, child: Row(mainAxisSize: MainAxisSize.min, textDirection: TextDirection.ltr, children: [
+          IconButton.outlined(key: const Key('home-settings'), tooltip: tr(context, 'الإعدادات'),
+            onPressed: onSettings, icon: const Icon(Icons.settings_outlined, size: 21),
+            style: IconButton.styleFrom(foregroundColor: homeCream, backgroundColor: const Color(0x30002C32),
+              side: const BorderSide(color: Color(0x556DB9AF)))),
+          const SizedBox(width: 6),
+          IconButton.outlined(key: const Key('home-search'), tooltip: tr(context, 'ابحث عن ذكر'),
+            onPressed: onSearch, icon: const Icon(Icons.search_rounded, size: 21),
+            style: IconButton.styleFrom(foregroundColor: homeCream, backgroundColor: const Color(0x30002C32),
+              side: const BorderSide(color: Color(0x556DB9AF)))),
+        ])),
+      ]),
+      const UiText('وردك اليومي', textAlign: TextAlign.center, style: TextStyle(
+        fontSize: 29, height: 1.5, color: homeCream, fontWeight: FontWeight.w700)),
+      const SizedBox(height: 2),
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const SizedBox(width: 25, child: Divider(color: Color(0x887B744F))),
+        const SizedBox(width: 9),
+        const Flexible(child: UiText('ذِكْرٌ يُرَافِقُ يَوْمَكَ', textAlign: TextAlign.center,
+          style: TextStyle(color: homeCream, fontSize: 13, height: 1.8))),
+        const SizedBox(width: 9),
+        const SizedBox(width: 25, child: Divider(color: Color(0x887B744F))),
+      ]),
+    ])),
+  ]);
+}
+
+class _HomeIllustratedSurface extends StatelessWidget {
+  const _HomeIllustratedSurface({required this.art, required this.child, required this.onTap,
+    required this.actionKey, this.radius = 22, this.shade = false});
+  final AssetImage art;
+  final Widget child;
+  final VoidCallback onTap;
+  final Key actionKey;
+  final double radius;
+  final bool shade;
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+    decoration: BoxDecoration(borderRadius: BorderRadius.circular(radius), boxShadow: const [
+      BoxShadow(color: Color(0x22000000), offset: Offset(0, 6), blurRadius: 18)]),
+    child: Material(color: const Color(0xFF07373D), clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius),
+        side: BorderSide(color: Theme.of(context).colorScheme.primary.withOpacity(.65), width: 1)),
+      child: Stack(children: [
+        Positioned.fill(child: Image(image: art, fit: BoxFit.cover, alignment: Alignment.topCenter, excludeFromSemantics: true,
+          gaplessPlayback: true, filterQuality: FilterQuality.medium)),
+        if (shade) Positioned.fill(child: DecoratedBox(decoration: BoxDecoration(gradient: LinearGradient(
+          begin: Alignment.topCenter, end: Alignment.bottomCenter,
+          colors: [const Color(0x00002128), const Color(0xDA002128)])))),
+        InkWell(key: actionKey, onTap: onTap, splashColor: homeGold.withOpacity(.15),
+          highlightColor: homeGold.withOpacity(.07), child: child),
+      ])),
+  );
+}
+
+class _HomeArrow extends StatelessWidget {
+  const _HomeArrow({this.filled = false, this.size = 28, this.complete = false});
+  final bool filled, complete;
+  final double size;
+  @override
+  Widget build(BuildContext context) => ExcludeSemantics(child: Container(
+    width: size, height: size, alignment: Alignment.center,
+    decoration: BoxDecoration(shape: BoxShape.circle,
+      gradient: filled ? const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
+        colors: [Color(0xFFF7DE9E), Color(0xFFB49352)]) : null,
+      border: Border.all(color: homeGold.withOpacity(.75))),
+    child: Icon(complete ? Icons.check_rounded : Directionality.of(context) == TextDirection.rtl
+      ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
+      textDirection: TextDirection.ltr, size: size * .7, color: filled ? const Color(0xFF143D3D) : homeCream)));
+}
+
+class _HomeShortcut extends StatelessWidget {
+  const _HomeShortcut({super.key, required this.label, required this.subtitle, this.icon,
+    this.symbol, required this.accent, required this.onTap});
+  final String label, subtitle;
+  final IconData? icon;
+  final Widget? symbol;
+  final Color accent;
+  final VoidCallback onTap;
+  @override
+  Widget build(BuildContext context) => Material(
+    color: Colors.transparent, clipBehavior: Clip.antiAlias,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(19),
+      side: BorderSide(color: accent.withOpacity(.35))),
+    child: Ink(decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft,
+      end: Alignment.bottomRight, colors: [accent.withOpacity(.14), const Color(0xFF073035)])),
+      child: InkWell(onTap: onTap, child: Padding(padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 13),
+        child: Column(children: [
+          IconTheme(data: IconThemeData(color: accent), child: SizedBox(height: 35,
+            child: Center(child: symbol ?? Icon(icon, color: accent, size: 31)))),
+          const SizedBox(height: 9),
+          UiText(label, textAlign: TextAlign.center, style: const TextStyle(
+            color: homeCream, fontSize: 13, height: 1.6, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 4),
+          UiText(subtitle, textAlign: TextAlign.center, style: const TextStyle(
+            color: Color(0xFFCAD9D3), fontSize: 10, height: 1.6)),
+        ])))),
+  );
+}
+
+class _BeadsPainter extends CustomPainter {
+  const _BeadsPainter();
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = homeGold;
+    const beads = <Offset>[
+      Offset(.26,.79),Offset(.15,.63),Offset(.12,.44),Offset(.16,.26),Offset(.29,.13),
+      Offset(.47,.09),Offset(.64,.16),Offset(.76,.29),Offset(.81,.48),Offset(.75,.66),
+      Offset(.61,.79),Offset(.43,.85),
+    ];
+    for (final o in beads) { canvas.drawCircle(Offset(o.dx*size.width,o.dy*size.height),size.width*.057,paint); }
+    canvas.drawLine(Offset(size.width*.29,size.height*.82),Offset(size.width*.23,size.height*.99),
+      paint..strokeWidth = size.width*.05..strokeCap = StrokeCap.round);
+  }
+  @override
+  bool shouldRepaint(_BeadsPainter oldDelegate) => false;
+}
+
+class _HomeTasbihPage extends StatelessWidget {
+  const _HomeTasbihPage({required this.store});
+  final WirdState store;
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: const UiText('السبحة الشخصية')),
+    body: AnimatedBuilder(animation: store, builder: (context, _) => Center(
+      child: SingleChildScrollView(padding: const EdgeInsets.all(24), child: Column(
+        mainAxisSize: MainAxisSize.min, children: [
+          Text('${store.tasbih}', key: const Key('home-tasbih-count'), style: TextStyle(
+            fontSize: 64, color: store.palette.primary, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 30),
+          FilledButton.icon(key: const Key('home-tasbih-add'), onPressed: () => store.setTasbih(store.tasbih + 1),
+            icon: const Icon(Icons.add_rounded), label: const UiText('تسبيح +')),
+          const SizedBox(height: 16),
+          OutlinedButton(onPressed: () => store.setTasbih(0), child: const UiText('إعادة')),
+          const SizedBox(height: 24),
+          const UiText('هدف شخصي، وليس عددًا تعبديًا منصوصًا.', textAlign: TextAlign.center),
+        ])),
+    )),
+  );
 }

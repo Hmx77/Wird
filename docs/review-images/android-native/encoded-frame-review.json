@@ -1,0 +1,20 @@
+{
+  "workflowRun": 39100695318,
+  "encodedFramesChecked": 57,
+  "unexpectedFramesAfterScene": [],
+  "stateChanges": [
+    {
+      "seconds": 0.0,
+      "state": "launcher"
+    },
+    {
+      "seconds": 3.486056,
+      "state": "scene"
+    },
+    {
+      "seconds": 7.4873,
+      "state": "home"
+    }
+  ],
+  "limitations": "Variable-frame-rate emulator recording; not a guarantee for every physical display frame or production launch duration."
+}

@@ -1,0 +1,17 @@
+{
+  "asset": "assets/home/botanical-serenity.webp",
+  "origin": "Original artwork created for Wird using built-in image generation; no third-party photo or audio",
+  "mode": "built-in imagegen",
+  "prompt": "Use case: stylized-concept. Asset type: original background artwork for a real Flutter Islamic worship tracker, not a UI mockup. Wide landscape 3:2 composition. Botanical Serenity: deep midnight teal and green, elegant realistic olive-like glossy leaves and tiny warm cream blossoms framing the top-left and top-right edges, soft golden sunrise on far right over distant layered misty mountain ridges, calm premium cinematic natural lighting. Keep center very dark teal with quiet negative space for real cream text overlay. Bottom third dissolves naturally to solid deep teal #002C32 so UI can continue below it. Fine painterly photographic detail, restrained gold edge light, tranquil modern luxury. No mosque, no arch, no people, no symbols, no lettering, no text, no logos, no interface, no phone, no watermark.",
+  "optimized_size": [
+    1200,
+    800
+  ],
+  "sha256": "f64a9f71f27f540a2abe88b7120355ba29d7317a1ad1c2dc896931399c077a3e",
+  "religious_copy_preserved_verbatim": [
+    "أربع قبل الظهر وركعتان قبل الفجر: البخاري 1182. ركعتان بعد الظهر والمغرب والعشاء: البخاري 1180–1181. وفضل اثنتي عشرة ركعة في يوم وليلة: مسلم 728a. توجد روايات صحيحة أخرى؛ هذا عرض لإحدى صور التتبع.",
+    "ركعتان من الضحى تجزئان عن صدقة المفاصل؛ صحيح مسلم 720.",
+    "صلاة الليل مثنى مثنى، وإذا خشي الصبح أوتر بواحدة؛ صحيح البخاري 990.",
+    "تصلّى ركعتين ركعتين؛ صحيح البخاري 990. التسجيل اختياري ولا يفرض عددًا."
+  ]
+}

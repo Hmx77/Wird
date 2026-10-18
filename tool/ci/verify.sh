@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 mkdir -p verification
+python3 tool/ci/check_approved_opening.py
 flutter --version
 flutter doctor -v
 flutter pub get
@@ -11,6 +12,7 @@ mkdir -p verification/content
 cp docs/CONTENT_VERIFICATION_2026-10-14.md docs/reference-comparison.csv docs/reference-screen-map.json docs/content-audit.json docs/quran-source.json verification/content/
 dart tool/export_catalog.dart > verification/content/runtime-catalog.json
 flutter test tool/brand_assets_test.dart --reporter expanded
+python3 tool/ci/check_approved_opening.py --restore-assets
 python3 tool/static_check.py
 flutter analyze
 WIRD_REVIEW_IMAGES=1 flutter test --reporter expanded
@@ -20,3 +22,4 @@ case "${1:-debug}" in
   validate) ;;
   *) echo 'Usage: verify.sh debug|ios|validate' >&2; exit 1;;
 esac
+

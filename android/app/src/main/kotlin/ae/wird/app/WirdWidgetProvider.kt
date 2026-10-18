@@ -24,7 +24,7 @@ class WirdWidgetProvider : HomeWidgetProvider() {
             views.setTextViewText(R.id.progress, if (total > 0) "$completed / $total" else if (english) "Open Wird to begin" else "افتح ورد للبدء")
             views.setTextViewText(R.id.widget_subtitle, if (english) "Today’s progress" else "متابعتك اليوم")
             views.setTextViewText(R.id.date, today)
-            val launch = Intent(context, MainActivity::class.java)
+            val launch = Intent(context, EntryActivity::class.java)
             val pending = PendingIntent.getActivity(context, id, launch,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
             views.setOnClickPendingIntent(R.id.widget_root, pending)
@@ -32,3 +32,4 @@ class WirdWidgetProvider : HomeWidgetProvider() {
         }
     }
 }
+

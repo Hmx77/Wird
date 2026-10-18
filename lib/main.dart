@@ -15,12 +15,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'content.dart';
 import 'quran_text.dart';
 part 'premium_ui.dart';
+part 'nawafil_ui.dart';
+part 'cinematic_opening.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Reminders.instance.initialize();
-  await AudioLibrary.instance.load();
-  runApp(const WirdApp());
+  runApp(WirdApp(firstFrameRasterized: WidgetsBinding.instance.waitUntilFirstFrameRasterized));
   LicenseRegistry.addLicense(() async* {
     final license = await rootBundle.loadString('assets/fonts/OFL.txt');
     yield LicenseEntryWithLineBreaks(['Noto Sans Arabic'], license);
@@ -42,8 +42,12 @@ class WirdPalette {
   final String name;
   final Color background, card, primary, ink;
   final bool dark;
-  Color get homeBackground => Color.lerp(ink, const Color(0xFF071D22), .55)!;
-  Color get homeSurface => Color.lerp(homeBackground, primary, .12)!;
+  // A restrained slate foundation; every theme retains its original identity.
+  Color get homeBackground =>
+      Color.lerp(const Color(0xFF002C32), primary, .09)!;
+  Color get homeSurface => Color.lerp(homeBackground, primary, .065)!;
+  Color get homeOutline => const Color(0xFFE3E0D5).withOpacity(.16);
+  Color get homeAccent => Color.lerp(primary, const Color(0xFFB5CBC3), .7)!;
 }
 
 const themes = <WirdPalette>[
@@ -359,8 +363,38 @@ class WirdState extends ChangeNotifier {
   }
 }
 
+/// Shared by the running app and visual regression captures.
+ThemeData wirdTheme(WirdPalette p) => ThemeData(
+  useMaterial3: true,
+  fontFamily: 'NotoSansArabic',
+  navigationBarTheme: NavigationBarThemeData(
+    height: 76,
+    elevation: 0,
+    surfaceTintColor: Colors.transparent,
+    backgroundColor: p.homeBackground,
+    labelTextStyle: const WidgetStatePropertyAll(
+      TextStyle(color: Color(0xFFF3EEDF), fontSize: 12),
+    ),
+    iconTheme: const WidgetStatePropertyAll(
+      IconThemeData(color: Color(0xFFF3EEDF)),
+    ),
+  ),
+  brightness: p.dark ? Brightness.dark : Brightness.light,
+  scaffoldBackgroundColor: p.background,
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: p.primary,
+    brightness: p.dark ? Brightness.dark : Brightness.light,
+  ),
+  appBarTheme: AppBarTheme(
+    backgroundColor: p.background,
+    foregroundColor: p.ink,
+    elevation: 0,
+  ),
+);
+
 class WirdApp extends StatefulWidget {
-  const WirdApp({super.key});
+  const WirdApp({super.key, this.firstFrameRasterized});
+  final Future<void>? firstFrameRasterized;
   @override
   State<WirdApp> createState() => _WirdAppState();
 }
@@ -369,12 +403,47 @@ class _WirdAppState extends State<WirdApp> with WidgetsBindingObserver {
   final WirdState store = WirdState();
   Timer? clock;
   String currentDay = dayKey();
+  bool servicesReady = false;
+  bool firstFrameReady = false;
+  bool started = false;
   @override
   void initState() {
     super.initState();
+    firstFrameReady = widget.firstFrameRasterized == null;
+    widget.firstFrameRasterized?.then((_) {
+      if (mounted) setState(() => firstFrameReady = true);
+    });
     WidgetsBinding.instance.addObserver(this);
-    store.initialize();
     clock = Timer.periodic(const Duration(seconds: 30), (_) => refreshDay());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (started) return;
+    started = true;
+    // Decode the scene before the first Flutter frame; keep native startup dark.
+    WidgetsBinding.instance.deferFirstFrame();
+    unawaited(prepareOpening());
+  }
+
+  Future<void> prepareOpening() async {
+    try {
+      await Future.wait([
+        precacheImage(wirdWordmark, context),
+        precacheImage(wirdSanctuary, context),
+      ]).timeout(const Duration(seconds: 2));
+    } catch (_) {
+      // The dark fallback and original logo remain usable if image decoding fails.
+    } finally {
+      WidgetsBinding.instance.allowFirstFrame();
+    }
+    await Future.wait([
+      store.initialize(),
+      Reminders.instance.initialize(),
+      AudioLibrary.instance.load(),
+    ]);
+    if (mounted) setState(() => servicesReady = true);
   }
 
   void refreshDay() {
@@ -411,33 +480,13 @@ class _WirdAppState extends State<WirdApp> with WidgetsBindingObserver {
         locale: Locale(store.languageCode),
         supportedLocales: const [Locale('ar'), Locale('en')],
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        theme: ThemeData(
-          useMaterial3: true,
-          fontFamily: 'NotoSansArabic',
-          navigationBarTheme: NavigationBarThemeData(
-            backgroundColor: p.homeBackground,
-            labelTextStyle: const WidgetStatePropertyAll(
-              TextStyle(color: Color(0xFFF3EEDF), fontSize: 12),
-            ),
-            iconTheme: const WidgetStatePropertyAll(
-              IconThemeData(color: Color(0xFFF3EEDF)),
-            ),
-          ),
-          brightness: p.dark ? Brightness.dark : Brightness.light,
-          scaffoldBackgroundColor: p.background,
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: p.primary,
-            brightness: p.dark ? Brightness.dark : Brightness.light,
-          ),
-          appBarTheme: AppBarTheme(
-            backgroundColor: p.background,
-            foregroundColor: p.ink,
-            elevation: 0,
-          ),
+        theme: wirdTheme(p),
+        home: WirdStartup(
+          ready: store.ready && servicesReady && firstFrameReady,
+          child: store.ready && servicesReady
+              ? WirdShell(store: store)
+              : const ColoredBox(color: openingTeal),
         ),
-        home: store.ready
-            ? WirdShell(store: store)
-            : const Scaffold(body: Center(child: WirdOpening())),
       );
     },
   );
@@ -486,43 +535,71 @@ class _WirdShellState extends State<WirdShell> {
     final store = widget.store;
     final p = store.palette;
     final screens = [
-      HomePage(store: store),
+      HomePage(store: store, onNavigate: (index) => setState(() => page = index)),
       LibraryPage(store: store),
       NawafilPage(store: store),
       SettingsPage(store: store),
     ];
-    return Scaffold(
-      body: SafeArea(
-        child: IndexedStack(index: page, children: screens),
+    final darkSurface = page == 0 || page == 2 || p.dark;
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: darkSurface
+            ? Brightness.light
+            : Brightness.dark,
+        statusBarBrightness: darkSurface ? Brightness.dark : Brightness.light,
+        systemNavigationBarColor: p.homeBackground,
+        systemNavigationBarIconBrightness: Brightness.light,
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: page,
-        onDestinationSelected: (index) => setState(() => page = index),
-        backgroundColor: p.homeBackground,
-        indicatorColor: p.primary.withOpacity(.17),
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.home_outlined),
-            selectedIcon: const Icon(Icons.home),
-            label: tr(context, 'الرئيسية'),
+      child: Scaffold(
+        backgroundColor: page == 0 || page == 2 ? p.homeBackground : p.background,
+        body: SafeArea(
+          child: IndexedStack(index: page, children: screens),
+        ),
+        bottomNavigationBar: Container(
+          margin: const EdgeInsets.fromLTRB(10, 4, 10, 5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(29),
+            border: Border.all(color: p.homeAccent.withOpacity(.3)),
+            gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
+              colors: [p.homeSurface, p.homeBackground]),
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.auto_stories_outlined),
-            selectedIcon: const Icon(Icons.auto_stories),
-            label: tr(context, 'الأذكار'),
-          ),
-          NavigationDestination(
-            icon: const SujoodIcon(),
-            selectedIcon: const SujoodIcon(selected: true),
-            label: tr(context, 'النوافل'),
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.tune_outlined),
-            selectedIcon: const Icon(Icons.tune),
-            label: tr(context, 'الإعدادات'),
-          ),
-        ],
+          child: ClipRRect(borderRadius: BorderRadius.circular(29), child: NavigationBar(
+          selectedIndex: page,
+          onDestinationSelected: (index) => setState(() => page = index),
+          backgroundColor: Colors.transparent,
+          indicatorColor: const Color(0xFFE4C47E).withOpacity(.18),
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          destinations: [
+            NavigationDestination(
+              key: const Key('nav-home'),
+              icon: const Icon(Icons.home_outlined),
+              selectedIcon: const Icon(Icons.home_rounded, color: homeGold),
+              label: tr(context, 'الرئيسية'),
+            ),
+            NavigationDestination(
+              key: const Key('nav-library'),
+              icon: const Icon(Icons.auto_stories_outlined),
+              selectedIcon: const Icon(Icons.auto_stories_outlined),
+              label: tr(context, 'الأذكار'),
+            ),
+            NavigationDestination(
+              key: const Key('nav-nawafil'),
+              icon: const SujoodIcon(),
+              selectedIcon: const IconTheme(data: IconThemeData(color: homeGold), child: SujoodIcon(selected: true)),
+              label: tr(context, 'النوافل'),
+            ),
+            NavigationDestination(
+              key: const Key('nav-settings'),
+              icon: const Icon(Icons.settings_outlined),
+              selectedIcon: const Icon(Icons.settings, color: homeGold),
+              label: tr(context, 'الإعدادات'),
+            ),
+          ],
+        )),
+        ),
       ),
     );
   }
@@ -1195,122 +1272,6 @@ class _ReaderPageState extends State<ReaderPage> {
   }
 }
 
-class NawafilPage extends StatelessWidget {
-  const NawafilPage({super.key, required this.store});
-  final WirdState store;
-  @override
-  Widget build(BuildContext context) {
-    final p = store.palette;
-    const rawatib = <(String, String, String, String)>[
-      ('الفجر', 'قبل', '٢', 'fajr_before'),
-      ('الظهر', 'قبل', '٤', 'dhuhr_before'),
-      ('الظهر', 'بعد', '٢', 'dhuhr_after'),
-      ('المغرب', 'بعد', '٢', 'maghrib_after'),
-      ('العشاء', 'بعد', '٢', 'isha_after'),
-    ];
-    final done = rawatib.where((r) => store.prayerDone(r.$4)).length;
-    return ListView(
-      padding: const EdgeInsets.only(bottom: 32),
-      children: [
-        const Header(
-          'السنن والنوافل',
-          subtitle: 'تتبّع شخصي اختياري — دون إلزام أو تنبيهات ضاغطة',
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 19),
-          child: Surface(
-            child: Column(
-              children: [
-                UiText(
-                  'السنن الرواتب الاثنتا عشرة',
-                  style: TextStyle(
-                    color: p.ink,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 7),
-                UiText(
-                  '$done / 5 مجموعات سُجّلت اليوم',
-                  style: TextStyle(color: p.ink.withOpacity(.7)),
-                ),
-                const SizedBox(height: 12),
-                ...rawatib.map(
-                  (r) => CheckboxListTile(
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    activeColor: p.primary,
-                    value: store.prayerDone(r.$4),
-                    onChanged: (_) => store.togglePrayer(r.$4),
-                    title: UiText(
-                      '${r.$1} — ${r.$2} الفريضة',
-                      style: TextStyle(color: p.ink),
-                    ),
-                    subtitle: UiText(
-                      '${r.$3} ركعات',
-                      style: TextStyle(color: p.ink.withOpacity(.7)),
-                    ),
-                  ),
-                ),
-                const Divider(),
-                UiText(
-                  'أربع قبل الظهر وركعتان قبل الفجر: البخاري 1182. ركعتان بعد الظهر والمغرب والعشاء: البخاري 1180–1181. وفضل اثنتي عشرة ركعة في يوم وليلة: مسلم 728a. توجد روايات صحيحة أخرى؛ هذا عرض لإحدى صور التتبع.',
-                  style: TextStyle(color: p.ink.withOpacity(.65), fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 14),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 19),
-          child: Surface(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                UiText(
-                  'نوافل أخرى',
-                  style: TextStyle(
-                    color: p.ink,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                ...const [
-                  (
-                    'duha',
-                    'صلاة الضحى',
-                    'ركعتان من الضحى تجزئان عن صدقة المفاصل؛ صحيح مسلم 720.',
-                  ),
-                  (
-                    'witr',
-                    'صلاة الوتر',
-                    'صلاة الليل مثنى مثنى، وإذا خشي الصبح أوتر بواحدة؛ صحيح البخاري 990.',
-                  ),
-                  (
-                    'night',
-                    'قيام الليل',
-                    'تصلّى ركعتين ركعتين؛ صحيح البخاري 990. التسجيل اختياري ولا يفرض عددًا.',
-                  ),
-                ].map(
-                  (r) => CheckboxListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: UiText(r.$2),
-                    subtitle: UiText(r.$3),
-                    value: store.prayerDone(r.$1),
-                    onChanged: (_) => store.togglePrayer(r.$1),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class ProgressPage extends StatelessWidget {
   const ProgressPage({super.key, required this.store});
   final WirdState store;
@@ -1669,3 +1630,4 @@ class SettingsPage extends StatelessWidget {
     );
   }
 }
+

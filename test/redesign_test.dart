@@ -55,7 +55,7 @@ void main() {
       expect(find.byType(ProgressPage), findsNothing);
       expect(find.byType(SujoodIcon), findsWidgets);
       expect(store.favorites, contains('morning_sayyid'));
-      await tester.tap(find.text('الإعدادات'));
+      await tester.tap(find.byKey(const Key('nav-settings')));
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
         find.text('زيتوني وكريمي'),
@@ -65,6 +65,65 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('زيتوني وكريمي'), findsOneWidget);
       expect(tester.takeException(), isNull);
+      await store.pendingWrites;
+      await tester.pumpWidget(const SizedBox.shrink());
+      store.dispose();
+    },
+  );
+  testWidgets(
+    'all themes preserve home actions, entries and RTL at large text',
+    (tester) async {
+      tester.view.physicalSize = const Size(320, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      SharedPreferences.setMockInitialValues({'haptics': false});
+      final store = WirdState();
+      await store.initialize();
+      for (final language in ['ar', 'en']) {
+        for (var theme = 0; theme < themes.length; theme++) {
+          store.changeTheme(theme);
+          // Each theme starts at the top; preserve no previous scroll viewport.
+          await tester.pumpWidget(const SizedBox.shrink());
+          await tester.pumpWidget(
+            MaterialApp(
+              locale: Locale(language),
+              supportedLocales: const [Locale('ar'), Locale('en')],
+              localizationsDelegates: GlobalMaterialLocalizations.delegates,
+              theme: wirdTheme(store.palette),
+              builder: (context, child) => MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(textScaler: const TextScaler.linear(2)),
+                child: child!,
+              ),
+              home: Scaffold(body: HomePage(store: store)),
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(
+            find.byTooltip(uiString('ابحث عن ذكر', language)),
+            findsOneWidget,
+          );
+          for (final section in DhikrSection.values) {
+            final card = find.byKey(Key('home-${section.name}'));
+            await tester.scrollUntilVisible(
+              card,
+              180,
+              scrollable: find.byType(Scrollable).last,
+            );
+            await tester.pumpAndSettle();
+            expect(card, findsOneWidget);
+            expect(tester.takeException(), isNull);
+          }
+          expect(find.text(uiString('لحظات من السكينة', language)), findsOneWidget);
+          expect(
+            tester.takeException(),
+            isNull,
+            reason: '${themes[theme].name} $language at 200% text',
+          );
+        }
+      }
       await store.pendingWrites;
       await tester.pumpWidget(const SizedBox.shrink());
       store.dispose();
@@ -98,7 +157,7 @@ void main() {
               locale: Locale(language),
               supportedLocales: const [Locale('ar'), Locale('en')],
               localizationsDelegates: GlobalMaterialLocalizations.delegates,
-              theme: ThemeData(fontFamily: 'NotoSansArabic'),
+              theme: wirdTheme(store.palette),
               builder: (context, child) => MediaQuery(
                 data: MediaQuery.of(
                   context,
@@ -111,6 +170,13 @@ void main() {
         );
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
+        await tester.runAsync(
+          () => Future.wait([
+            precacheImage(wirdWordmark, tester.element(find.byKey(const Key('home-wordmark')))),
+            ...homeArt.values.map((art) => precacheImage(art, tester.element(find.byKey(const Key('home-wordmark'))))),
+          ]),
+        );
+        await tester.pump();
         if (Platform.environment['WIRD_REVIEW_IMAGES'] == '1') {
           final render =
               boundary.currentContext!.findRenderObject()!
@@ -155,10 +221,7 @@ void main() {
             locale: Locale(language),
             supportedLocales: const [Locale('ar'), Locale('en')],
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
-            theme: ThemeData(
-              fontFamily: 'NotoSansArabic',
-              scaffoldBackgroundColor: store.palette.background,
-            ),
+            theme: wirdTheme(store.palette),
             home: WirdShell(store: store),
           ),
         ),
@@ -180,6 +243,16 @@ void main() {
         });
       }
 
+      await tester.runAsync(
+        () => Future.wait([
+          precacheImage(wirdWordmark, tester.element(find.byKey(const Key('home-wordmark')))),
+          ...homeArt.values.map((art) => precacheImage(art, tester.element(find.byKey(const Key('home-wordmark'))))),
+        ]),
+      );
+      await tester.pump();
+      await capture('home-regular');
+      await tester.ensureVisible(find.byKey(const Key('home-morning')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('home-morning')));
       await tester.pumpAndSettle();
       await capture('reader');
@@ -201,10 +274,10 @@ void main() {
       );
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(uiString('النوافل', language)));
+      await tester.tap(find.byKey(const Key('nav-nawafil')));
       await tester.pumpAndSettle();
       await capture('nawafil');
-      await tester.tap(find.text(uiString('الإعدادات', language)));
+      await tester.tap(find.byKey(const Key('nav-settings')));
       await tester.pumpAndSettle();
       await capture('settings');
       await tester.drag(find.byType(ListView).last, const Offset(0, -600));
@@ -225,3 +298,4 @@ void main() {
     });
   }
 }
+
