@@ -187,6 +187,8 @@ ffmpeg -hide_banner -loglevel error -i verification/device/startup.mp4 \
   -vf fps=10,scale=32:72,format=rgb24 -f rawvideo verification/device/startup-rgb.raw
 ffmpeg -hide_banner -loglevel error -i android/app/src/main/res/drawable-nodpi/wird_launch_scene.png \
   -vf scale=32:72,format=rgb24 -frames:v 1 -f rawvideo verification/device/startup-reference.raw
+ffmpeg -hide_banner -loglevel error -i verification/device/android-home-offline.png \
+  -vf scale=32:72,format=rgb24 -frames:v 1 -f rawvideo verification/device/startup-home-reference.raw
 python3 tool/ci/check_startup_frames.py
 printf '%s\n' 'PASS: first cold launch recorded from actual launcher tap; no interaction after entry'
 # Returning launcher activation must reuse the existing Flutter activity.

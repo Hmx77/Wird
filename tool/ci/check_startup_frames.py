@@ -18,6 +18,14 @@ reference_light = [sum(p)/3 for p in reference_pixels]
 reference_mean = sum(reference_light)/len(reference_light)
 reference_delta = [v-reference_mean for v in reference_light]
 reference_energy = sum(v*v for v in reference_delta)
+home_raw = (root / 'startup-home-reference.raw').read_bytes()
+assert len(home_raw) == size, 'Missing actual home reference'
+home_light = [sum(home_raw[p:p+3])/3 for p in range(32*6*3,32*66*3,3)]
+home_mean = sum(home_light)/len(home_light)
+home_delta = [v-home_mean for v in home_light]
+home_energy = sum(v*v for v in home_delta)
+seen_scene = False
+unexpected = []
 timeline = []
 longest = current = 0
 cinematic = 0
@@ -34,16 +42,24 @@ for index in range(len(raw) // size):
     correlation = (sum(a*b for a,b in zip(delta,reference_delta)) /
                    math.sqrt(energy*reference_energy)) if energy > 0 else 0
     scene = correlation > .65 and warm > .08
+    home_correlation = (sum(a*b for a,b in zip(delta,home_delta)) /
+                        math.sqrt(energy*home_energy)) if energy > 0 else 0
+    home = home_correlation > .85
+    seen_scene = seen_scene or scene
+    if seen_scene and not scene and not home:
+        unexpected.append(index / 10)
     timeline.append({'seconds': index / 10, 'deviation': round(deviation, 2),
-                     'warmFraction': round(warm, 4), 'sceneCorrelation': round(correlation, 3), 'flat': flat, 'sceneCandidate': scene})
+                     'warmFraction': round(warm, 4), 'sceneCorrelation': round(correlation, 3), 'flat': flat, 'sceneCandidate': scene, 'homeCorrelation': round(home_correlation, 3), 'homeCandidate': home})
     # The first two seconds include the launcher and its OS tap animation.
     if index >= 20:
         current = current + 1 if flat else 0
         longest = max(longest, current)
         cinematic += int(scene)
 report = {'longestFlatSecondsAfter2s': longest / 10,
-          'cinematicCandidateFramesAfter2s': cinematic, 'frames': timeline}
+          'cinematicCandidateFramesAfter2s': cinematic, 'unexpectedFramesAfterScene': unexpected, 'frames': timeline}
 (root / 'startup-timeline.json').write_text(json.dumps(report, indent=2))
+assert not unexpected, f'Unexpected icon/blank/other frames between cinematic and home: {unexpected}'
+assert timeline[-1]['homeCandidate'], 'Recording does not end on actual home'
 assert longest <= 8, f'Flat startup interval remains: {longest / 10:.1f}s'
 assert cinematic >= 2, 'No sustained cinematic scene detected after launcher tap'
 print(f'PASS: startup frame guard; longest flat interval {longest / 10:.1f}s; '
