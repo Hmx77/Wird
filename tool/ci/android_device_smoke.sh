@@ -43,6 +43,10 @@ PYLOG
   fi
   sleep 5
 done
+# Keep only this disposable test emulator awake throughout package setup.
+adb shell settings put system screen_off_timeout 1800000
+adb shell svc power stayon true
+adb shell input keyevent KEYCODE_WAKEUP
 adb shell input keyevent 82
 wird_package_deadline=$((SECONDS + 120))
 until timeout 10 adb shell cmd package list packages >/dev/null 2>&1; do
@@ -124,6 +128,12 @@ PYPNG
   echo "No valid screenshot for $target" >&2
   return 1
 }
+if ! command -v ffmpeg >/dev/null; then
+  sudo apt-get update -qq
+  sudo apt-get install -y --no-install-recommends ffmpeg
+fi
+command -v ffmpeg >/dev/null
+# Observe launcher coordinates after tool installation, never before a long install.
 # Wait for the installed app label in the launcher drawer, not just wallpaper.
 wird_launcher_ready=false
 for attempt in 1 2 3 4 5; do
@@ -153,11 +163,6 @@ fi
 echo 'PASS: installed Wird icon visible in launcher drawer'
 wird_capture verification/device/android-launcher.png
 # Record the actual launcher tap and first cold launch through real home.
-if ! command -v ffmpeg >/dev/null; then
-  sudo apt-get update -qq
-  sudo apt-get install -y --no-install-recommends ffmpeg
-fi
-command -v ffmpeg >/dev/null
 adb shell screenrecord --time-limit 12 /sdcard/wird-startup.mp4 &
 record_pid=$!
 sleep 1
@@ -176,7 +181,16 @@ PYTAP
 )
 adb shell settings put system show_touches 1
 adb shell input tap "$wird_tap_x" "$wird_tap_y"
-wird_wait_for_home window
+if ! wird_wait_for_home window; then
+  wird_capture verification/device/android-startup-failure.png || true
+  adb shell dumpsys window > verification/device/startup-window-state.txt || true
+  adb shell dumpsys activity activities > verification/device/startup-activities.txt || true
+  adb logcat -d -s AndroidRuntime:E flutter:E > verification/device/startup-runtime-errors.log || true
+  wait "$record_pid" || true
+  adb pull /sdcard/wird-startup.mp4 verification/device/startup.mp4 || true
+  echo 'Cold launcher activation failed; actual screen, movie and runtime diagnostics preserved.' >&2
+  exit 1
+fi
 wird_capture verification/device/android-home-offline.png
 wait "$record_pid"
 adb pull /sdcard/wird-startup.mp4 verification/device/startup.mp4
