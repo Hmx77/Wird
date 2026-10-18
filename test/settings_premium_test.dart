@@ -46,7 +46,7 @@ void main() {
     for(final section in ['morning','evening','sleep']) {
       final f=find.byKey(Key('reminder-switch-$section'));expect(t.widget<Switch>(f).value,isFalse);
     }
-    await tap(t,'reminder-time-morning');expect(find.byType(TimePickerDialog),findsOneWidget);await t.tap(find.text('إلغاء'));await t.pumpAndSettle();
+    await tap(t,'reminder-time-morning');expect(find.byType(TimePickerDialog),findsOneWidget);await t.tap(find.text(MaterialLocalizations.of(t.element(find.byType(TimePickerDialog))).cancelButtonLabel));await t.pumpAndSettle();
     await tap(t,'settings-tasbih-add');await tap(t,'settings-tasbih-reset');expect(s.tasbih,0);
     await tap(t,'privacy-details');expect(find.text(settingsPrivacyCopy),findsOneWidget);
     await tap(t,'settings-licenses');expect(find.byType(LicensePage),findsOneWidget);
