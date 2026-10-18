@@ -1,3 +1,5 @@
+> Superseded: build 6 did not meet the corrected logo and seamless-launch requirements. See [the splash correction report](SPLASH_CORRECTION_2026-10-17.md) for current evidence and remaining limits.
+
 # Automatic cinematic opening — 17 October 2026
 
 Review branch: `redesign/refined-20261015`. No merge or store publication.
