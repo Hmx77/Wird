@@ -69,6 +69,10 @@ const uiEnglish = <String, String>{
   "تراجع عن ضغطة": "Undo one count",
   "السابق": "Previous",
   "التالي": "Next",
+  "السُّنن والنوافل": "Sunnah and voluntary prayers",
+  "المراجع والتنبيه": "Sources and context",
+  "ركعات سُجّلت اليوم": "Rakahs recorded today",
+  "ركعات": "Rakahs",
   "السنن والنوافل": "Sunnah and voluntary prayers",
   "تتبّع شخصي اختياري — دون إلزام أو تنبيهات ضاغطة":
       "Optional personal tracking, without pressure",

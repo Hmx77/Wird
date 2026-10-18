@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'content.dart';
 import 'quran_text.dart';
 part 'premium_ui.dart';
+part 'nawafil_ui.dart';
 part 'cinematic_opening.dart';
 
 Future<void> main() async {
@@ -539,7 +540,7 @@ class _WirdShellState extends State<WirdShell> {
       NawafilPage(store: store),
       SettingsPage(store: store),
     ];
-    final darkSurface = page == 0 || p.dark;
+    final darkSurface = page == 0 || page == 2 || p.dark;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -551,7 +552,7 @@ class _WirdShellState extends State<WirdShell> {
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: Scaffold(
-        backgroundColor: page == 0 ? p.homeBackground : p.background,
+        backgroundColor: page == 0 || page == 2 ? p.homeBackground : p.background,
         body: SafeArea(
           child: IndexedStack(index: page, children: screens),
         ),
@@ -1267,122 +1268,6 @@ class _ReaderPageState extends State<ReaderPage> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class NawafilPage extends StatelessWidget {
-  const NawafilPage({super.key, required this.store});
-  final WirdState store;
-  @override
-  Widget build(BuildContext context) {
-    final p = store.palette;
-    const rawatib = <(String, String, String, String)>[
-      ('الفجر', 'قبل', '٢', 'fajr_before'),
-      ('الظهر', 'قبل', '٤', 'dhuhr_before'),
-      ('الظهر', 'بعد', '٢', 'dhuhr_after'),
-      ('المغرب', 'بعد', '٢', 'maghrib_after'),
-      ('العشاء', 'بعد', '٢', 'isha_after'),
-    ];
-    final done = rawatib.where((r) => store.prayerDone(r.$4)).length;
-    return ListView(
-      padding: const EdgeInsets.only(bottom: 32),
-      children: [
-        const Header(
-          'السنن والنوافل',
-          subtitle: 'تتبّع شخصي اختياري — دون إلزام أو تنبيهات ضاغطة',
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 19),
-          child: Surface(
-            child: Column(
-              children: [
-                UiText(
-                  'السنن الرواتب الاثنتا عشرة',
-                  style: TextStyle(
-                    color: p.ink,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 7),
-                UiText(
-                  '$done / 5 مجموعات سُجّلت اليوم',
-                  style: TextStyle(color: p.ink.withOpacity(.7)),
-                ),
-                const SizedBox(height: 12),
-                ...rawatib.map(
-                  (r) => CheckboxListTile(
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    activeColor: p.primary,
-                    value: store.prayerDone(r.$4),
-                    onChanged: (_) => store.togglePrayer(r.$4),
-                    title: UiText(
-                      '${r.$1} — ${r.$2} الفريضة',
-                      style: TextStyle(color: p.ink),
-                    ),
-                    subtitle: UiText(
-                      '${r.$3} ركعات',
-                      style: TextStyle(color: p.ink.withOpacity(.7)),
-                    ),
-                  ),
-                ),
-                const Divider(),
-                UiText(
-                  'أربع قبل الظهر وركعتان قبل الفجر: البخاري 1182. ركعتان بعد الظهر والمغرب والعشاء: البخاري 1180–1181. وفضل اثنتي عشرة ركعة في يوم وليلة: مسلم 728a. توجد روايات صحيحة أخرى؛ هذا عرض لإحدى صور التتبع.',
-                  style: TextStyle(color: p.ink.withOpacity(.65), fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 14),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 19),
-          child: Surface(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                UiText(
-                  'نوافل أخرى',
-                  style: TextStyle(
-                    color: p.ink,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                ...const [
-                  (
-                    'duha',
-                    'صلاة الضحى',
-                    'ركعتان من الضحى تجزئان عن صدقة المفاصل؛ صحيح مسلم 720.',
-                  ),
-                  (
-                    'witr',
-                    'صلاة الوتر',
-                    'صلاة الليل مثنى مثنى، وإذا خشي الصبح أوتر بواحدة؛ صحيح البخاري 990.',
-                  ),
-                  (
-                    'night',
-                    'قيام الليل',
-                    'تصلّى ركعتين ركعتين؛ صحيح البخاري 990. التسجيل اختياري ولا يفرض عددًا.',
-                  ),
-                ].map(
-                  (r) => CheckboxListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: UiText(r.$2),
-                    subtitle: UiText(r.$3),
-                    value: store.prayerDone(r.$1),
-                    onChanged: (_) => store.togglePrayer(r.$1),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
