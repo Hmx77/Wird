@@ -1,10 +1,17 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:timezone/data/latest.dart' as tzdata;
+import 'package:timezone/data/latest_all.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:wird/services/reminders.dart';
 
 void main() {
   setUpAll(tzdata.initializeTimeZones);
+  test('Android UTC/GMT aliases and named zones resolve offline', () {
+    for (final name in ['GMT', 'UTC', 'Etc/UTC', 'Etc/GMT', 'Asia/Dubai', 'Asia/Calcutta']) {
+      final zone = tz.getLocation(name);
+      final now = tz.TZDateTime(zone, 2026, 10, 18, 6);
+      expect(nextReminderOccurrence(now, 7, 0).hour, 7);
+    }
+  });
   test('future time today, equal time tomorrow, and date rollover', () {
     final dubai = tz.getLocation('Asia/Dubai');
     final before = tz.TZDateTime(dubai, 2026, 12, 31, 6, 59);
