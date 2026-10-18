@@ -1,0 +1,42 @@
+[
+  {
+    "asset": "assets/home/morning.webp",
+    "source": "Original image generated for Wird using built-in image generation; no third-party recording or stock image incorporated.",
+    "dimensions": [
+      1200,
+      800
+    ],
+    "bytes": 111622,
+    "sha256": "d9654023dee93afd32003bf343e9fa3f32af69b2c42617e620d16ce6c4c3e441"
+  },
+  {
+    "asset": "assets/home/evening.webp",
+    "source": "Original image generated for Wird using built-in image generation; no third-party recording or stock image incorporated.",
+    "dimensions": [
+      1200,
+      800
+    ],
+    "bytes": 91360,
+    "sha256": "6581c3fda8b738392ed09360378ef72cff96f158323a494cb8510dc82320722e"
+  },
+  {
+    "asset": "assets/home/night.webp",
+    "source": "Original image generated for Wird using built-in image generation; no third-party recording or stock image incorporated.",
+    "dimensions": [
+      1200,
+      400
+    ],
+    "bytes": 30402,
+    "sha256": "f3d04aec2d271aa82c79cced208b13a7a2e606ee36b2341e2ae4bf12f739ab5c"
+  },
+  {
+    "asset": "assets/home/serenity.webp",
+    "source": "Original image generated for Wird using built-in image generation; no third-party recording or stock image incorporated.",
+    "dimensions": [
+      1200,
+      600
+    ],
+    "bytes": 72714,
+    "sha256": "b1e93bec4a120f1315c57d98e90b59b80a0e986e285d9769a19625006cc3bfa5"
+  }
+]
