@@ -92,6 +92,46 @@ tap('النوافل',scroll=True)
 expect('السنن الرواتب الاثنتا عشرة')
 capture('android-nawafil-navigation.png')
 checks.append('nawafil-shortcut-and-sujood-navigation')
+# The redesign keeps all existing grouped tracking keys; test actual accessibility
+# checked states, UI progress, offline persistence and all lower prayer rows.
+capture('android-nawafil-header-rawatib.png')
+def checked(label, expected):
+    matches = [n for n in snapshot() if normal(label) in normal(n.get('text','')+' '+n.get('content-desc','')) and n.get('checkable') == 'true']
+    assert matches, f'Missing accessible tracking control: {label}'
+    assert any(n.get('checked') == str(expected).lower() for n in matches), f'Wrong checked state: {label}'
+checked('الفجر — قبل الفريضة', False)
+tap('الفجر — قبل الفريضة', scroll=True)
+checked('الفجر — قبل الفريضة', True)
+expect('2/12')
+capture('android-nawafil-checked.png')
+# A true process restart must recover the same local state while offline.
+adb('shell','am','force-stop','ae.wird.app')
+adb('shell','am','start','-W','-n','ae.wird.app/.MainActivity')
+expect('الرئيسية')
+tap('النوافل', bottom=True)
+expect('السنن الرواتب الاثنتا عشرة')
+checked('الفجر — قبل الفريضة', True)
+expect('2/12')
+capture('android-nawafil-persisted.png')
+tap('الفجر — قبل الفريضة', scroll=True)
+checked('الفجر — قبل الفريضة', False)
+expect('0/12')
+# Scroll incrementally until each real section is visible, then capture it.
+for _ in range(7):
+    values=' '.join(n.get('text','')+' '+n.get('content-desc','') for n in snapshot())
+    if 'المراجع والتنبيه' in values:
+        break
+    adb('shell','input','swipe',str(width//2),str(int(height*.77)),str(width//2),str(int(height*.40)),'450')
+expect('المراجع والتنبيه')
+capture('android-nawafil-note.png')
+for label in ['صلاة الضحى','صلاة الوتر','قيام الليل']:
+    tap(label, scroll=True)
+    checked(label, True)
+    capture({'صلاة الضحى':'android-nawafil-duha-checked.png','صلاة الوتر':'android-nawafil-witr-checked.png','قيام الليل':'android-nawafil-other-prayers.png'}[label])
+    tap(label, scroll=True)
+    checked(label, False)
+checks.append('nawafil-checkboxes-rakahs-process-restart-and-offline-persistence')
+(out/'nawafil-interactions.json').write_text(json.dumps({'passed':True,'rawatib':'fajr_before toggled on, survived process restart, then off','derived_progress':['0/12','2/12','0/12'],'other_prayers':['duha','witr','night'],'offline':True},ensure_ascii=False,indent=2)+'\n')
 tap('الإعدادات',bottom=True)
 expect('المظهر والقراءة والخصوصية')
 checks.append('settings-navigation')
