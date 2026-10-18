@@ -171,9 +171,10 @@ expect('إلغاء')
 capture('android-settings-time-picker.png')
 (out/'settings-time-picker.xml').write_text(adb('shell','cat','/sdcard/wird-home-review.xml'))
 tap('إدخال')
-fields=[n for n in snapshot() if n.get('class')=='android.widget.EditText']
-assert len(fields)==2, 'Expected separate hour and minute text fields'
-for node,value in zip(fields,['8','15']):
+for index,value in enumerate(['8','15']):
+    fields=[n for n in snapshot() if n.get('class')=='android.widget.EditText']
+    assert len(fields)==2, 'Expected separate hour and minute text fields'
+    node=fields[index]
     x1,y1,x2,y2=map(int,re.findall(r'\d+',node.get('bounds','')))
     adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
     adb('shell','input','keyevent','KEYCODE_MOVE_END')
