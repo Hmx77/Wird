@@ -25,7 +25,7 @@ class SettingsPage extends StatelessWidget {
             if(store.languageCode=='en') const Padding(padding: EdgeInsets.symmetric(vertical:8),child:UiText('النص الديني بالعربية؛ الترجمة الإنجليزية قيد المراجعة.',style:TextStyle(color:homeCream,fontSize:12))),
             const SizedBox(height:10),
             SettingsPanel(highlighted:true, child: InkWell(key:const Key('appearance-picker'),borderRadius:BorderRadius.circular(22), onTap:()=>_appearance(context),child:_SettingsControl(icon:Icons.palette_outlined,title:'المظهر',subtitle:themes[store.themeIndex].name,
-              control: Row(mainAxisSize:MainAxisSize.min,children:[...{store.themeIndex,5,9}.take(3).map((i)=>Padding(padding:const EdgeInsets.all(3),child:Container(width:28,height:28,decoration:BoxDecoration(shape:BoxShape.circle,color:themes[i].primary,border:Border.all(color:i==store.themeIndex?homeGold:homeCream.withOpacity(.3),width:i==store.themeIndex?2:1))))),const Icon(Icons.chevron_left,size:18)])))),
+              control: Row(mainAxisSize:MainAxisSize.min,children:[...{store.themeIndex,5,9}.take(3).map((i)=>Padding(padding:const EdgeInsets.all(3),child:Container(width:28,height:28,decoration:BoxDecoration(shape:BoxShape.circle,color:themes[i].primary,border:Border.all(color:i==store.themeIndex?homeGold:homeCream.withOpacity(.3),width:i==store.themeIndex?2:1))))),Icon(Directionality.of(context)==TextDirection.rtl?Icons.chevron_left:Icons.chevron_right,size:18)])))),
             const SizedBox(height:12),
             const ReminderPanel(),
             const SizedBox(height:12),
@@ -45,8 +45,8 @@ class SettingsPage extends StatelessWidget {
                 final buttons=Wrap(spacing:10,runSpacing:8,alignment:WrapAlignment.center,children:[
                   FilledButton.icon(key:const Key('settings-tasbih-add'),onPressed:(){store.setTasbih(store.tasbih+1);if(store.haptics) unawaited(HapticFeedback.selectionClick());},icon:const Icon(Icons.add,size:18),label:const UiText('تسبيح +')),
                   OutlinedButton.icon(key:const Key('settings-tasbih-reset'),onPressed:()=>store.setTasbih(0),icon:const Icon(Icons.restart_alt,size:18),label:const UiText('إعادة'))]);
-                if(c.maxWidth<450 || MediaQuery.textScalerOf(context).scale(1)>1.3) return Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[counter,const SizedBox(height:12),buttons]);
-                return Row(children:[Expanded(child:counter),const SizedBox(width:16),Expanded(flex:2,child:buttons)]);
+                if(c.maxWidth<320 || MediaQuery.textScalerOf(context).scale(1)>1.3) return Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[counter,const SizedBox(height:12),buttons]);
+                return Row(children:[Expanded(flex:2,child:buttons),const SizedBox(width:16),Expanded(child:counter)]);
               }),
             ])),
             const SizedBox(height:12),
@@ -77,11 +77,11 @@ class SettingsPage extends StatelessWidget {
   ]))))));
 
   Future<void> _erase(BuildContext context) async {
-    final confirmed=await showDialog<bool>(context:context,builder:(c)=>AlertDialog(
+    final confirmed=await showDialog<bool>(context:context,builder:(c)=>SettingsStyle(palette:store.palette,child:AlertDialog(
       backgroundColor:store.palette.homeSurface,title:const UiText('مسح المتابعة والمفضلة؟',style:TextStyle(color:homeCream)),
       content:const UiText('سيمسح تقدم القراءة والمفضلة وتتبع الصلاة والسبحة الشخصية. لا يمكن التراجع. تبقى إعدادات المظهر والتذكيرات.',style:TextStyle(color:homeCream,height:1.8)),
       actions:[TextButton(onPressed:()=>Navigator.pop(c,false),child:const UiText('إلغاء')),TextButton(key:const Key('confirm-local-erase'),onPressed:()=>Navigator.pop(c,true),child:const UiText('مسح'))],
-    ));
+    )));
     if(confirmed==true) {try{await store.erase();}catch(_){if(context.mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:UiText('تعذر مسح البيانات. حاول مجددًا.')));}}
   }
 }
@@ -97,8 +97,8 @@ class SettingsStyle extends StatelessWidget {
     textTheme:Theme.of(context).textTheme.apply(bodyColor:homeCream,displayColor:homeCream),
     switchTheme:SwitchThemeData(thumbColor:const WidgetStatePropertyAll(homeCream),trackColor:WidgetStateProperty.resolveWith((s)=>s.contains(WidgetState.selected)?const Color(0xFFB99A54):palette.homeBackground),trackOutlineColor:WidgetStatePropertyAll(homeGold.withOpacity(.4))),
     sliderTheme:SliderTheme.of(context).copyWith(activeTrackColor:homeGold,thumbColor:homeGold,inactiveTrackColor:homeCream.withOpacity(.25),overlayColor:homeGold.withOpacity(.12)),
-    filledButtonTheme:FilledButtonThemeData(style:FilledButton.styleFrom(backgroundColor:homeGold,foregroundColor:const Color(0xFF173A36),minimumSize:const Size(48,48),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(17)))),
-    outlinedButtonTheme:OutlinedButtonThemeData(style:OutlinedButton.styleFrom(foregroundColor:homeGold,side:BorderSide(color:homeGold.withOpacity(.65)),minimumSize:const Size(48,48),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(17)))),
+    filledButtonTheme:FilledButtonThemeData(style:FilledButton.styleFrom(backgroundColor:homeGold,foregroundColor:const Color(0xFF173A36),padding:const EdgeInsets.symmetric(horizontal:12),minimumSize:const Size(48,48),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(17)))),
+    outlinedButtonTheme:OutlinedButtonThemeData(style:OutlinedButton.styleFrom(foregroundColor:homeGold,padding:const EdgeInsets.symmetric(horizontal:12),side:BorderSide(color:homeGold.withOpacity(.65)),minimumSize:const Size(48,48),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(17)))),
     textButtonTheme:TextButtonThemeData(style:TextButton.styleFrom(foregroundColor:homeGold,minimumSize:const Size(48,48))),
     dividerTheme:const DividerThemeData(color:Color(0x335F9D92)),
   ),child:child);
@@ -148,7 +148,7 @@ class _SettingsAction extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
   @override
-  Widget build(BuildContext context)=>InkWell(onTap:onTap,borderRadius:BorderRadius.circular(16),child:Padding(padding:const EdgeInsets.symmetric(vertical:8),child:Row(children:[_SettingsMedallion(icon),const SizedBox(width:12),Expanded(child:UiText(title,style:const TextStyle(color:homeCream,fontSize:15,height:1.8))),const Icon(Icons.chevron_left,color:homeGold,size:20)])));
+  Widget build(BuildContext context)=>InkWell(onTap:onTap,borderRadius:BorderRadius.circular(16),child:Padding(padding:const EdgeInsets.symmetric(vertical:8),child:Row(children:[_SettingsMedallion(icon),const SizedBox(width:12),Expanded(child:UiText(title,style:const TextStyle(color:homeCream,fontSize:15,height:1.8))),Icon(Directionality.of(context)==TextDirection.rtl?Icons.chevron_left:Icons.chevron_right,color:homeGold,size:20)])));
 }
 class _SettingsHeader extends StatelessWidget {
   const _SettingsHeader({required this.palette});
