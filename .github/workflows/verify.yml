@@ -232,6 +232,11 @@ jobs:
               target.parent.mkdir(parents=True, exist_ok=True)
               shutil.copyfile(source, target)
           assert pathlib.Path('docs/review-images/home-ar-430.png').is_file()
+          for name in ['lib/settings_ui.dart', 'lib/feature_panels.dart', 'lib/ui_strings.dart',
+                       'test/settings_premium_test.dart', 'test/redesign_test.dart']:
+              source = root / 'verification/settings-source' / name
+              assert source.is_file() and not source.is_symlink(), 'Missing tested formatted Settings source'
+              shutil.copyfile(source, pathlib.Path(name))
           for folder, label in [('reviewed-native', 'android-native'),
                                 ('reviewed-ios/verification/ios-device', 'ios-native')]:
               destination = pathlib.Path('docs/review-images') / label
@@ -251,7 +256,7 @@ jobs:
           test "$(git ls-remote origin refs/heads/redesign/premium-settings-20261018 | cut -f1)" = "$GITHUB_SHA"
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A -- assets/brand/wird_wordmark.png android/app/src/main/res/mipmap-*/ic_launcher.png android/app/src/main/res/drawable-nodpi/wird*.png ios/Runner/Assets.xcassets/AppIcon.appiconset/*.png ios/Runner/Assets.xcassets/LaunchImage.imageset/*.png docs/review-images/
+          git add -A -- lib/settings_ui.dart lib/feature_panels.dart lib/ui_strings.dart test/settings_premium_test.dart test/redesign_test.dart assets/brand/wird_wordmark.png android/app/src/main/res/mipmap-*/ic_launcher.png android/app/src/main/res/drawable-nodpi/wird*.png ios/Runner/Assets.xcassets/AppIcon.appiconset/*.png ios/Runner/Assets.xcassets/LaunchImage.imageset/*.png docs/review-images/
           if ! git diff --cached --quiet; then
             git commit -m 'Preserve actual native captures and generated branding'
             git push origin HEAD:redesign/premium-settings-20261018
