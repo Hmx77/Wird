@@ -59,7 +59,7 @@ class NawafilPage extends StatelessWidget {
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         const Row(children: [Icon(Icons.menu_book_rounded, color: homeGold, size: 25), SizedBox(width: 10), Flexible(child: UiText('المراجع والتنبيه', style: TextStyle(color: homeGold, fontSize: 15, fontWeight: FontWeight.w700)))]),
                         const SizedBox(height: 11),
-                        const UiText(rawatibSourceNote, style: TextStyle(color: homeCream, fontSize: 13, height: 1.95)),
+                        const _NawafilDirectionalCopy(rawatibSourceNote, style: TextStyle(color: homeCream, fontSize: 13, height: 1.95)),
                       ]),
                     ),
                     const SizedBox(height: 24),
@@ -118,7 +118,7 @@ class _NawafilSummary extends StatelessWidget {
     final copy = Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       const UiText('السنن الرواتب الاثنتا عشرة', style: TextStyle(color: homeGold, fontSize: 20, height: 1.6, fontWeight: FontWeight.w700)),
       const SizedBox(height: 6),
-      UiText('$groups / 5 مجموعات سُجّلت اليوم', style: const TextStyle(color: homeCream, fontSize: 12, height: 1.8)),
+      _NawafilDirectionalCopy('$groups / 5 مجموعات سُجّلت اليوم', style: const TextStyle(color: homeCream, fontSize: 12, height: 1.8)),
     ]);
     final ring = Semantics(
       label: uiString('ركعات سُجّلت اليوم', Localizations.localeOf(context).languageCode), value: '$rakahs / 12',
@@ -182,7 +182,7 @@ class _WorshipRow extends StatelessWidget {
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               UiText(title, style: const TextStyle(color: homeCream, fontSize: 17, fontWeight: FontWeight.w600, height: 1.6)),
               const SizedBox(height: 3),
-              UiText(subtitle, style: const TextStyle(color: Color(0xFFCFD9CD), fontSize: 12, height: 1.85)),
+              _NawafilDirectionalCopy(subtitle, style: const TextStyle(color: Color(0xFFCFD9CD), fontSize: 12, height: 1.85)),
             ])),
             const SizedBox(width: 12),
             IconTheme(data: const IconThemeData(color: homeGold, size: 28), child: prostration ? const SujoodIcon(size: 34) : Icon(icon)),
@@ -195,4 +195,23 @@ class _WorshipRow extends StatelessWidget {
       )),
     ),
   );
+}
+
+// Keep numeric fractions and citation ranges in their original logical order
+// inside Arabic paragraphs, without modifying the preserved source strings.
+String nawafilDirectionalText(String text) => text.replaceAllMapped(
+  RegExp(r'[0-9]+(?:\s*[/–-]\s*[0-9]+)?[a-z]?'),
+  (match) => '\u2066${match[0]}\u2069',
+);
+
+class _NawafilDirectionalCopy extends StatelessWidget {
+  const _NawafilDirectionalCopy(this.data, {this.style});
+  final String data;
+  final TextStyle? style;
+  @override
+  Widget build(BuildContext context) {
+    final value = tr(context, data);
+    return Text(nawafilDirectionalText(value), style: style,
+      textDirection: RegExp(r'[\u0600-\u06ff]').hasMatch(value) ? TextDirection.rtl : null);
+  }
 }
