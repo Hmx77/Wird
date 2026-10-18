@@ -55,7 +55,7 @@ void main() {
       expect(find.byType(ProgressPage), findsNothing);
       expect(find.byType(SujoodIcon), findsWidgets);
       expect(store.favorites, contains('morning_sayyid'));
-      await tester.tap(find.text('الإعدادات'));
+      await tester.tap(find.byKey(const Key('nav-settings')));
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
         find.text('زيتوني وكريمي'),
@@ -116,7 +116,7 @@ void main() {
             expect(card, findsOneWidget);
             expect(tester.takeException(), isNull);
           }
-          expect(find.text('لحظات من السكينة'), findsNothing);
+          expect(find.text(uiString('لحظات من السكينة', language)), findsOneWidget);
           expect(
             tester.takeException(),
             isNull,
@@ -172,8 +172,8 @@ void main() {
         expect(tester.takeException(), isNull);
         await tester.runAsync(
           () => precacheImage(
-            wirdArtwork,
-            tester.element(find.byType(WirdMark).first),
+            wirdWordmark,
+            tester.element(find.byKey(const Key('home-wordmark'))),
           ),
         );
         await tester.pump();
@@ -245,12 +245,14 @@ void main() {
 
       await tester.runAsync(
         () => precacheImage(
-          wirdArtwork,
-          tester.element(find.byType(WirdMark).first),
+          wirdWordmark,
+          tester.element(find.byKey(const Key('home-wordmark'))),
         ),
       );
       await tester.pump();
       await capture('home-regular');
+      await tester.ensureVisible(find.byKey(const Key('home-morning')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('home-morning')));
       await tester.pumpAndSettle();
       await capture('reader');
@@ -272,10 +274,10 @@ void main() {
       );
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(uiString('النوافل', language)));
+      await tester.tap(find.byKey(const Key('nav-nawafil')));
       await tester.pumpAndSettle();
       await capture('nawafil');
-      await tester.tap(find.text(uiString('الإعدادات', language)));
+      await tester.tap(find.byKey(const Key('nav-settings')));
       await tester.pumpAndSettle();
       await capture('settings');
       await tester.drag(find.byType(ListView).last, const Offset(0, -600));
@@ -296,3 +298,4 @@ void main() {
     });
   }
 }
+

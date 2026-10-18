@@ -73,10 +73,10 @@ void main() {
         );
         await tester.pump();
         expect(find.text('Morning Athkar'), findsOneWidget);
-        final logo = tester.widget<Image>(find.byType(Image).first);
+        final logo = tester.widget<Image>(find.byKey(const Key('home-wordmark')));
         expect(
           (logo.image as AssetImage).assetName,
-          'assets/brand/wird_artwork_20261015.png',
+          'assets/brand/wird_wordmark.png',
         );
         expect(logo.fit, BoxFit.contain);
         expect(tester.takeException(), isNull);
@@ -93,3 +93,4 @@ void main() {
     expect(uiString('2 / 6 مكتمل', 'en'), '2 / 6 complete');
   });
 }
+
