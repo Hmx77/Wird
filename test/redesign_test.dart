@@ -113,7 +113,10 @@ void main() {
             expect(card, findsOneWidget);
             expect(tester.takeException(), isNull);
           }
-          expect(find.text(uiString('لحظات من السكينة', language)), findsOneWidget);
+          expect(
+            find.text(uiString('لحظات من السكينة', language)),
+            findsOneWidget,
+          );
           expect(
             tester.takeException(),
             isNull,
@@ -169,8 +172,16 @@ void main() {
         expect(tester.takeException(), isNull);
         await tester.runAsync(
           () => Future.wait([
-            precacheImage(wirdWordmark, tester.element(find.byKey(const Key('home-wordmark')))),
-            ...homeArt.values.map((art) => precacheImage(art, tester.element(find.byKey(const Key('home-wordmark'))))),
+            precacheImage(
+              wirdWordmark,
+              tester.element(find.byKey(const Key('home-wordmark'))),
+            ),
+            ...homeArt.values.map(
+              (art) => precacheImage(
+                art,
+                tester.element(find.byKey(const Key('home-wordmark'))),
+              ),
+            ),
           ]),
         );
         await tester.pump();
@@ -242,8 +253,16 @@ void main() {
 
       await tester.runAsync(
         () => Future.wait([
-          precacheImage(wirdWordmark, tester.element(find.byKey(const Key('home-wordmark')))),
-          ...homeArt.values.map((art) => precacheImage(art, tester.element(find.byKey(const Key('home-wordmark'))))),
+          precacheImage(
+            wirdWordmark,
+            tester.element(find.byKey(const Key('home-wordmark'))),
+          ),
+          ...homeArt.values.map(
+            (art) => precacheImage(
+              art,
+              tester.element(find.byKey(const Key('home-wordmark'))),
+            ),
+          ),
         ]),
       );
       await tester.pump();
