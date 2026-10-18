@@ -16,6 +16,7 @@ import 'content.dart';
 import 'quran_text.dart';
 part 'premium_ui.dart';
 part 'nawafil_ui.dart';
+part 'settings_ui.dart';
 part 'cinematic_opening.dart';
 
 Future<void> main() async {
@@ -540,7 +541,7 @@ class _WirdShellState extends State<WirdShell> {
       NawafilPage(store: store),
       SettingsPage(store: store),
     ];
-    final darkSurface = page == 0 || page == 2 || p.dark;
+    final darkSurface = page == 0 || page == 2 || page == 3 || p.dark;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -552,7 +553,7 @@ class _WirdShellState extends State<WirdShell> {
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: Scaffold(
-        backgroundColor: page == 0 || page == 2 ? p.homeBackground : p.background,
+        backgroundColor: page == 0 || page == 2 || page == 3 ? p.homeBackground : p.background,
         body: SafeArea(
           child: IndexedStack(index: page, children: screens),
         ),
@@ -1381,246 +1382,6 @@ class ProgressPage extends StatelessWidget {
                 UiText(
                   'الدلالات: الصباح • المساء • النوم',
                   style: TextStyle(color: p.ink.withOpacity(.6), fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key, required this.store});
-  final WirdState store;
-  @override
-  Widget build(BuildContext context) {
-    final p = store.palette;
-    return ListView(
-      padding: const EdgeInsets.only(bottom: 25),
-      children: [
-        const Header('الإعدادات', subtitle: 'المظهر والقراءة والخصوصية'),
-        if (store.storageError != null)
-          Padding(
-            padding: const EdgeInsets.all(19),
-            child: UiText(store.storageError!),
-          ),
-        ListTile(
-          title: const UiText('اللغة'),
-          trailing: DropdownButton<String>(
-            key: const Key('language-picker'),
-            value: store.languageCode,
-            items: const [
-              DropdownMenuItem(value: 'ar', child: Text('العربية')),
-              DropdownMenuItem(value: 'en', child: Text('English')),
-            ],
-            onChanged: (value) {
-              if (value != null) store.changeLanguage(value);
-            },
-          ),
-        ),
-        if (store.languageCode == 'en')
-          const Padding(
-            padding: EdgeInsets.all(19),
-            child: UiText(
-              'النص الديني بالعربية؛ الترجمة الإنجليزية قيد المراجعة.',
-            ),
-          ),
-        const ReminderPanel(),
-        SwitchListTile(
-          title: const UiText('اهتزاز خفيف عند العد'),
-          value: store.haptics,
-          onChanged: (v) => store.preferences(feedback: v),
-        ),
-        SwitchListTile(
-          title: const UiText('الانتقال تلقائيًا بعد إكمال الذكر'),
-          value: store.autoAdvance,
-          onChanged: (v) => store.preferences(advance: v),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 19),
-          child: Surface(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                UiText(
-                  'المظهر',
-                  style: TextStyle(
-                    color: p.ink,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                ...List.generate(themes.length, (index) {
-                  final t = themes[index];
-                  return RadioListTile<int>(
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    title: Row(
-                      children: [
-                        Container(
-                          width: 25,
-                          height: 25,
-                          decoration: BoxDecoration(
-                            color: t.primary,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        const SizedBox(width: 9),
-                        Expanded(
-                          child: UiText(
-                            t.name,
-                            style: TextStyle(color: p.ink, fontSize: 13),
-                          ),
-                        ),
-                      ],
-                    ),
-                    value: index,
-                    groupValue: store.themeIndex,
-                    activeColor: p.primary,
-                    onChanged: (value) {
-                      if (value != null) store.changeTheme(value);
-                    },
-                  );
-                }),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 14),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 19),
-          child: Surface(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                UiText(
-                  'حجم الخط',
-                  style: TextStyle(color: p.ink, fontWeight: FontWeight.bold),
-                ),
-                Slider(
-                  value: store.fontSize,
-                  min: 19,
-                  max: 38,
-                  divisions: 19,
-                  activeColor: p.primary,
-                  onChanged: store.changeFont,
-                ),
-                UiText(
-                  'هذا مثال على حجم القراءة',
-                  style: TextStyle(fontSize: store.fontSize, color: p.ink),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 14),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 19),
-          child: Surface(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                UiText(
-                  'السبحة الشخصية',
-                  style: TextStyle(color: p.ink, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 15),
-                Center(
-                  child: UiText(
-                    '${store.tasbih}',
-                    style: TextStyle(
-                      color: p.primary,
-                      fontSize: 42,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    FilledButton(
-                      onPressed: () => store.setTasbih(store.tasbih + 1),
-                      child: const UiText('تسبيح +'),
-                    ),
-                    const SizedBox(width: 10),
-                    OutlinedButton(
-                      onPressed: () => store.setTasbih(0),
-                      child: const UiText('إعادة'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                UiText(
-                  'هدف شخصي، وليس عددًا تعبديًا منصوصًا.',
-                  style: TextStyle(color: p.ink.withOpacity(.65), fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 14),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 19),
-          child: Surface(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                UiText(
-                  'خصوصيتك ومصادرك',
-                  style: TextStyle(color: p.ink, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                UiText(
-                  'لا حسابات ولا إعلانات ولا تحليلات ولا قاعدة بيانات خارجية. تحفظ المتابعة على جهازك. أضف ودجت ورد من الشاشة الرئيسية. الصوت لا يتاح إلا بعد اعتماد التسجيل وترخيصه. أوقات التذكير اختيار شخصي وليست تحديدًا شرعيًا.',
-                  style: TextStyle(color: p.ink.withOpacity(.75), height: 1.7),
-                ),
-                TextButton(
-                  onPressed: () => showLicensePage(
-                    context: context,
-                    applicationName: 'ورد — Wird',
-                  ),
-                  child: const UiText('تراخيص البرمجيات'),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    final confirmed = await showDialog<bool>(
-                      context: context,
-                      builder: (c) => AlertDialog(
-                        title: const UiText('مسح المتابعة والمفضلة؟'),
-                        content: const UiText(
-                          'لا يمكن التراجع. تبقى إعدادات المظهر والتذكيرات.',
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(c, false),
-                            child: const UiText('إلغاء'),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.pop(c, true),
-                            child: const UiText('مسح'),
-                          ),
-                        ],
-                      ),
-                    );
-                    if (confirmed == true) {
-                      try {
-                        await store.erase();
-                      } catch (_) {
-                        if (context.mounted)
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: UiText(
-                                'تعذر مسح البيانات. حاول مجددًا.',
-                              ),
-                            ),
-                          );
-                      }
-                    }
-                  },
-                  child: const UiText('مسح بياناتي المحلية'),
                 ),
               ],
             ),

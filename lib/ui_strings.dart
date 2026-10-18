@@ -14,6 +14,11 @@ const themeArabic = <String, String>{
 };
 
 const uiEnglish = <String, String>{
+  'اختر لغة التطبيق': 'Choose your app language',
+  'التفاصيل والمصادر': 'Details and sources',
+  'تحفظ المتابعة على جهازك.': 'Your progress is stored on your device.',
+  'سيمسح تقدم القراءة والمفضلة وتتبع الصلاة والسبحة الشخصية. لا يمكن التراجع. تبقى إعدادات المظهر والتذكيرات.': 'This erases reading progress, favorites, prayer tracking and personal Tasbih. This cannot be undone. Appearance settings and reminders remain.',
+
   'متابعة القراءة': 'Continue reading',
   'تقدم اليوم': 'Today’s progress',
   'التسبيح': 'Tasbih',
