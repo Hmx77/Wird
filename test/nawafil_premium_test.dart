@@ -5,6 +5,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wird/main.dart';
 
 void main() {
+  test('Arabic fractions and source ranges retain logical order and exact wording', () {
+    expect(nawafilDirectionalText('0 / 5 مجموعات'), '\u20660 / 5\u2069 مجموعات');
+    final note = nawafilDirectionalText(rawatibSourceNote);
+    expect(note, contains('\u20661180–1181\u2069'));
+    expect(note.replaceAll(RegExp('[\u2066\u2069]'), ''), rawatibSourceNote);
+  });
   Future<WirdState> mount(WidgetTester tester, {int theme = 8, String language = 'ar', double scale = 1}) async {
     SharedPreferences.setMockInitialValues({'haptics': false, 'theme': theme});
     final store = WirdState(now: () => DateTime(2026, 10, 18, 12));
@@ -32,7 +38,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(store.prayerDone('dhuhr_before'), isTrue);
     expect(find.text('4/12'), findsOneWidget);
-    expect(find.text('1 / 5 مجموعات سُجّلت اليوم'), findsOneWidget);
+    expect(find.text('\u20661 / 5\u2069 مجموعات سُجّلت اليوم'), findsOneWidget);
     await store.pendingWrites;
     final restored = WirdState(now: () => DateTime(2026, 10, 18, 12));
     await restored.initialize();
@@ -63,7 +69,7 @@ void main() {
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
         }
-        expect(find.text(rawatibSourceNote), findsOneWidget);
+        expect(find.text(nawafilDirectionalText(rawatibSourceNote)), findsOneWidget);
         expect(find.byType(SujoodIcon), findsNWidgets(2));
         await finish(tester, store);
       });
