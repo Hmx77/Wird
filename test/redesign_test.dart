@@ -57,11 +57,8 @@ void main() {
       expect(store.favorites, contains('morning_sayyid'));
       await tester.tap(find.byKey(const Key('nav-settings')));
       await tester.pumpAndSettle();
-      await tester.scrollUntilVisible(
-        find.text('زيتوني وكريمي'),
-        200,
-        scrollable: find.byType(Scrollable).last,
-      );
+      await tester.ensureVisible(find.byKey(const Key('appearance-picker')));
+      await tester.tap(find.byKey(const Key('appearance-picker')));
       await tester.pumpAndSettle();
       expect(find.text('زيتوني وكريمي'), findsOneWidget);
       expect(tester.takeException(), isNull);
@@ -280,7 +277,8 @@ void main() {
       await tester.tap(find.byKey(const Key('nav-settings')));
       await tester.pumpAndSettle();
       await capture('settings');
-      await tester.drag(find.byType(ListView).last, const Offset(0, -600));
+      await tester.ensureVisible(find.byKey(const Key('appearance-picker')));
+      await tester.tap(find.byKey(const Key('appearance-picker')));
       await tester.pumpAndSettle();
       await capture('themes');
       await store.pendingWrites;
@@ -298,4 +296,3 @@ void main() {
     });
   }
 }
-

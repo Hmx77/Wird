@@ -43,7 +43,7 @@ void main() {
   });
   testWidgets('Reminder defaults and saved time picker work without enabling notifications',(t)async {
     final s=await mount(t);
-    for(final section in ['morning','evening','bedtime']) {
+    for(final section in ['morning','evening','sleep']) {
       final f=find.byKey(Key('reminder-switch-$section'));expect(t.widget<Switch>(f).value,isFalse);
     }
     await tap(t,'reminder-time-morning');expect(find.byType(TimePickerDialog),findsOneWidget);await t.tap(find.text('إلغاء'));await t.pumpAndSettle();
