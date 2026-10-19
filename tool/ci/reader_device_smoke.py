@@ -29,7 +29,7 @@ def tap(label, scroll=False, bottom=False):
     for attempt in range(50 if scroll else 3):
         candidates = []
         for n in snapshot():
-            value = n.get('text', '') + ' ' + n.get('content-desc', '')
+            value = n.get('text', '') + ' ' + n.get('content-desc', '') + ' ' + n.get('hint', '')
             if normal(label) not in normal(value):
                 continue
             bounds = list(map(int, re.findall(r'\d+', n.get('bounds', ''))))
