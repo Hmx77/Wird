@@ -3,12 +3,13 @@ set -euo pipefail
 mkdir -p verification
 python3 tool/ci/check_approved_opening.py
 python3 tool/ci/check_reader_preservation.py
+python3 tool/ci/check_tasbih_preservation.py
 flutter --version
 flutter doctor -v
 flutter pub get
 dart format lib test tool
 mkdir -p verification/settings-source/lib verification/settings-source/test
-for wird_source in lib/settings_ui.dart lib/feature_panels.dart lib/ui_strings.dart lib/reading_ui.dart test/settings_premium_test.dart test/redesign_test.dart test/reading_premium_test.dart
+for wird_source in lib/settings_ui.dart lib/feature_panels.dart lib/ui_strings.dart lib/reading_ui.dart lib/tasbih_ui.dart test/tasbih_premium_test.dart test/settings_premium_test.dart test/redesign_test.dart test/reading_premium_test.dart
 do
   cp "$wird_source" "verification/settings-source/$wird_source.txt"
 done
