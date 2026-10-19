@@ -59,6 +59,7 @@ void main(){
   testWidgets('Reader count Undo target alternatives navigation fonts and restart persistence',(t)async{
     final s=await state();final group=inSection(DhikrSection.morning);final e=group.first;
     await t.pumpWidget(app(s,ReaderPage(store:s,section:e.section)));await t.pumpAndSettle();
+    await reveal(t,find.byKey(const Key('reader-previous')));
     expect(t.widget<OutlinedButton>(find.byKey(const Key('reader-previous'))).onPressed,isNull);
     await tap(t,'reader-counter');expect(s.count(e),1);
     await tap(t,'reader-undo');expect(s.count(e),0);
