@@ -48,7 +48,7 @@ void main() {
   testWidgets('100 rapid taps increment once, survive reinitialization, reset isolates other data', (t) async {
     final s=await state(count:6);s.favorites.add('preserved');s.counts['preserved']=2;s.prayers.add('preserved');
     await t.pumpWidget(app(s));await t.pumpAndSettle();
-    final button=find.byKey(const Key('home-tasbih-add'));await t.ensureVisible(button);
+    final button=find.byKey(const Key('home-tasbih-add'));await t.ensureVisible(button);await t.pumpAndSettle();
     for(var i=0;i<100;i++){await t.tap(button);}
     expect(s.tasbih,106);await t.pumpAndSettle();await s.pendingWrites;
     expect((await SharedPreferences.getInstance()).getInt('tasbih'),106);
