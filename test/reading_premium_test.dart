@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,11 +10,16 @@ import 'package:wird/content.dart';
 import 'package:wird/main.dart';
 
 void main(){
+  TestWidgetsFlutterBinding.ensureInitialized();
+  setUpAll(()async{
+    final font=FontLoader('NotoSansArabic')..addFont(rootBundle.load('assets/fonts/NotoSansArabic.ttf'));await font.load();
+    final icons=FontLoader('MaterialIcons')..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'));await icons.load();
+  });
   Future<WirdState> state({int theme=8,String language='ar'})async{
     SharedPreferences.setMockInitialValues({'haptics':false,'theme':theme,'language':language});
     final s=WirdState();await s.initialize();return s;
   }
-  Widget app(WirdState s,Widget page,{double scale=1,GlobalKey? capture})=>RepaintBoundary(key:capture,child:AnimatedBuilder(animation:s,builder:(context,_)=>MaterialApp(locale:Locale(s.languageCode),supportedLocales:const[Locale('ar'),Locale('en')],localizationsDelegates:GlobalMaterialLocalizations.delegates,theme:wirdTheme(s.palette),builder:(context,child)=>MediaQuery(data:MediaQuery.of(context).copyWith(textScaler:TextScaler.linear(scale)),child:child!),home:Scaffold(body:page))));
+  Widget app(WirdState s,Widget page,{double scale=1,GlobalKey? capture})=>RepaintBoundary(key:capture,child:AnimatedBuilder(animation:s,builder:(context,_)=>MaterialApp(debugShowCheckedModeBanner:false,locale:Locale(s.languageCode),supportedLocales:const[Locale('ar'),Locale('en')],localizationsDelegates:GlobalMaterialLocalizations.delegates,theme:wirdTheme(s.palette),builder:(context,child)=>MediaQuery(data:MediaQuery.of(context).copyWith(textScaler:TextScaler.linear(scale)),child:child!),home:Scaffold(body:page))));
   Future<void> reveal(WidgetTester t,Finder target)async{
     final viewport=find.byType(Scrollable).first;
     final position=t.state<ScrollableState>(viewport).position;
