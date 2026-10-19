@@ -93,14 +93,26 @@ class DevotionCard extends StatelessWidget {
 
 class _DevotionArch extends CustomPainter {
   const _DevotionArch();
-  @override void paint(Canvas canvas,Size size){
-    final w=size.width;
-    final p=Path()..moveTo(w*.055,175)..cubicTo(w*.055,116,w*.22,95,w*.30,87)
-      ..quadraticBezierTo(w*.43,62,w*.5,11)..quadraticBezierTo(w*.57,62,w*.70,87)
-      ..cubicTo(w*.78,95,w*.945,116,w*.945,175);
-    canvas.drawPath(p,Paint()..color=homeGold.withOpacity(.20)..style=PaintingStyle.stroke..strokeWidth=1);
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final p = Path()
+      ..moveTo(w * .055, 175)
+      ..cubicTo(w * .055, 116, w * .22, 95, w * .30, 87)
+      ..quadraticBezierTo(w * .43, 62, w * .5, 11)
+      ..quadraticBezierTo(w * .57, 62, w * .70, 87)
+      ..cubicTo(w * .78, 95, w * .945, 116, w * .945, 175);
+    canvas.drawPath(
+      p,
+      Paint()
+        ..color = homeGold.withOpacity(.20)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1,
+    );
   }
-  @override bool shouldRepaint(covariant _DevotionArch oldDelegate)=>false;
+
+  @override
+  bool shouldRepaint(covariant _DevotionArch oldDelegate) => false;
 }
 
 class _DevotionCorners extends CustomPainter {
@@ -263,125 +275,146 @@ class _LibraryPageState extends State<LibraryPage> {
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             slivers: [
               SliverToBoxAdapter(
-                child: CustomPaint(painter:const _DevotionArch(),child:Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
-                  child: Column(
-                    children: [
-                      const Icon(Icons.spa_outlined, color: homeGold, size: 24),
-                      const SizedBox(height: 10),
-                      const UiText(
-                        'الأذكار',
-                        style: TextStyle(
+                child: CustomPaint(
+                  painter: const _DevotionArch(),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+                    child: Column(
+                      children: [
+                        const Icon(
+                          Icons.spa_outlined,
                           color: homeGold,
-                          fontSize: 32,
-                          fontWeight: FontWeight.w600,
+                          size: 24,
                         ),
-                      ),
-                      const SizedBox(height: 6),
-                      const UiText(
-                        'ابحث واقرأ واحفظ أذكارك المفضلة',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: homeCream,
-                          fontSize: 14,
-                          height: 1.7,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      TextField(
-                        key: const Key('library-search'),
-                        controller: search,
-                        textDirection: Directionality.of(context),
-                        style: const TextStyle(
-                          color: homeCream,
-                          fontFamily: 'NotoSansArabic',
-                        ),
-                        onChanged: (value) =>
-                            setState(() => query = value.trim()),
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(
-                            Icons.search_rounded,
+                        const SizedBox(height: 10),
+                        const UiText(
+                          'الأذكار',
+                          style: TextStyle(
                             color: homeGold,
+                            fontSize: 32,
+                            fontWeight: FontWeight.w600,
                           ),
-                          suffixIcon: query.isEmpty
-                              ? null
-                              : IconButton(
-                                  tooltip: tr(context, 'مسح البحث'),
-                                  onPressed: () {
-                                    search.clear();
-                                    setState(() => query = '');
-                                  },
-                                  icon: const Icon(
-                                    Icons.close,
-                                    color: homeGold,
-                                  ),
-                                ),
-                          hintText: tr(context, 'ابحث عن ذكر'),
-                          hintStyle: TextStyle(
-                            color: homeCream.withOpacity(.7),
+                        ),
+                        const SizedBox(height: 6),
+                        const UiText(
+                          'ابحث واقرأ واحفظ أذكارك المفضلة',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: homeCream,
+                            fontSize: 14,
+                            height: 1.7,
                           ),
-                          filled: true,
-                          fillColor: p.homeSurface.withOpacity(.8),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 16,
+                        ),
+                        const SizedBox(height: 20),
+                        TextField(
+                          key: const Key('library-search'),
+                          controller: search,
+                          textDirection: Directionality.of(context),
+                          style: const TextStyle(
+                            color: homeCream,
+                            fontFamily: 'NotoSansArabic',
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(24),
-                            borderSide: BorderSide(
-                              color: homeGold.withOpacity(.55),
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(24),
-                            borderSide: const BorderSide(
+                          onChanged: (value) =>
+                              setState(() => query = value.trim()),
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(
+                              Icons.search_rounded,
                               color: homeGold,
-                              width: 1.5,
+                            ),
+                            suffixIcon: query.isEmpty
+                                ? null
+                                : IconButton(
+                                    tooltip: tr(context, 'مسح البحث'),
+                                    onPressed: () {
+                                      search.clear();
+                                      setState(() => query = '');
+                                    },
+                                    icon: const Icon(
+                                      Icons.close,
+                                      color: homeGold,
+                                    ),
+                                  ),
+                            hintText: tr(context, 'ابحث عن ذكر'),
+                            hintStyle: TextStyle(
+                              color: homeCream.withOpacity(.7),
+                            ),
+                            filled: true,
+                            fillColor: p.homeSurface.withOpacity(.8),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 16,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(24),
+                              borderSide: BorderSide(
+                                color: homeGold.withOpacity(.55),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(24),
+                              borderSide: const BorderSide(
+                                color: homeGold,
+                                width: 1.5,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      Wrap(
-                        spacing: 14,
-                        runSpacing: 10,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          FilterChip(
-                            key: const Key('library-favorites'),
-                            avatar: Icon(
-                              favoriteOnly
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              color: favoriteOnly ? const Color(0xFF002B2B) : homeGold,
-                              size: 20,
+                        const SizedBox(height: 16),
+                        Wrap(
+                          spacing: 14,
+                          runSpacing: 10,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            FilterChip(
+                              key: const Key('library-favorites'),
+                              avatar: Icon(
+                                favoriteOnly
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: favoriteOnly
+                                    ? const Color(0xFF002B2B)
+                                    : homeGold,
+                                size: 20,
+                              ),
+                              label: UiText(
+                                'المفضلة',
+                                style: TextStyle(
+                                  color: favoriteOnly
+                                      ? const Color(0xFF002B2B)
+                                      : homeCream,
+                                ),
+                              ),
+                              selected: favoriteOnly,
+                              color: WidgetStateProperty.resolveWith(
+                                (states) =>
+                                    states.contains(WidgetState.selected)
+                                    ? homeGold
+                                    : p.homeBackground,
+                              ),
+                              selectedColor: homeGold,
+                              backgroundColor: p.homeBackground,
+                              side: BorderSide(
+                                color: homeGold.withOpacity(.65),
+                              ),
+                              showCheckmark: false,
+                              onSelected: (v) =>
+                                  setState(() => favoriteOnly = v),
                             ),
-                            label: UiText(
-                              'المفضلة',
-                              style: TextStyle(color: favoriteOnly ? const Color(0xFF002B2B) : homeCream),
+                            UiText(
+                              '${filtered.length} ذكر',
+                              key: const Key('library-count'),
+                              style: TextStyle(
+                                color: homeCream.withOpacity(.85),
+                                fontSize: 14,
+                              ),
                             ),
-                            selected: favoriteOnly,
-                            color: WidgetStateProperty.resolveWith((states) => states.contains(WidgetState.selected) ? homeGold : p.homeBackground),
-                            selectedColor: homeGold,
-                            backgroundColor: p.homeBackground,
-                            side: BorderSide(color: homeGold.withOpacity(.65)),
-                            showCheckmark: false,
-                            onSelected: (v) => setState(() => favoriteOnly = v),
-                          ),
-                          UiText(
-                            '${filtered.length} ذكر',
-                            key: const Key('library-count'),
-                            style: TextStyle(
-                              color: homeCream.withOpacity(.85),
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              )),
+              ),
               if (filtered.isEmpty)
                 const SliverToBoxAdapter(
                   child: Padding(
@@ -726,136 +759,144 @@ class _ReaderPageState extends State<ReaderPage> {
                             ),
                           ),
                           AnimatedSize(
-                            duration:MediaQuery.disableAnimationsOf(context)?Duration.zero:const Duration(milliseconds:220),
-                            curve:Curves.easeOutCubic,alignment:Alignment.topCenter,
-                            child:expanded?Padding(
-                              padding: const EdgeInsets.only(top: 8),
-                              child: DevotionCard(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    UiText(
-                                      'المعنى',
-                                      style: TextStyle(
-                                        color: homeGold,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 7),
-                                    UiText(
-                                      e.meaning,
-                                      style: TextStyle(
-                                        color: homeCream,
-                                        height: 1.7,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 14),
-                                    UiText(
-                                      'الفضل',
-                                      style: TextStyle(
-                                        color: homeGold,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 7),
-                                    UiText(
-                                      e.benefit,
-                                      style: TextStyle(
-                                        color: homeCream,
-                                        height: 1.7,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 14),
-                                    UiText(
-                                      'الدليل',
-                                      style: TextStyle(
-                                        color: homeGold,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 7),
-                                    UiText(
-                                      e.evidence,
-                                      style: TextStyle(
-                                        color: homeCream,
-                                        height: 1.7,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    UiText(
-                                      e.timing,
-                                      style: TextStyle(color: homeCream),
-                                    ),
-                                    TextButton.icon(
-                                      onPressed: () async {
-                                        var ok = false;
-                                        try {
-                                          ok = await launchUrl(
-                                            Uri.parse(e.sourceUrl),
-                                            mode:
-                                                LaunchMode.externalApplication,
-                                          );
-                                        } catch (_) {
-                                          /* Show the same recoverable message. */
-                                        }
-                                        if (!ok && context.mounted)
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            const SnackBar(
-                                              content: UiText(
-                                                'تعذر فتح المرجع. يحتاج اتصالًا بالإنترنت.',
+                            duration: MediaQuery.disableAnimationsOf(context)
+                                ? Duration.zero
+                                : const Duration(milliseconds: 220),
+                            curve: Curves.easeOutCubic,
+                            alignment: Alignment.topCenter,
+                            child: expanded
+                                ? Padding(
+                                    padding: const EdgeInsets.only(top: 8),
+                                    child: DevotionCard(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          UiText(
+                                            'المعنى',
+                                            style: TextStyle(
+                                              color: homeGold,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 7),
+                                          UiText(
+                                            e.meaning,
+                                            style: TextStyle(
+                                              color: homeCream,
+                                              height: 1.7,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 14),
+                                          UiText(
+                                            'الفضل',
+                                            style: TextStyle(
+                                              color: homeGold,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 7),
+                                          UiText(
+                                            e.benefit,
+                                            style: TextStyle(
+                                              color: homeCream,
+                                              height: 1.7,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 14),
+                                          UiText(
+                                            'الدليل',
+                                            style: TextStyle(
+                                              color: homeGold,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 7),
+                                          UiText(
+                                            e.evidence,
+                                            style: TextStyle(
+                                              color: homeCream,
+                                              height: 1.7,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 12),
+                                          UiText(
+                                            e.timing,
+                                            style: TextStyle(color: homeCream),
+                                          ),
+                                          TextButton.icon(
+                                            onPressed: () async {
+                                              var ok = false;
+                                              try {
+                                                ok = await launchUrl(
+                                                  Uri.parse(e.sourceUrl),
+                                                  mode: LaunchMode
+                                                      .externalApplication,
+                                                );
+                                              } catch (_) {
+                                                /* Show the same recoverable message. */
+                                              }
+                                              if (!ok && context.mounted)
+                                                ScaffoldMessenger.of(
+                                                  context,
+                                                ).showSnackBar(
+                                                  const SnackBar(
+                                                    content: UiText(
+                                                      'تعذر فتح المرجع. يحتاج اتصالًا بالإنترنت.',
+                                                    ),
+                                                  ),
+                                                );
+                                            },
+                                            icon: const Icon(Icons.open_in_new),
+                                            label: const UiText(
+                                              'فتح المصدر — يحتاج إنترنت',
+                                            ),
+                                          ),
+                                          if (e.quranSourceUrl.isNotEmpty)
+                                            TextButton.icon(
+                                              onPressed: () async {
+                                                var ok = false;
+                                                try {
+                                                  ok = await launchUrl(
+                                                    Uri.parse(e.quranSourceUrl),
+                                                    mode: LaunchMode
+                                                        .externalApplication,
+                                                  );
+                                                } catch (_) {
+                                                  /* Same recoverable source failure. */
+                                                }
+                                                if (!ok && context.mounted) {
+                                                  ScaffoldMessenger.of(
+                                                    context,
+                                                  ).showSnackBar(
+                                                    const SnackBar(
+                                                      content: UiText(
+                                                        'تعذر فتح المرجع. يحتاج اتصالًا بالإنترنت.',
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                              },
+                                              icon: const Icon(
+                                                Icons.open_in_new,
+                                              ),
+                                              label: const UiText(
+                                                'نص القرآن — Tanzil',
                                               ),
                                             ),
-                                          );
-                                      },
-                                      icon: const Icon(Icons.open_in_new),
-                                      label: const UiText(
-                                        'فتح المصدر — يحتاج إنترنت',
+                                          const SizedBox(height: 12),
+                                          UiText(
+                                            e.isQuran ? 'آية قرآنية' : 'صحيح',
+                                            style: TextStyle(
+                                              color: homeGold,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    if (e.quranSourceUrl.isNotEmpty)
-                                      TextButton.icon(
-                                        onPressed: () async {
-                                          var ok = false;
-                                          try {
-                                            ok = await launchUrl(
-                                              Uri.parse(e.quranSourceUrl),
-                                              mode: LaunchMode
-                                                  .externalApplication,
-                                            );
-                                          } catch (_) {
-                                            /* Same recoverable source failure. */
-                                          }
-                                          if (!ok && context.mounted) {
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              const SnackBar(
-                                                content: UiText(
-                                                  'تعذر فتح المرجع. يحتاج اتصالًا بالإنترنت.',
-                                                ),
-                                              ),
-                                            );
-                                          }
-                                        },
-                                        icon: const Icon(Icons.open_in_new),
-                                        label: const UiText(
-                                          'نص القرآن — Tanzil',
-                                        ),
-                                      ),
-                                    const SizedBox(height: 12),
-                                    UiText(
-                                      e.isQuran ? 'آية قرآنية' : 'صحيح',
-                                      style: TextStyle(
-                                        color: homeGold,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ):const SizedBox.shrink(),
+                                  )
+                                : const SizedBox.shrink(),
                           ),
                           const SizedBox(height: 10),
                           Row(
@@ -1002,4 +1043,3 @@ class _ReaderPageState extends State<ReaderPage> {
     );
   }
 }
-
