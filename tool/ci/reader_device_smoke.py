@@ -26,7 +26,7 @@ size = re.findall(r'(\d+)x(\d+)', adb('shell', 'wm', 'size'))[-1]
 width, height = map(int, size)
 
 def tap(label, scroll=False, bottom=False):
-    for attempt in range(7 if scroll else 3):
+    for attempt in range(50 if scroll else 3):
         candidates = []
         for n in snapshot():
             value = n.get('text', '') + ' ' + n.get('content-desc', '')
@@ -90,6 +90,7 @@ expect('1 / 18')
 capture('android-reader-main.png')
 tap('الفضل والدليل والمعنى',scroll=True)
 expect('المعنى')
+tap('المعنى',scroll=True)
 capture('android-reader-evidence.png')
 tap('التالي',scroll=True)
 expect('2 / 18')
