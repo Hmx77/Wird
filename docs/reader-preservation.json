@@ -89,5 +89,10 @@
       "path": "lib/settings_ui.dart",
       "sha": "ffc88b8822789ad85dce3290fec8f75e8ffdaf04"
     }
-  ]
+  ],
+  "homeLibraryRoute": {
+    "path": "lib/premium_ui.dart",
+    "before": "MaterialPageRoute(builder: (_) => Scaffold(\n      appBar: AppBar(title: UiText(favorites ? 'المفضلة' : 'الأذكار')),",
+    "after": "MaterialPageRoute(builder: (_) => Scaffold(\n      backgroundColor:store.palette.homeBackground,\n      appBar: AppBar(backgroundColor:store.palette.homeBackground,foregroundColor:homeCream,surfaceTintColor:Colors.transparent,title: UiText(favorites ? 'المفضلة' : 'الأذكار')),"
+  }
 }
