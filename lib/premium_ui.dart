@@ -278,7 +278,8 @@ class HomePage extends StatelessWidget {
   void browse(BuildContext context, {bool favorites = false}) => Navigator.push(
     context,
     MaterialPageRoute(builder: (_) => Scaffold(
-      appBar: AppBar(title: UiText(favorites ? 'المفضلة' : 'الأذكار')),
+      backgroundColor:store.palette.homeBackground,
+      appBar: AppBar(backgroundColor:store.palette.homeBackground,foregroundColor:homeCream,surfaceTintColor:Colors.transparent,title: UiText(favorites ? 'المفضلة' : 'الأذكار')),
       body: SafeArea(child: LibraryPage(store: store, initialFavorites: favorites)),
     )),
   );
