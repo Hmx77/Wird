@@ -137,15 +137,20 @@ adb('shell','input','keyevent','KEYCODE_BACK')
 # Favorites filter was reset on process restart, as in the original application.
 expect('16 ذكر')
 tap('سورة الملك',scroll=True,node_class='android.view.View')
-expect('سورة الملك')
+expect('12 / 16')
+# Long SelectableText exposes the full passage but may omit its offscreen title.
+passages=[n.get('text','') for n in snapshot() if '\u06dd' in n.get('text','')]
+assert any([int(v) for v in re.findall(r'\u06dd([٠-٩]+)', passage)]==list(range(1,31)) for passage in passages), 'Mulk must expose all 30 ordered verse markers'
+adb('shell','input','swipe',str(width//2),str(int(height*.35)),str(width//2),str(int(height*.8)),'450')
 capture('android-reader-mulk.png')
+print('PASS: native Mulk destination 12/16 with all 30 ordered verse markers',flush=True)
 adb('shell','settings','put','system','font_scale','1.5')
 # System text-scale updates must preserve complete selectable text and scrolling.
 time.sleep(2)
 capture('android-reader-mulk-large.png')
 for attempt in range(50):
     nodes=snapshot()
-    visible=[n for n in nodes if normal('اضغط للعد') in normal(n.get('text','')+' '+n.get('content-desc','')) and len(re.findall(r'\d+',n.get('bounds','')))==4 and 0<int(re.findall(r'\d+',n.get('bounds',''))[1])<height*.85]
+    visible=[n for n in nodes if normal('اضغط للعد') in normal(n.get('text','')+' '+n.get('content-desc','')) and len(re.findall(r'\d+',n.get('bounds','')))==4 and 0<int(re.findall(r'\d+',n.get('bounds',''))[1])<height*.85 and int(re.findall(r'\d+',n.get('bounds',''))[3])<=height*.96]
     if visible:
         capture('android-reader-mulk-counter.png')
         break
