@@ -353,15 +353,16 @@ class _LibraryPageState extends State<LibraryPage> {
                               favoriteOnly
                                   ? Icons.favorite
                                   : Icons.favorite_border,
-                              color: homeGold,
+                              color: favoriteOnly ? const Color(0xFF002B2B) : homeGold,
                               size: 20,
                             ),
-                            label: const UiText(
+                            label: UiText(
                               'المفضلة',
-                              style: TextStyle(color: homeCream),
+                              style: TextStyle(color: favoriteOnly ? const Color(0xFF002B2B) : homeCream),
                             ),
                             selected: favoriteOnly,
-                            selectedColor: homeGold.withOpacity(.22),
+                            color: WidgetStateProperty.resolveWith((states) => states.contains(WidgetState.selected) ? homeGold : p.homeBackground),
+                            selectedColor: homeGold,
                             backgroundColor: p.homeBackground,
                             side: BorderSide(color: homeGold.withOpacity(.65)),
                             showCheckmark: false,
@@ -1001,3 +1002,4 @@ class _ReaderPageState extends State<ReaderPage> {
     );
   }
 }
+
