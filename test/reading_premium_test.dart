@@ -44,7 +44,11 @@ void main(){
     }
   }
   testWidgets('Arabic search, English category search, bookmark filtering and reader route preserve IDs',(t)async{
-    final s=await state();await t.pumpWidget(app(s,LibraryPage(store:s)));await t.pumpAndSettle();
+    final s=await state();await t.pumpWidget(app(s,HomePage(store:s)));await t.pumpAndSettle();
+    await tap(t,'home-favorites');
+    expect(t.widget<AppBar>(find.byType(AppBar)).backgroundColor,s.palette.homeBackground);
+    await t.tap(find.byType(BackButton));await t.pumpAndSettle();
+    await t.pumpWidget(app(s,LibraryPage(store:s)));await t.pumpAndSettle();
     expect(find.text('49 ذكر'),findsOneWidget);
     await t.enterText(find.byKey(const Key('library-search')),'اللَّه');await t.pumpAndSettle();expect(find.byType(DevotionCard),findsWidgets);
     await t.enterText(find.byKey(const Key('library-search')),'Evening');await t.pumpAndSettle();expect(find.text('15 ذكر'),findsOneWidget);
