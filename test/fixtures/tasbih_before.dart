@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wird/main.dart';
 import 'package:wird/ui_strings.dart';
 class TasbihBefore extends StatelessWidget {
-  const TasbihBefore({required this.store});
+  const TasbihBefore({super.key, required this.store});
   final WirdState store;
   @override
   Widget build(BuildContext context) => Scaffold(
