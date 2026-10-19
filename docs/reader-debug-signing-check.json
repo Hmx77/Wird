@@ -1,0 +1,27 @@
+{
+  "build16_public_certificate_sha256": "989d99c56a93b1ccd1a1f7698ca825566f592a408e43bfff161263550fe800dc",
+  "build17_public_certificate_sha256": "fe0e4292abf42b3eafa2ca84f873ec702544cefa685c17083ff1833d0eb4c9ad",
+  "same_certificate": false,
+  "apk_sha256": "9703562bacba4cfa7448a017505d1f29c531f879ed11a878970e8f43d4eb83e6",
+  "apk_bytes": 168550874,
+  "app_commit": "57723380107ff0199e3c80afd13ed73e2257278e",
+  "preserved_shipped_assets": [
+    "assets/audio/manifest.json",
+    "assets/brand/wird_artwork_20261015.png",
+    "assets/brand/wird_logo.png",
+    "assets/brand/wird_sanctuary_20261017.png",
+    "assets/brand/wird_wordmark.png",
+    "assets/fonts/NotoSansArabic.ttf",
+    "assets/fonts/OFL.txt",
+    "assets/home/botanical-serenity.webp",
+    "assets/home/evening.webp",
+    "assets/home/morning.webp",
+    "assets/home/night.webp",
+    "assets/home/serenity.webp"
+  ],
+  "abis": [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "x86_64"
+  ]
+}
