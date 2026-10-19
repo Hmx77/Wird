@@ -2,7 +2,17 @@
 
 Arabic-first, offline Flutter application for Android and iOS, expanded from the supplied starter.
 
-**Current review:** [PR #2](https://github.com/Hmx77/Wird/pull/2), on `redesign/refined-20261015`, targets `redesign/premium-20261013`. Review build **0.6.1+15** implements Botanical Serenity for Sunnah and Nawafil: an original local botanical sunrise header, gold/cream tracking rows, the preserved source note and optional prayers, accessible checks, and a derived rakah ring alongside the existing five-group progress. Arabic fractions and citation ranges retain their logical order. The approved premium Home, splash, launcher, original branding, religious catalog, ten themes and local state are preserved.
+**Current review:** [PR #3](https://github.com/Hmx77/Wird/pull/3), on `redesign/premium-reader-20261019`, targets the approved Settings review branch. Build **0.6.3+17** implements the botanical deep-teal Athkar Library and manuscript Reader with full source text, live search/bookmarks, complete references, existing counter controls and persistence. The approved splash, launcher, Settings, Nawafil and Home layout are preserved; only the Home Library popup route colors were integrated.
+
+[Actual Library render](docs/review-images/library-premium-ar.png) · [Actual Reader render](docs/review-images/reader-premium-main.png) · [Counter and controls](docs/review-images/reader-premium-counter.png) · [Before/after and full results](docs/PREMIUM_READING_2026-10-19.md) · [Download final build-17 APK](https://github.com/Hmx77/Wird/actions/runs/39265460158/artifacts/12192697789).
+
+Android and macOS analysis passed, with **114 app tests + 1 separate branding test on each platform**. Android debug packaging, unsigned iOS device/simulator packaging and actual iOS 26 simulator install/launch passed in [build #112](https://github.com/Hmx77/Wird/actions/runs/39261132223); the overall run was canceled after those build jobs and its native selector run was superseded. [Focused Reader recheck #115](https://github.com/Hmx77/Wird/actions/runs/39265460158) passed on the identical APK: Library/search/bookmarks, count/Undo/restart/navigation/evidence, all 30 Al-Mulk markers, 150% text and reachable counter, cold/warm launch and small/tablet checks. Home/Settings native interactions passed separately in #113 on that same APK. See the report for exact scopes and retained earlier failures. No merge or publication has occurred.
+
+**Debug update limitation:** build 17's runner-generated debug certificate differs from build 16, so it cannot update that installation in place. Avoid uninstalling an existing copy without considering loss of local progress. Stable owner-controlled signing is required for reliable updates; this APK is not a production release.
+
+## Previous Home and Nawafil review
+
+**Previous review:** [PR #2](https://github.com/Hmx77/Wird/pull/2), on `redesign/refined-20261015`, targets `redesign/premium-20261013`. Review build **0.6.1+15** implements Botanical Serenity for Sunnah and Nawafil: an original local botanical sunrise header, gold/cream tracking rows, the preserved source note and optional prayers, accessible checks, and a derived rakah ring alongside the existing five-group progress. Arabic fractions and citation ranges retain their logical order. The approved premium Home, splash, launcher, original branding, religious catalog, ten themes and local state are preserved.
 
 [Actual Android Nawafil screen](docs/review-images/nawafil-header-build15.png) · [Source note](docs/review-images/nawafil-note-build15.png) · [Other prayers](docs/review-images/nawafil-other-build15.jpg) · [Download wird-debug-apk](https://github.com/Hmx77/Wird/actions/runs/39121693620/artifacts/12134501811) · [Final verification run](https://github.com/Hmx77/Wird/actions/runs/39121693620) · [Complete Nawafil verification report](docs/PREMIUM_NAWAFIL_2026-10-18.md).
 
@@ -69,4 +79,5 @@ iOS: open `ios/Runner.xcworkspace`; select your Apple team for Runner and WirdWi
 See `docs/RELEASE_READINESS.md`, `docs/CONTENT_REVIEW.md`, `docs/AUDIO_PERMISSIONS.md`, and `docs/PRIVACY.md`.
 
 All three supplied PDFs (25 morning, 23 evening, 18 bedtime screens) have now been visually inspected and compared. See `docs/CONTENT_VERIFICATION_2026-10-14.md`, `docs/reference-comparison.csv`, `docs/reference-screen-map.json` and `docs/content-audit.json` for every correction, preserved variant, source, pending item and counting definition. The sevenfold حسبي الله attribution warning and other disputed, Hasan-only or weak routes remain in the development review queue, outside the reader/search/share catalog. No qualified scholarly approval is claimed; independent Arabic/religious proofreading remains required before public release. Earlier redesign manifests describe the historical 19-entry baseline.
+
 

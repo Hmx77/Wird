@@ -243,7 +243,12 @@ instances = re.findall(r'Hist\s+#\d+:\s+ActivityRecord\{[^\n]*ae\.wird\.app/(?:a
 assert len(instances) == 1, f'Expected one reusable Flutter activity, found {len(instances)}'
 print('PASS: returning launcher activation reuses one Flutter activity')
 PYWARM
-python3 tool/ci/premium_home_smoke.py
+if [[ "${WIRD_READER_ONLY:-false}" == "true" ]]; then
+  printf '%s\n' 'Focused Reader recheck: prior Home/Settings results are reported separately.' | tee verification/device/recheck-scope.txt
+else
+  python3 tool/ci/premium_home_smoke.py
+fi
+python3 tool/ci/reader_device_smoke.py
 adb shell wm size 720x1280
 adb shell wm density 320
 adb shell settings put system font_scale 1.5
@@ -270,4 +275,5 @@ adb emu kill
 printf '%s\n' 'PASS: Android 36 emulator offline feature checks, large-font/small/tablet captures; no fatal runtime errors.'
 # An opening guard failure remains a real nonzero job result, never a green pass.
 exit "$wird_startup_guard"
+
 

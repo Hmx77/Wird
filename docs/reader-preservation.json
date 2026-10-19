@@ -1,0 +1,98 @@
+{
+  "base": "b9612529cc835c788a4874aa8b75ac8a42de0a73",
+  "files": [
+    {
+      "path": "assets/audio/manifest.json",
+      "sha": "2914003a5d48f0dd32ac2a4c87b95a9318dd3411"
+    },
+    {
+      "path": "assets/brand/concept_icon_preview.png",
+      "sha": "ccf537b8a06513787e95118e904278b8ad44447a"
+    },
+    {
+      "path": "assets/brand/wird_artwork_20261015.png",
+      "sha": "5b798e17bd5f347944edcff12284c79bb291972f"
+    },
+    {
+      "path": "assets/brand/wird_logo.png",
+      "sha": "ff179d05bdc7e5d7f6fd57c2ad7a498616fa3f8b"
+    },
+    {
+      "path": "assets/brand/wird_sanctuary_20261017.png",
+      "sha": "20894b06374a22492b5bc6ded2ed1701a6b83f57"
+    },
+    {
+      "path": "assets/brand/wird_wordmark.png",
+      "sha": "751865cbe4b5b2cd7717422909c99a481f510997"
+    },
+    {
+      "path": "assets/fonts/NotoSansArabic.ttf",
+      "sha": "f1d01edce4ebaedcbe9a06fc75fec07b304ec3df"
+    },
+    {
+      "path": "assets/fonts/OFL.txt",
+      "sha": "32d57a768bc3c2f6837fec411a3256fd97af4f07"
+    },
+    {
+      "path": "assets/home/botanical-serenity.webp",
+      "sha": "0a5dd6e1a4be35a53608625939e548c52c8b3bb3"
+    },
+    {
+      "path": "assets/home/evening.webp",
+      "sha": "60758ddd8423ca7fdb58bba4edac9a00c8241375"
+    },
+    {
+      "path": "assets/home/morning.webp",
+      "sha": "9b445817760c021c71b89a9b0d7f52d028fa2ae9"
+    },
+    {
+      "path": "assets/home/night.webp",
+      "sha": "581f2ce00145b2c8ff20c8ae6cafa7c7ae1133ed"
+    },
+    {
+      "path": "assets/home/serenity.webp",
+      "sha": "060ded38948c13b4a600b185dcca7d2cdc0978a5"
+    },
+    {
+      "path": "lib/cinematic_opening.dart",
+      "sha": "b0891e0dd5e8999cc849fb28ed25affdd9b8b675"
+    },
+    {
+      "path": "lib/content.dart",
+      "sha": "1e22a145cc77b3414ba1ba9ea9407c8db9e18d2d"
+    },
+    {
+      "path": "lib/nawafil_ui.dart",
+      "sha": "693b09550507e1173b51127dd32172c040d91494"
+    },
+    {
+      "path": "lib/premium_ui.dart",
+      "sha": "d9fedb92d1d5aeaec70fe20ffd7cbb52d8628dc1"
+    },
+    {
+      "path": "lib/quran_text.dart",
+      "sha": "11869d41adf92c91f207a905323ec9230e9622b2"
+    },
+    {
+      "path": "lib/services/audio_library.dart",
+      "sha": "96fd72e2d58620f84d855be7f4faba49043f78cd"
+    },
+    {
+      "path": "lib/services/reminders.dart",
+      "sha": "c8908c79771555363633316df9b6a8aaebd5b04f"
+    },
+    {
+      "path": "lib/services/widgets.dart",
+      "sha": "e779524d2983df87816c2041c5361f1105b4758c"
+    },
+    {
+      "path": "lib/settings_ui.dart",
+      "sha": "ffc88b8822789ad85dce3290fec8f75e8ffdaf04"
+    }
+  ],
+  "homeLibraryRoute": {
+    "path": "lib/premium_ui.dart",
+    "before": "MaterialPageRoute(builder: (_) => Scaffold(\n      appBar: AppBar(title: UiText(favorites ? 'المفضلة' : 'الأذكار')),",
+    "after": "MaterialPageRoute(builder: (_) => Scaffold(\n      backgroundColor:store.palette.homeBackground,\n      appBar: AppBar(backgroundColor:store.palette.homeBackground,foregroundColor:homeCream,surfaceTintColor:Colors.transparent,title: UiText(favorites ? 'المفضلة' : 'الأذكار')),"
+  }
+}
