@@ -138,14 +138,8 @@ class _ReaderPageState extends State<ReaderPage> {
     final e = sectionEntries[index.clamp(0, sectionEntries.length - 1)];
     final progress = widget.store.count(e);
     final target = widget.store.target(e);
-    return SettingsStyle(palette:p,child: AnnotatedRegion<SystemUiOverlayStyle>(value:SystemUiOverlayStyle.light,child: Scaffold(
-      backgroundColor:p.homeBackground,
-      appBar: AppBar(
-        backgroundColor:p.homeBackground,foregroundColor:homeGold,surfaceTintColor:Colors.transparent,
-        toolbarHeight:MediaQuery.textScalerOf(context).scale(1)>1.3?100:68,
-        titleTextStyle:const TextStyle(fontFamily:"NotoSansArabic",fontSize:18,color:homeCream),
-        title: UiText(sectionLabel(widget.section)),
-        actions: [
+    final largeHeader=MediaQuery.textScalerOf(context).scale(1)>1.3 || MediaQuery.sizeOf(context).width<360;
+    final controls=<Widget>[
           IconButton(
             tooltip: tr(context, 'مشاركة بطاقة'),
             onPressed: () async {
@@ -184,7 +178,16 @@ class _ReaderPageState extends State<ReaderPage> {
                   : Icons.bookmark_outline,
             ),
           ),
-        ],
+        ];
+    return SettingsStyle(palette:p,child: AnnotatedRegion<SystemUiOverlayStyle>(value:SystemUiOverlayStyle.light,child: Scaffold(
+      backgroundColor:p.homeBackground,
+      appBar: AppBar(
+        backgroundColor:p.homeBackground,foregroundColor:homeGold,surfaceTintColor:Colors.transparent,
+        toolbarHeight:MediaQuery.textScalerOf(context).scale(1)>1.3?100:68,
+        titleTextStyle:const TextStyle(fontFamily:"NotoSansArabic",fontSize:18,color:homeCream),
+        title: UiText(sectionLabel(widget.section)),
+        actions: largeHeader?null:controls,
+        bottom:largeHeader?PreferredSize(preferredSize:const Size.fromHeight(48),child:Align(alignment:AlignmentDirectional.centerEnd,child:Wrap(children:controls))):null,
       ),
       body: DevotionBackdrop(palette:p,child: SafeArea(top:false,child: Column(
         children: [
