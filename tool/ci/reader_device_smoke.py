@@ -25,12 +25,15 @@ def snapshot():
 size = re.findall(r'(\d+)x(\d+)', adb('shell', 'wm', 'size'))[-1]
 width, height = map(int, size)
 
-def tap(label, scroll=False, bottom=False):
+def tap(label, scroll=False, bottom=False, exact=False, node_class=None):
     for attempt in range(50 if scroll else 3):
         candidates = []
         for n in snapshot():
             value = n.get('text', '') + ' ' + n.get('content-desc', '') + ' ' + n.get('hint', '')
-            if normal(label) not in normal(value):
+            if node_class and n.get('class') != node_class:
+                continue
+            values = [n.get(k, '') for k in ['text', 'content-desc', 'hint']]
+            if (exact and not any(normal(label) == normal(v) for v in values)) or (not exact and normal(label) not in normal(value)):
                 continue
             bounds = list(map(int, re.findall(r'\d+', n.get('bounds', ''))))
             if len(bounds) != 4:
@@ -86,10 +89,10 @@ capture('android-library-search.png')
 tap('مسح البحث')
 expect('49 ذكر')
 tap('حفظ في المفضلة آية الكرسي',scroll=True)
-tap('المفضلة')
+tap('المفضلة', exact=True)
 expect('1 ذكر')
 capture('android-library-favorites.png')
-tap('آية الكرسي',scroll=True)
+tap('آية الكرسي',scroll=True,node_class='android.view.View')
 expect('1 / 18')
 capture('android-reader-main.png')
 tap('الفضل والدليل والمعنى',scroll=True)
@@ -128,7 +131,7 @@ adb('shell','input','text','Bedtime')
 adb('shell','input','keyevent','KEYCODE_BACK')
 # Favorites filter was reset on process restart, as in the original application.
 expect('16 ذكر')
-tap('سورة الملك',scroll=True)
+tap('سورة الملك',scroll=True,node_class='android.view.View')
 expect('سورة الملك')
 capture('android-reader-mulk.png')
 adb('shell','settings','put','system','font_scale','1.5')
@@ -148,3 +151,4 @@ adb('shell','input','keyevent','KEYCODE_BACK')
 tap('الرئيسية',bottom=True)
 (out/'reader-interactions.json').write_text(json.dumps({'passed':True,'offline':True,'library_count':49,'search_evening':15,'search_bedtime':16,'bookmark_filter':1,'reader_count_sequence':['1/3','0/3','1/3','restart','2/3'],'navigation':['next','previous'],'evidence':'expanded','long_passage':'Mulk at system font scale 1.5'},ensure_ascii=False,indent=2)+'\n')
 print('PASS: premium Library search/bookmarks, Reader count/Undo/restart/navigation/evidence and large Mulk',flush=True)
+
