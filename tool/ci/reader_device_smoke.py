@@ -25,7 +25,7 @@ def snapshot():
 size = re.findall(r'(\d+)x(\d+)', adb('shell', 'wm', 'size'))[-1]
 width, height = map(int, size)
 
-def tap(label, scroll=False, bottom=False, exact=False, node_class=None):
+def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_bottom=False):
     for attempt in range(50 if scroll else 3):
         candidates = []
         for n in snapshot():
@@ -41,7 +41,7 @@ def tap(label, scroll=False, bottom=False, exact=False, node_class=None):
             x1, y1, x2, y2 = bounds
             if x2 <= x1 or y2 <= y1 or y1 < 0 or y2 > height:
                 continue
-            if scroll and y2 > height * .89:
+            if scroll and y2 > height * (.98 if allow_bottom else .89):
                 continue
             candidates.append((n, bounds))
         if candidates:
@@ -92,14 +92,16 @@ tap('حفظ في المفضلة آية الكرسي',scroll=True)
 tap('المفضلة', exact=True)
 expect('1 ذكر')
 capture('android-library-favorites.png')
+print('PASS: native Library search, independent bookmark and exact favorites filter',flush=True)
 tap('آية الكرسي',scroll=True,node_class='android.view.View')
 expect('1 / 18')
 capture('android-reader-main.png')
 tap('الفضل والدليل والمعنى',scroll=True)
 expect('المعنى')
-tap('المعنى',scroll=True)
+tap('المعنى',scroll=True,exact=True)
 capture('android-reader-evidence.png')
-tap('التالي',scroll=True)
+print('PASS: native Reader opened and exact meaning heading reached in expanded evidence',flush=True)
+tap('التالي',scroll=True,allow_bottom=True)
 expect('2 / 18')
 tap('اضغط للعد',scroll=True)
 expect('1 / 3')
@@ -112,12 +114,13 @@ adb('shell','am','force-stop','ae.wird.app')
 adb('shell','am','start','-W','-n','ae.wird.app/.MainActivity')
 expect('الرئيسية')
 tap('أذكار الصباح',scroll=True)
-tap('التالي',scroll=True)
+tap('التالي',scroll=True,allow_bottom=True)
 expect('2 / 18')
 tap('اضغط للعد',scroll=True)
 expect('2 / 3')
 capture('android-reader-persisted.png')
-tap('السابق',scroll=True)
+print('PASS: native Reader count, Undo and process restart persistence',flush=True)
+tap('السابق',scroll=True,allow_bottom=True)
 expect('1 / 18')
 adb('shell','input','keyevent','KEYCODE_BACK')
 tap('الأذكار',bottom=True)
