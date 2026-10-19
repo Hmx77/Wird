@@ -1,0 +1,87 @@
+import 'dart:io';
+import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wird/content.dart';
+import 'package:wird/main.dart';
+
+void main(){
+  Future<WirdState> state({int theme=8,String language='ar'})async{
+    SharedPreferences.setMockInitialValues({'haptics':false,'theme':theme,'language':language});
+    final s=WirdState();await s.initialize();return s;
+  }
+  Widget app(WirdState s,Widget page,{double scale=1,GlobalKey? capture})=>RepaintBoundary(key:capture,child:AnimatedBuilder(animation:s,builder:(context,_)=>MaterialApp(locale:Locale(s.languageCode),supportedLocales:const[Locale('ar'),Locale('en')],localizationsDelegates:GlobalMaterialLocalizations.delegates,theme:wirdTheme(s.palette),builder:(context,child)=>MediaQuery(data:MediaQuery.of(context).copyWith(textScaler:TextScaler.linear(scale)),child:child!),home:Scaffold(body:page))));
+  Future<void> tap(WidgetTester t,String key)async{final f=find.byKey(Key(key));await t.ensureVisible(f);await t.pumpAndSettle();await t.tap(f);await t.pumpAndSettle();}
+  Future<void> close(WidgetTester t,WirdState s)async{await s.pendingWrites;await t.pumpWidget(const SizedBox.shrink());s.dispose();}
+  for(final lang in ['ar','en']){
+    for(var theme=0;theme<10;theme++){
+      testWidgets('Premium library and reader $lang theme $theme 320px 200% text',(t)async{
+        t.view.physicalSize=const Size(320,700);t.view.devicePixelRatio=1;addTearDown(t.view.resetPhysicalSize);addTearDown(t.view.resetDevicePixelRatio);
+        final s=await state(theme:theme,language:lang);
+        await t.pumpWidget(app(s,LibraryPage(store:s),scale:2));await t.pumpAndSettle();
+        expect(Directionality.of(t.element(find.byType(LibraryPage))),lang=='ar'?TextDirection.rtl:TextDirection.ltr);
+        await t.ensureVisible(find.byKey(Key('library-entry-${entries.first.id}')));await t.pumpAndSettle();expect(t.takeException(),isNull);
+        await t.pumpWidget(app(s,ReaderPage(store:s,section:DhikrSection.morning),scale:2));await t.pumpAndSettle();
+        await tap(t,'reader-evidence-toggle');
+        for(final key in ['reader-font-increase','reader-counter','reader-next']){await t.ensureVisible(find.byKey(Key(key)));await t.pumpAndSettle();expect(t.takeException(),isNull);}
+        await close(t,s);
+      });
+    }
+  }
+  testWidgets('Arabic search, English category search, bookmark filtering and reader route preserve IDs',(t)async{
+    final s=await state();await t.pumpWidget(app(s,LibraryPage(store:s)));await t.pumpAndSettle();
+    expect(find.text('49 ذكر'),findsOneWidget);
+    await t.enterText(find.byKey(const Key('library-search')),'اللَّه');await t.pumpAndSettle();expect(find.byType(DevotionCard),findsWidgets);
+    await t.enterText(find.byKey(const Key('library-search')),'Evening');await t.pumpAndSettle();expect(find.text('15 ذكر'),findsOneWidget);
+    await t.enterText(find.byKey(const Key('library-search')),'zzzz');await t.pumpAndSettle();expect(find.text('لا توجد نتائج'),findsOneWidget);
+    await t.enterText(find.byKey(const Key('library-search')),'');await t.pumpAndSettle();
+    final e=entries.first;
+    await tap(t,'library-bookmark-${e.id}');expect(find.byType(ReaderPage),findsNothing);expect(s.favorites,contains(e.id));
+    await tap(t,'library-favorites');expect(find.text('1 ذكر'),findsOneWidget);
+    await tap(t,'library-entry-${e.id}');expect(find.byType(ReaderPage),findsOneWidget);expect(t.widget<SelectableText>(find.byKey(const Key('reader-arabic'))).data,e.arabic);
+    await s.pendingWrites;final restored=WirdState();await restored.initialize();expect(restored.favorites,contains(e.id));restored.dispose();await close(t,s);
+  });
+  testWidgets('Reader count Undo target alternatives navigation fonts and restart persistence',(t)async{
+    final s=await state();final group=inSection(DhikrSection.morning);final e=group.first;
+    await t.pumpWidget(app(s,ReaderPage(store:s,section:e.section)));await t.pumpAndSettle();
+    expect(t.widget<OutlinedButton>(find.byKey(const Key('reader-previous'))).onPressed,isNull);
+    await tap(t,'reader-counter');expect(s.count(e),1);
+    await tap(t,'reader-undo');expect(s.count(e),0);
+    await tap(t,'reader-counter');await s.pendingWrites;final restored=WirdState();await restored.initialize();expect(restored.count(e),1);restored.dispose();
+    await tap(t,'reader-next');expect(t.widget<SelectableText>(find.byKey(const Key('reader-arabic'))).data,group[1].arabic);
+    await tap(t,'reader-previous');expect(s.count(e),1);
+    await tap(t,'reader-font-increase');expect(s.fontSize,27);
+    await tap(t,'reader-evidence-toggle');expect(find.text(e.evidence),findsOneWidget);
+    final alt=group.firstWhere((e)=>e.countAlternatives.isNotEmpty);
+    await t.pumpWidget(app(s,ReaderPage(key:const ValueKey('alternate'),store:s,section:alt.section,initialIndex:group.indexOf(alt))));await t.pumpAndSettle();
+    final f=find.byKey(const Key('reader-count-choice'));await t.ensureVisible(f);await t.pumpAndSettle();expect(t.widget<DropdownButton<int>>(f).items!.map((x)=>x.value),alt.allowedCounts);
+    s.autoAdvance=true;
+    await t.pumpWidget(app(s,ReaderPage(key:const ValueKey('automatic'),store:s,section:e.section)));await t.pumpAndSettle();s.setCount(e,0);await t.pumpAndSettle();
+    for(var i=0;i<s.target(e);i++){await tap(t,'reader-counter');}
+    expect(t.widget<SelectableText>(find.byKey(const Key('reader-arabic'))).data,group[1].arabic);
+    await close(t,s);
+  });
+  testWidgets('All 49 reader entries expose the exact complete source text and large Mulk scrolls',(t)async{
+    final s=await state();
+    for(final e in entries){await t.pumpWidget(app(s,ReaderPage(key:ValueKey(e.id),store:s,section:e.section,initialIndex:inSection(e.section).indexOf(e))));await t.pumpAndSettle();expect(t.widget<SelectableText>(find.byKey(const Key('reader-arabic'))).data,e.arabic);expect(t.takeException(),isNull);}
+    final mulk=entries.firstWhere((e)=>e.id=='sleep_mulk');s.changeFont(38);
+    await t.pumpWidget(app(s,ReaderPage(key:const ValueKey('long-mulk'),store:s,section:mulk.section,initialIndex:inSection(mulk.section).indexOf(mulk)),scale:2));await t.pumpAndSettle();
+    await t.ensureVisible(find.byKey(const Key('reader-counter')));await t.pumpAndSettle();expect(t.takeException(),isNull);await close(t,s);
+  });
+  testWidgets('Premium rendered library, reader evidence and large Quran captures',(t)async{
+    if(Platform.environment['WIRD_REVIEW_IMAGES']!='1')return;
+    t.view.physicalSize=const Size(430,932);t.view.devicePixelRatio=1;addTearDown(t.view.resetPhysicalSize);addTearDown(t.view.resetDevicePixelRatio);
+    final s=await state();final boundary=GlobalKey();
+    Future<void> capture(String name)async{await t.pumpAndSettle();await t.runAsync(()async{final r=boundary.currentContext!.findRenderObject()! as RenderRepaintBoundary;final image=await r.toImage(pixelRatio:2);final bytes=await image.toByteData(format:ui.ImageByteFormat.png);Directory('verification/screenshots').createSync(recursive:true);File('verification/screenshots/$name.png').writeAsBytesSync(bytes!.buffer.asUint8List());image.dispose();});}
+    await t.pumpWidget(app(s,LibraryPage(store:s),capture:boundary));await capture('library-premium-ar');
+    await tap(t,'library-bookmark-${entries.first.id}');await tap(t,'library-favorites');await capture('library-premium-favorites');
+    await t.pumpWidget(app(s,ReaderPage(store:s,section:DhikrSection.evening),capture:boundary));await capture('reader-premium-main');
+    await tap(t,'reader-evidence-toggle');await capture('reader-premium-evidence');await t.ensureVisible(find.byKey(const Key('reader-next')));await capture('reader-premium-counter');
+    final e=entries.firstWhere((e)=>e.id=='sleep_mulk');s.changeFont(38);
+    await t.pumpWidget(app(s,ReaderPage(key:const ValueKey('mulk-capture'),store:s,section:e.section,initialIndex:inSection(e.section).indexOf(e)),capture:boundary,scale:1.5));await capture('reader-premium-mulk-large');
+    await close(t,s);
+  });
+}
