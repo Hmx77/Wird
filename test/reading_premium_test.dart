@@ -159,12 +159,21 @@ void main() {
       expect(s.favorites, contains(e.id));
       await tap(t, 'library-favorites');
       expect(find.text('1 ذكر'), findsOneWidget);
-      final selectedChip=t.widget<FilterChip>(find.byKey(const Key('library-favorites')));
-      final selectedBackground=selectedChip.color!.resolve({WidgetState.selected})!;
-      final selectedForeground=(selectedChip.label as UiText).style!.color!;
-      final light=selectedBackground.computeLuminance();
-      final dark=selectedForeground.computeLuminance();
-      expect((light+.05)/(dark+.05),greaterThanOrEqualTo(4.5),reason:'Selected favorites must remain readable independently of the light Material chip theme');
+      final selectedChip = t.widget<FilterChip>(
+        find.byKey(const Key('library-favorites')),
+      );
+      final selectedBackground = selectedChip.color!.resolve({
+        WidgetState.selected,
+      })!;
+      final selectedForeground = (selectedChip.label as UiText).style!.color!;
+      final light = selectedBackground.computeLuminance();
+      final dark = selectedForeground.computeLuminance();
+      expect(
+        (light + .05) / (dark + .05),
+        greaterThanOrEqualTo(4.5),
+        reason:
+            'Selected favorites must remain readable independently of the light Material chip theme',
+      );
       await tap(t, 'library-entry-${e.id}');
       expect(find.byType(ReaderPage), findsOneWidget);
       expect(
@@ -235,11 +244,18 @@ void main() {
         t.widget<DropdownButton<int>>(f).items!.map((x) => x.value),
         alt.allowedCounts,
       );
-      await t.tap(f);await t.pumpAndSettle();
-      final alternative=alt.allowedCounts.last;
-      await t.tap(find.text('عدد التكرار: $alternative').last);await t.pumpAndSettle();
-      expect(s.target(alt),alternative);expect(s.count(alt),0);
-      await s.pendingWrites;final restoredTarget=WirdState();await restoredTarget.initialize();expect(restoredTarget.target(alt),alternative);restoredTarget.dispose();
+      await t.tap(f);
+      await t.pumpAndSettle();
+      final alternative = alt.allowedCounts.last;
+      await t.tap(find.text('عدد التكرار: $alternative').last);
+      await t.pumpAndSettle();
+      expect(s.target(alt), alternative);
+      expect(s.count(alt), 0);
+      await s.pendingWrites;
+      final restoredTarget = WirdState();
+      await restoredTarget.initialize();
+      expect(restoredTarget.target(alt), alternative);
+      restoredTarget.dispose();
       s.autoAdvance = true;
       await t.pumpWidget(
         app(
@@ -320,8 +336,12 @@ void main() {
       final boundary = GlobalKey();
       Future<void> capture(String name) async {
         await t.pumpAndSettle();
-        final r=boundary.currentContext!.findRenderObject()! as RenderRepaintBoundary;
-        r.markNeedsPaint();await t.pump();await t.pumpAndSettle();
+        final r =
+            boundary.currentContext!.findRenderObject()!
+                as RenderRepaintBoundary;
+        r.markNeedsPaint();
+        await t.pump();
+        await t.pumpAndSettle();
         await t.runAsync(() async {
           final image = await r.toImage(pixelRatio: 2);
           final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
@@ -333,7 +353,9 @@ void main() {
         });
       }
 
-      await t.pumpWidget(app(s,BaselineLibraryPage(store:s),capture:boundary));
+      await t.pumpWidget(
+        app(s, BaselineLibraryPage(store: s), capture: boundary),
+      );
       await capture('library-before-build16');
       await t.pumpWidget(app(s, LibraryPage(store: s), capture: boundary));
       await capture('library-premium-ar');
@@ -373,4 +395,3 @@ void main() {
     },
   );
 }
-
