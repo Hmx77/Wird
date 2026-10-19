@@ -158,6 +158,12 @@ void main() {
       expect(s.favorites, contains(e.id));
       await tap(t, 'library-favorites');
       expect(find.text('1 ذكر'), findsOneWidget);
+      final selectedChip=t.widget<FilterChip>(find.byKey(const Key('library-favorites')));
+      final selectedBackground=selectedChip.color!.resolve({WidgetState.selected})!;
+      final selectedForeground=(selectedChip.label as UiText).style!.color!;
+      final light=selectedBackground.computeLuminance();
+      final dark=selectedForeground.computeLuminance();
+      expect((light+.05)/(dark+.05),greaterThanOrEqualTo(4.5),reason:'Selected favorites must remain readable independently of the light Material chip theme');
       await tap(t, 'library-entry-${e.id}');
       expect(find.byType(ReaderPage), findsOneWidget);
       expect(
@@ -366,3 +372,4 @@ void main() {
     },
   );
 }
+
