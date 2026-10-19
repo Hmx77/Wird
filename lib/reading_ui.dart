@@ -91,6 +91,18 @@ class DevotionCard extends StatelessWidget {
   );
 }
 
+class _DevotionArch extends CustomPainter {
+  const _DevotionArch();
+  @override void paint(Canvas canvas,Size size){
+    final w=size.width;
+    final p=Path()..moveTo(w*.055,175)..cubicTo(w*.055,116,w*.22,95,w*.30,87)
+      ..quadraticBezierTo(w*.43,62,w*.5,11)..quadraticBezierTo(w*.57,62,w*.70,87)
+      ..cubicTo(w*.78,95,w*.945,116,w*.945,175);
+    canvas.drawPath(p,Paint()..color=homeGold.withOpacity(.20)..style=PaintingStyle.stroke..strokeWidth=1);
+  }
+  @override bool shouldRepaint(covariant _DevotionArch oldDelegate)=>false;
+}
+
 class _DevotionCorners extends CustomPainter {
   const _DevotionCorners();
   @override
@@ -251,7 +263,7 @@ class _LibraryPageState extends State<LibraryPage> {
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             slivers: [
               SliverToBoxAdapter(
-                child: Padding(
+                child: CustomPaint(painter:const _DevotionArch(),child:Padding(
                   padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
                   child: Column(
                     children: [
@@ -368,7 +380,7 @@ class _LibraryPageState extends State<LibraryPage> {
                     ],
                   ),
                 ),
-              ),
+              )),
               if (filtered.isEmpty)
                 const SliverToBoxAdapter(
                   child: Padding(
@@ -712,8 +724,10 @@ class _ReaderPageState extends State<ReaderPage> {
                               ),
                             ),
                           ),
-                          if (expanded)
-                            Padding(
+                          AnimatedSize(
+                            duration:MediaQuery.disableAnimationsOf(context)?Duration.zero:const Duration(milliseconds:220),
+                            curve:Curves.easeOutCubic,alignment:Alignment.topCenter,
+                            child:expanded?Padding(
                               padding: const EdgeInsets.only(top: 8),
                               child: DevotionCard(
                                 child: Column(
@@ -840,7 +854,8 @@ class _ReaderPageState extends State<ReaderPage> {
                                   ],
                                 ),
                               ),
-                            ),
+                            ):const SizedBox.shrink(),
+                          ),
                           const SizedBox(height: 10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
