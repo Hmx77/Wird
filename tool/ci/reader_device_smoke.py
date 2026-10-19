@@ -127,8 +127,14 @@ adb('shell','settings','put','system','font_scale','1.5')
 # System text-scale updates must preserve complete selectable text and scrolling.
 time.sleep(2)
 capture('android-reader-mulk-large.png')
-tap('اضغط للعد',scroll=True)
-capture('android-reader-mulk-counter.png')
+for attempt in range(50):
+    nodes=snapshot()
+    visible=[n for n in nodes if normal('اضغط للعد') in normal(n.get('text','')+' '+n.get('content-desc','')) and len(re.findall(r'\d+',n.get('bounds','')))==4 and 0<int(re.findall(r'\d+',n.get('bounds',''))[1])<height*.85]
+    if visible:
+        capture('android-reader-mulk-counter.png')
+        break
+    adb('shell','input','swipe',str(width//2),str(int(height*.77)),str(width//2),str(int(height*.32)),'450')
+else:raise AssertionError('Long Quran counter did not become reachable')
 adb('shell','settings','put','system','font_scale','1.0')
 adb('shell','input','keyevent','KEYCODE_BACK')
 tap('الرئيسية',bottom=True)
