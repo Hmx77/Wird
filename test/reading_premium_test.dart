@@ -14,7 +14,13 @@ void main(){
     final s=WirdState();await s.initialize();return s;
   }
   Widget app(WirdState s,Widget page,{double scale=1,GlobalKey? capture})=>RepaintBoundary(key:capture,child:AnimatedBuilder(animation:s,builder:(context,_)=>MaterialApp(locale:Locale(s.languageCode),supportedLocales:const[Locale('ar'),Locale('en')],localizationsDelegates:GlobalMaterialLocalizations.delegates,theme:wirdTheme(s.palette),builder:(context,child)=>MediaQuery(data:MediaQuery.of(context).copyWith(textScaler:TextScaler.linear(scale)),child:child!),home:Scaffold(body:page))));
-  Future<void> tap(WidgetTester t,String key)async{final f=find.byKey(Key(key));await t.ensureVisible(f);await t.pumpAndSettle();await t.tap(f);await t.pumpAndSettle();}
+  Future<void> reveal(WidgetTester t,Finder target)async{
+    final viewport=find.byType(Scrollable).first;
+    final position=t.state<ScrollableState>(viewport).position;
+    position.jumpTo(position.minScrollExtent);await t.pumpAndSettle();
+    await t.scrollUntilVisible(target,250,scrollable:viewport,maxScrolls:300);await t.pumpAndSettle();
+  }
+  Future<void> tap(WidgetTester t,String key)async{final f=find.byKey(Key(key));await reveal(t,f);await t.tap(f);await t.pumpAndSettle();}
   Future<void> close(WidgetTester t,WirdState s)async{await s.pendingWrites;await t.pumpWidget(const SizedBox.shrink());s.dispose();}
   for(final lang in ['ar','en']){
     for(var theme=0;theme<10;theme++){
@@ -23,10 +29,10 @@ void main(){
         final s=await state(theme:theme,language:lang);
         await t.pumpWidget(app(s,LibraryPage(store:s),scale:2));await t.pumpAndSettle();
         expect(Directionality.of(t.element(find.byType(LibraryPage))),lang=='ar'?TextDirection.rtl:TextDirection.ltr);
-        await t.ensureVisible(find.byKey(Key('library-entry-${entries.first.id}')));await t.pumpAndSettle();expect(t.takeException(),isNull);
+        await reveal(t,find.byKey(Key('library-entry-${entries.first.id}')));await t.pumpAndSettle();expect(t.takeException(),isNull);
         await t.pumpWidget(app(s,ReaderPage(store:s,section:DhikrSection.morning),scale:2));await t.pumpAndSettle();
         await tap(t,'reader-evidence-toggle');
-        for(final key in ['reader-font-increase','reader-counter','reader-next']){await t.ensureVisible(find.byKey(Key(key)));await t.pumpAndSettle();expect(t.takeException(),isNull);}
+        for(final key in ['reader-font-increase','reader-counter','reader-next']){await reveal(t,find.byKey(Key(key)));await t.pumpAndSettle();expect(t.takeException(),isNull);}
         await close(t,s);
       });
     }
@@ -57,7 +63,7 @@ void main(){
     await tap(t,'reader-evidence-toggle');expect(find.text(e.evidence),findsOneWidget);
     final alt=group.firstWhere((e)=>e.countAlternatives.isNotEmpty);
     await t.pumpWidget(app(s,ReaderPage(key:const ValueKey('alternate'),store:s,section:alt.section,initialIndex:group.indexOf(alt))));await t.pumpAndSettle();
-    final f=find.byKey(const Key('reader-count-choice'));await t.ensureVisible(f);await t.pumpAndSettle();expect(t.widget<DropdownButton<int>>(f).items!.map((x)=>x.value),alt.allowedCounts);
+    final f=find.byKey(const Key('reader-count-choice'));await reveal(t,f);await t.pumpAndSettle();expect(t.widget<DropdownButton<int>>(f).items!.map((x)=>x.value),alt.allowedCounts);
     s.autoAdvance=true;
     await t.pumpWidget(app(s,ReaderPage(key:const ValueKey('automatic'),store:s,section:e.section)));await t.pumpAndSettle();s.setCount(e,0);await t.pumpAndSettle();
     for(var i=0;i<s.target(e);i++){await tap(t,'reader-counter');}
@@ -69,7 +75,7 @@ void main(){
     for(final e in entries){await t.pumpWidget(app(s,ReaderPage(key:ValueKey(e.id),store:s,section:e.section,initialIndex:inSection(e.section).indexOf(e))));await t.pumpAndSettle();expect(t.widget<SelectableText>(find.byKey(const Key('reader-arabic'))).data,e.arabic);expect(t.takeException(),isNull);}
     final mulk=entries.firstWhere((e)=>e.id=='sleep_mulk');s.changeFont(38);
     await t.pumpWidget(app(s,ReaderPage(key:const ValueKey('long-mulk'),store:s,section:mulk.section,initialIndex:inSection(mulk.section).indexOf(mulk)),scale:2));await t.pumpAndSettle();
-    await t.ensureVisible(find.byKey(const Key('reader-counter')));await t.pumpAndSettle();expect(t.takeException(),isNull);await close(t,s);
+    await reveal(t,find.byKey(const Key('reader-counter')));await t.pumpAndSettle();expect(t.takeException(),isNull);await close(t,s);
   });
   testWidgets('Premium rendered library, reader evidence and large Quran captures',(t)async{
     if(Platform.environment['WIRD_REVIEW_IMAGES']!='1')return;
@@ -79,7 +85,7 @@ void main(){
     await t.pumpWidget(app(s,LibraryPage(store:s),capture:boundary));await capture('library-premium-ar');
     await tap(t,'library-bookmark-${entries.first.id}');await tap(t,'library-favorites');await capture('library-premium-favorites');
     await t.pumpWidget(app(s,ReaderPage(store:s,section:DhikrSection.evening),capture:boundary));await capture('reader-premium-main');
-    await tap(t,'reader-evidence-toggle');await capture('reader-premium-evidence');await t.ensureVisible(find.byKey(const Key('reader-next')));await capture('reader-premium-counter');
+    await tap(t,'reader-evidence-toggle');await reveal(t,find.text(inSection(DhikrSection.evening).first.meaning));await capture('reader-premium-evidence');await reveal(t,find.byKey(const Key('reader-next')));await capture('reader-premium-counter');
     final e=entries.firstWhere((e)=>e.id=='sleep_mulk');s.changeFont(38);
     await t.pumpWidget(app(s,ReaderPage(key:const ValueKey('mulk-capture'),store:s,section:e.section,initialIndex:inSection(e.section).indexOf(e)),capture:boundary,scale:1.5));await capture('reader-premium-mulk-large');
     await close(t,s);
