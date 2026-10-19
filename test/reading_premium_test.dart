@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wird/content.dart';
 import 'package:wird/main.dart';
+import 'package:wird/ui_strings.dart';
 import 'fixtures/library_before.dart';
 
 void main() {
