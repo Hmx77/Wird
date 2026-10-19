@@ -14,6 +14,8 @@ const themeArabic = <String, String>{
 };
 
 const uiEnglish = <String, String>{
+  'مسح البحث': 'Clear search',
+  'حفظ في المفضلة': 'Bookmark',
   'تذكير': 'Reminder',
   'تعذر تجهيز التذكيرات على هذا الجهاز.':
       'Reminders could not be initialized on this device.',
