@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'content.dart';
 import 'quran_text.dart';
 part 'premium_ui.dart';
+part 'tasbih_ui.dart';
 part 'nawafil_ui.dart';
 part 'settings_ui.dart';
 part 'reading_ui.dart';

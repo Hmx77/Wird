@@ -1,0 +1,210 @@
+part of 'main.dart';
+
+/// Standalone personal tool. Uses the existing Tasbih preference and no targets.
+class PersonalTasbihPage extends StatefulWidget {
+  const PersonalTasbihPage({super.key, required this.store});
+  final WirdState store;
+  @override
+  State<PersonalTasbihPage> createState() => _PersonalTasbihPageState();
+}
+
+class _PersonalTasbihPageState extends State<PersonalTasbihPage>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulse = AnimationController(
+    vsync: this, duration: const Duration(milliseconds: 300));
+  bool _resetOpen = false;
+  bool get _still => MediaQuery.disableAnimationsOf(context) ||
+      MediaQuery.accessibleNavigationOf(context);
+  String _label(String ar, String en) => widget.store.languageCode == 'en' ? en : ar;
+  @override
+  void dispose() { _pulse.dispose(); super.dispose(); }
+
+  void _increment() {
+    widget.store.setTasbih(widget.store.tasbih + 1);
+    if (widget.store.haptics) unawaited(HapticFeedback.selectionClick());
+    if (!_still) _pulse.forward(from: 0);
+  }
+
+  Future<void> _reset() async {
+    if (_resetOpen || widget.store.tasbih == 0) return;
+    if (widget.store.tasbih >= 100) {
+      _resetOpen = true;
+      final confirmed = await showDialog<bool>(context: context,
+        builder: (dialog) => AlertDialog(
+          backgroundColor: widget.store.palette.homeSurface,
+          titleTextStyle: const TextStyle(color: homeCream, fontFamily: 'NotoSansArabic', fontSize: 21),
+          contentTextStyle: const TextStyle(color: homeCream, fontFamily: 'NotoSansArabic', height: 1.8),
+          title: Text(_label('إعادة العداد؟', 'Reset personal counter?')),
+          content: Text(_label('سيُصفّر عداد السبحة الشخصية فقط. لا تتغير الأذكار أو المفضلة أو الإعدادات.',
+            'Only your personal Tasbih count will be reset. Athkar progress, favorites and preferences are kept.')),
+          actions: [
+            TextButton(key: const Key('tasbih-reset-cancel'), onPressed: () => Navigator.pop(dialog, false),
+              child: const UiText('إلغاء', style: TextStyle(color: homeCream))),
+            TextButton(key: const Key('tasbih-reset-confirm'), onPressed: () => Navigator.pop(dialog, true),
+              child: const UiText('إعادة', style: TextStyle(color: homeGold))),
+          ],
+        ));
+      _resetOpen = false;
+      if (!mounted || confirmed != true) return;
+    }
+    widget.store.setTasbih(0);
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: widget.store,
+    builder: (context, _) {
+      final store = widget.store;
+      final base = Color.lerp(const Color(0xFF031C1B), store.palette.primary, .045)!;
+      return AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light.copyWith(statusBarColor: Colors.transparent,
+          systemNavigationBarColor: base),
+        child: Scaffold(backgroundColor: base, body: Stack(children: [
+          Positioned.fill(child: IgnorePointer(child: RepaintBoundary(child:
+            CustomPaint(painter: _TasbihAtmosphere(base: base))))),
+          SafeArea(child: LayoutBuilder(builder: (context, bounds) {
+            final diameter = (bounds.maxWidth * .65).clamp(200.0, 330.0);
+            final gap = (bounds.maxHeight * .065).clamp(22.0, 56.0);
+            return SingleChildScrollView(key: const Key('tasbih-scroll'),
+              padding: const EdgeInsets.fromLTRB(24, 14, 24, 24),
+              child: ConstrainedBox(constraints: BoxConstraints(minHeight: (bounds.maxHeight - 38).clamp(0.0, double.infinity)),
+                child: Center(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 520),
+                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Row(children: [
+                      IconButton(key: const Key('tasbih-back'), tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                        onPressed: () => Navigator.maybePop(context), icon: const BackButtonIcon(), color: homeGold,
+                        constraints: const BoxConstraints(minWidth: 48, minHeight: 48)),
+                      Expanded(child: UiText('السبحة الشخصية', textAlign: TextAlign.center,
+                        style: const TextStyle(color: homeCream, fontSize: 23, fontWeight: FontWeight.w500, height: 1.6))),
+                      const SizedBox(width: 48),
+                    ]),
+                    SizedBox(height: gap),
+                    const _TasbihOrnament(),
+                    const SizedBox(height: 22),
+                    AnimatedBuilder(animation: _pulse, builder: (context, _) {
+                      final glow = _still ? 0.0 : (1 - _pulse.value) * (_pulse.isAnimating ? 1 : 0);
+                      return Transform.scale(scale: 1 - glow * .012, child: Semantics(
+                        label: _label('عداد السبحة الشخصية', 'Personal Tasbih count'),
+                        value: '${store.tasbih}', liveRegion: true,
+                        child: ExcludeSemantics(child: Container(
+                          key: const Key('tasbih-circle'), width: diameter, height: diameter,
+                          padding: const EdgeInsets.all(2.5),
+                          decoration: BoxDecoration(shape: BoxShape.circle,
+                            gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
+                              colors: [Color(0xFFFFE7AC), Color(0xFFA1824C), Color(0xFFDEC38D), Color(0xFFFFE5A1)]),
+                            boxShadow: [BoxShadow(color: homeGold.withValues(alpha: .12 + glow * .14), blurRadius: 28 + glow * 10, spreadRadius: 1)]),
+                          child: DecoratedBox(decoration: BoxDecoration(shape: BoxShape.circle,
+                            border: Border.all(color: const Color(0xFF122D27), width: 3),
+                            gradient: RadialGradient(center: const Alignment(-.55,-.7), radius: 1.3,
+                              colors: [Color.lerp(base, store.palette.primary, .32)!, base])),
+                            child: Padding(padding: const EdgeInsets.symmetric(horizontal: 22), child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center, children: [
+                                SizedBox(height: diameter * .12),
+                                Flexible(child: FittedBox(fit: BoxFit.scaleDown, child: AnimatedSwitcher(
+                                  duration: _still ? Duration.zero : const Duration(milliseconds: 140),
+                                  transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: child),
+                                  child: KeyedSubtree(key: ValueKey(store.tasbih), child: Text('${store.tasbih}', key: const Key('home-tasbih-count'),
+                                    style: TextStyle(color: homeCream, fontSize: diameter * .40,
+                                      fontFamily: 'NotoSansArabic', fontWeight: FontWeight.w300, height: 1.35))),
+                                ))),
+                                const SizedBox(height: 4),
+                                const _TasbihOrnament(lines: true),
+                                SizedBox(height: diameter * .1),
+                              ])),
+                          ),
+                        )),
+                      ));
+                    }),
+                    SizedBox(height: gap * .85),
+                    SizedBox(width: diameter, child: _TasbihPill(
+                      controlKey: const Key('home-tasbih-add'), prominent: true,
+                      onPressed: _increment, child: const UiText('تسبيح +', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600)))),
+                    const SizedBox(height: 18),
+                    SizedBox(width: 154, child: _TasbihPill(controlKey: const Key('tasbih-reset'),
+                      onPressed: _reset, child: const UiText('إعادة', style: TextStyle(fontSize: 20)))),
+                    const SizedBox(height: 28),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      const Padding(padding: EdgeInsets.only(top: 4), child: Icon(Icons.info_outline_rounded, color: homeGold, size: 19)),
+                      const SizedBox(width: 9),
+                      Flexible(child: UiText('هدف شخصي، وليس عددًا تعبديًا منصوصًا.', textAlign: TextAlign.center,
+                        style: TextStyle(color: homeCream.withValues(alpha: .8), fontSize: 13, height: 1.9))),
+                    ]),
+                    if (store.storageError != null) Padding(padding: const EdgeInsets.only(top: 16), child:
+                      Semantics(liveRegion: true, child: UiText(store.storageError!, style: const TextStyle(color: homeCream)))),
+                    SizedBox(height: gap * .5),
+                  ]))),
+              ));
+          })),
+        ])),
+      );
+    });
+}
+
+class _TasbihPill extends StatelessWidget {
+  const _TasbihPill({required this.controlKey, required this.onPressed, required this.child, this.prominent = false});
+  final Key controlKey;
+  final VoidCallback onPressed;
+  final Widget child;
+  final bool prominent;
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+    decoration: BoxDecoration(borderRadius: BorderRadius.circular(60),
+      boxShadow: prominent ? [BoxShadow(color: homeGold.withValues(alpha: .10), blurRadius: 18)] : null),
+    child: OutlinedButton(key: controlKey, onPressed: onPressed,
+      style: OutlinedButton.styleFrom(foregroundColor: homeCream,
+        backgroundColor: prominent ? const Color(0xFF123C31) : const Color(0xFF092724),
+        side: BorderSide(color: homeGold.withValues(alpha: prominent ? .9 : .55), width: prominent ? 1.7 : 1),
+        shape: const StadiumBorder(), minimumSize: Size(48, prominent ? 64 : 48),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10)), child: child));
+}
+
+class _TasbihOrnament extends StatelessWidget {
+  const _TasbihOrnament({this.lines = false});
+  final bool lines;
+  @override
+  Widget build(BuildContext context) => ExcludeSemantics(child: Row(mainAxisSize: MainAxisSize.min, children: [
+    if (lines) Container(width: 22, height: 1, color: homeGold.withValues(alpha: .6)),
+    const Padding(padding: EdgeInsets.symmetric(horizontal: 9), child: Text('❖', style: TextStyle(color: homeGold, fontSize: 16))),
+    if (lines) Container(width: 22, height: 1, color: homeGold.withValues(alpha: .6)),
+  ]));
+}
+
+/// Vector decoration: offline, no reference screenshot or scenic mosque blocks.
+class _TasbihAtmosphere extends CustomPainter {
+  const _TasbihAtmosphere({required this.base});
+  final Color base;
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    canvas.drawRect(rect, Paint()..shader = RadialGradient(center: const Alignment(-.8,-.75), radius: 1.3,
+      colors: [Color.lerp(base, homeGold, .13)!, base]).createShader(rect));
+    final line = Paint()..color = homeGold.withValues(alpha: .085)..style = PaintingStyle.stroke..strokeWidth = 1;
+    for (final inset in [0.0, 9.0]) {
+      final left = size.width * .1 + inset, right = size.width * .9 - inset;
+      final arch = Path()..moveTo(left, size.height)..lineTo(left, size.height * .24)
+        ..cubicTo(left, size.height * .16, size.width * .42, size.height * .15, size.width * .5, size.height * .09)
+        ..cubicTo(size.width * .58, size.height * .15, right, size.height * .16, right, size.height * .24)
+        ..lineTo(right, size.height);
+      canvas.drawPath(arch, line);
+    }
+    void branch(Offset origin, double sx, double sy) {
+      canvas.save(); canvas.translate(origin.dx, origin.dy); canvas.scale(sx, sy);
+      final stem = Path()..moveTo(0, 0)..cubicTo(42, 60, 10, 120, 62, 205);
+      canvas.drawPath(stem, Paint()..color = homeGold.withValues(alpha: .17)..style=PaintingStyle.stroke..strokeWidth=1.2);
+      for (var i=0; i<7; i++) {
+        final y=20.0+i*25, x=15.0+i*5;
+        final side=i.isEven?1.0:-1.0;
+        final leaf=Path()..moveTo(x,y)..quadraticBezierTo(x+side*46,y-30,x+side*55,y-4)
+          ..quadraticBezierTo(x+side*35,y+15,x,y)..close();
+        canvas.drawPath(leaf, Paint()..shader=LinearGradient(colors:[homeGold.withValues(alpha:.19),const Color(0xFF446148).withValues(alpha:.12)])
+          .createShader(Rect.fromLTWH(x-55,y-30,110,60)));
+      }
+      canvas.restore();
+    }
+    branch(Offset(-22, size.height * .03), 1.1, 1.15);
+    branch(Offset(size.width + 12, size.height * .63), -.95, .95);
+    branch(Offset(-28, size.height * .85), .7, .7);
+  }
+  @override
+  bool shouldRepaint(_TasbihAtmosphere oldDelegate) => base != oldDelegate.base;
+}
