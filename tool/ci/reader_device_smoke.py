@@ -75,6 +75,10 @@ tap('الأذكار',bottom=True)
 expect('49 ذكر')
 capture('android-library-premium.png')
 tap('ابحث عن ذكر')
+for attempt in range(6):
+    if any(n.get('class')=='android.widget.EditText' and n.get('focused')=='true' for n in snapshot()):break
+    time.sleep(.3)
+else:raise AssertionError('Search input did not receive focus')
 adb('shell','input','text','Evening')
 expect('15 ذكر')
 adb('shell','input','keyevent','KEYCODE_BACK')
@@ -116,6 +120,10 @@ adb('shell','input','keyevent','KEYCODE_BACK')
 tap('الأذكار',bottom=True)
 # A new tab visit keeps live bookmark state. Show all collections for long text.
 tap('ابحث عن ذكر')
+for attempt in range(6):
+    if any(n.get('class')=='android.widget.EditText' and n.get('focused')=='true' for n in snapshot()):break
+    time.sleep(.3)
+else:raise AssertionError('Search input did not receive focus')
 adb('shell','input','text','Bedtime')
 adb('shell','input','keyevent','KEYCODE_BACK')
 # Favorites filter was reset on process restart, as in the original application.
