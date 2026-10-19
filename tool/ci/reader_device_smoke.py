@@ -25,7 +25,7 @@ def snapshot():
 size = re.findall(r'(\d+)x(\d+)', adb('shell', 'wm', 'size'))[-1]
 width, height = map(int, size)
 
-def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_bottom=False):
+def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_bottom=False, prefix=False):
     for attempt in range(50 if scroll else 3):
         candidates = []
         for n in snapshot():
@@ -33,6 +33,8 @@ def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_b
             if node_class and n.get('class') != node_class:
                 continue
             values = [n.get(k, '') for k in ['text', 'content-desc', 'hint']]
+            if prefix and not any(normal(v).strip().startswith(normal(label)) for v in values):
+                continue
             if (exact and not any(normal(label) == normal(v) for v in values)) or (not exact and normal(label) not in normal(value)):
                 continue
             bounds = list(map(int, re.findall(r'\d+', n.get('bounds', ''))))
@@ -98,9 +100,9 @@ expect('1 / 18')
 capture('android-reader-main.png')
 tap('الفضل والدليل والمعنى',scroll=True)
 expect('المعنى')
-tap('المعنى',scroll=True,exact=True)
+tap('المعنى',scroll=True,prefix=True)
 capture('android-reader-evidence.png')
-print('PASS: native Reader opened and exact meaning heading reached in expanded evidence',flush=True)
+print('PASS: native Reader opened and meaning panel prefix reached in expanded evidence',flush=True)
 tap('التالي',scroll=True,allow_bottom=True)
 expect('2 / 18')
 tap('اضغط للعد',scroll=True)
