@@ -71,9 +71,8 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                 child: Center(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 520),
                   child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Row(children: [
-                      IconButton(key: const Key('tasbih-back'), tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-                        onPressed: () => Navigator.maybePop(context), icon: const BackButtonIcon(), color: homeGold,
-                        constraints: const BoxConstraints(minWidth: 48, minHeight: 48)),
+                      BackButton(key: const Key('tasbih-back'), color: homeGold,
+                        onPressed: () => Navigator.maybePop(context)),
                       Expanded(child: UiText('السبحة الشخصية', textAlign: TextAlign.center,
                         style: const TextStyle(color: homeCream, fontSize: 23, fontWeight: FontWeight.w500, height: 1.6))),
                       const SizedBox(width: 48),
