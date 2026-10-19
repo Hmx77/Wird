@@ -13,6 +13,10 @@ on:
         description: Existing APK run for native recheck with Android build disabled
         type: string
         default: ""
+      reader_only:
+        description: Focused Reader recheck using an existing APK; report prior Home and Settings checks separately
+        type: boolean
+        default: false
       build_android:
         description: Validate and build Android debug APK
         type: boolean
@@ -162,6 +166,8 @@ jobs:
           run-id: ${{ inputs.reuse_android_run || github.run_id }}
           github-token: ${{ github.token }}
       - name: Android emulator offline native smoke test
+        env:
+          WIRD_READER_ONLY: ${{ inputs.reader_only && !inputs.build_android && inputs.reuse_android_run != '' && 'true' || 'false' }}
         run: bash tool/ci/android_device_smoke.sh
       - name: Upload verified debug APK on native recheck
         if: ${{ always() && !inputs.build_android && inputs.reuse_android_run != '' }}
@@ -265,4 +271,5 @@ jobs:
             git commit -m 'Preserve actual native captures and generated branding'
             git push origin HEAD:redesign/premium-reader-20261019
           fi
+
 
