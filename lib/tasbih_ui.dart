@@ -529,15 +529,23 @@ class _TasbihFoliage extends StatelessWidget {
     child: ExcludeSemantics(child: RepaintBoundary(child: ShaderMask(
       blendMode: BlendMode.dstIn,
       shaderCallback: (rect) => const LinearGradient(
-        begin: Alignment.topLeft, end: Alignment.bottomRight,
-        colors: [Colors.white, Colors.white, Colors.transparent],
-        stops: [0, .2, 1],
+        begin: Alignment.topCenter, end: Alignment.bottomCenter,
+        colors: [Colors.transparent, Colors.white, Colors.white, Colors.transparent],
+        stops: [0, .12, .28, 1],
       ).createShader(rect),
-      child: Opacity(opacity: .48, child: Image.asset(
-        'assets/home/botanical-serenity.webp',
-        fit: BoxFit.cover, alignment: Alignment.topLeft, cacheWidth: 720,
-        excludeFromSemantics: true, filterQuality: FilterQuality.medium,
-      )),
+      child: ShaderMask(
+        blendMode: BlendMode.dstIn,
+        shaderCallback: (rect) => const LinearGradient(
+          begin: Alignment.centerLeft, end: Alignment.centerRight,
+          colors: [Colors.transparent, Colors.white, Colors.white, Colors.transparent],
+          stops: [0, .12, .28, 1],
+        ).createShader(rect),
+        child: Opacity(opacity: .56, child: Image.asset(
+          'assets/home/botanical-serenity.webp',
+          fit: BoxFit.cover, alignment: Alignment.topLeft, cacheWidth: 720,
+          excludeFromSemantics: true, filterQuality: FilterQuality.medium,
+        )),
+      ),
     ))),
   );
 }
