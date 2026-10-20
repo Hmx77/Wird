@@ -21,10 +21,10 @@ void main() {
       ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'));
     await icons.load();
   });
-  Future<WirdState> state({int theme = 8, String language = 'ar'}) async {
+  Future<WirdState> state({int theme = 0, String language = 'ar'}) async {
     SharedPreferences.setMockInitialValues({
       'haptics': false,
-      'theme': theme,
+      appearancePreference: appearanceIds[theme],
       'language': language,
     });
     final s = WirdState();
@@ -85,7 +85,7 @@ void main() {
   }
 
   for (final lang in ['ar', 'en']) {
-    for (var theme = 0; theme < 10; theme++) {
+    for (var theme = 0; theme < themes.length; theme++) {
       testWidgets(
         'Premium library and reader $lang theme $theme 320px 200% text',
         (t) async {

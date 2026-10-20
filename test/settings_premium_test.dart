@@ -7,12 +7,12 @@ import 'package:wird/main.dart';
 void main() {
   Future<WirdState> mount(
     WidgetTester tester, {
-    int theme = 8,
+    int theme = 0,
     String language = 'ar',
     double scale = 1,
   }) async {
     SharedPreferences.setMockInitialValues({
-      'theme': theme,
+      appearancePreference: appearanceIds[theme],
       'language': language,
       'haptics': false,
       'favorites': ['test'],
@@ -57,7 +57,7 @@ void main() {
   }
 
   for (final language in ['ar', 'en']) {
-    for (var theme = 0; theme < 10; theme++) {
+    for (var theme = 0; theme < themes.length; theme++) {
       testWidgets(
         'Settings theme $theme $language 320px 200% text scrolls without overflow',
         (t) async {
@@ -91,9 +91,9 @@ void main() {
     (t) async {
       final s = await mount(t);
       await tap(t, 'appearance-picker');
-      expect(find.byType(RadioListTile<int>), findsNWidgets(10));
-      await tap(t, 'settings-theme-5');
-      expect(s.themeIndex, 5);
+      expect(find.byType(RadioListTile<int>), findsNWidgets(2));
+      await tap(t, 'settings-theme-1');
+      expect(s.themeIndex, 1);
       await tap(t, 'language-picker');
       await t.tap(find.text('English').last);
       await t.pumpAndSettle();
@@ -113,7 +113,7 @@ void main() {
       await s.pendingWrites;
       final restored = WirdState();
       await restored.initialize();
-      expect(restored.themeIndex, 5);
+      expect(restored.themeIndex, 1);
       expect(restored.languageCode, 'en');
       expect(restored.fontSize, s.fontSize);
       expect(restored.tasbih, 1);
@@ -129,7 +129,7 @@ void main() {
       await tap(t, 'confirm-local-erase');
       expect(s.favorites, isEmpty);
       expect(s.tasbih, 0);
-      expect(s.themeIndex, 5);
+      expect(s.themeIndex, 1);
       expect(s.languageCode, 'en');
       final prefs = await SharedPreferences.getInstance();
       expect(prefs.getInt('reminder.morning.hour'), 9);

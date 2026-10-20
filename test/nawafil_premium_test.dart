@@ -11,7 +11,7 @@ void main() {
     expect(note, contains('\u20661180–1181\u2069'));
     expect(note.replaceAll(RegExp('[\u2066\u2069]'), ''), rawatibSourceNote);
   });
-  Future<WirdState> mount(WidgetTester tester, {int theme = 8, String language = 'ar', double scale = 1}) async {
+  Future<WirdState> mount(WidgetTester tester, {int theme = 0, String language = 'ar', double scale = 1}) async {
     SharedPreferences.setMockInitialValues({'haptics': false, 'theme': theme});
     final store = WirdState(now: () => DateTime(2026, 10, 18, 12));
     await store.initialize();

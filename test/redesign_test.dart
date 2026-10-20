@@ -20,9 +20,9 @@ void main() {
     icons.addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'));
     await icons.load();
   });
-  test('all ten theme identities have Arabic and English UI names', () {
-    expect(themes.length, 10);
-    expect(themeArabic.length, 10);
+  test('both premium theme identities have Arabic and English UI names', () {
+    expect(themes.length, 2);
+    expect(themeArabic.length, 2);
     for (final theme in themes) {
       expect(uiString(theme.name, 'ar'), themeArabic[theme.name]);
       expect(uiString(theme.name, 'ar'), isNot(theme.name));
@@ -60,7 +60,7 @@ void main() {
       await tester.ensureVisible(find.byKey(const Key('appearance-picker')));
       await tester.tap(find.byKey(const Key('appearance-picker')));
       await tester.pumpAndSettle();
-      expect(find.text('زيتوني وكريمي'), findsOneWidget);
+      expect(find.text('فاتح — Ivory Serenity'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await store.pendingWrites;
       await tester.pumpWidget(const SizedBox.shrink());
