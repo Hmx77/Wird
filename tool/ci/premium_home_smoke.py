@@ -57,7 +57,13 @@ def expect(label):
         nodes = snapshot()
         value = ' '.join(n.get('text','') + ' ' + n.get('content-desc','') for n in nodes)
         if label.isdecimal():
-            matched=any(part.strip()==label for n in nodes for key in ['text','content-desc'] for part in n.get(key,'').splitlines())
+            matched=any(
+                part.strip()==label
+                for n in nodes for key in ['text','content-desc']
+                for part in n.get(key,'').splitlines()) or any(
+                    re.fullmatch(re.escape(label)+r',\s*'+re.escape(normal('عداد السبحة الشخصية')),
+                                 normal(n.get('content-desc',''))) is not None
+                    for n in nodes)
         else:
             matched=normal(label) in normal(value)
         if matched:
