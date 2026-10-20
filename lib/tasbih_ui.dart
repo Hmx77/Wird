@@ -104,13 +104,21 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                 ),
               ),
               const Positioned(
-                top: -20, left: -30, width: 180, height: 310,
+                top: -20,
+                left: -30,
+                width: 180,
+                height: 310,
                 child: _TasbihFoliage(),
               ),
               Positioned(
-                right: -38, bottom: 85, width: 155, height: 290,
-                child: Transform.rotate(angle: 3.141592653589793,
-                  child: const _TasbihFoliage()),
+                right: -38,
+                bottom: 85,
+                width: 155,
+                height: 290,
+                child: Transform.rotate(
+                  angle: 3.141592653589793,
+                  child: const _TasbihFoliage(),
+                ),
               ),
               SafeArea(
                 child: LayoutBuilder(
@@ -409,11 +417,14 @@ class _TasbihPill extends StatelessWidget {
   Widget build(BuildContext context) => DecoratedBox(
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(60),
-      gradient: prominent ? const LinearGradient(
-        begin: Alignment.topLeft, end: Alignment.bottomRight,
-        colors: [Color(0xFF3F6651), Color(0xFF123C31), Color(0xFF082924)],
-        stops: [0, .35, 1],
-      ) : null,
+      gradient: prominent
+          ? const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF3F6651), Color(0xFF123C31), Color(0xFF082924)],
+              stops: [0, .35, 1],
+            )
+          : null,
       boxShadow: prominent
           ? [BoxShadow(color: homeGold.withValues(alpha: .10), blurRadius: 18)]
           : null,
@@ -455,8 +466,11 @@ class _TasbihOrnament extends StatelessWidget {
           ),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 9),
-          child: SizedBox(width: 16, height: 16,
-            child: CustomPaint(painter: _TasbihDiamondPainter())),
+          child: SizedBox(
+            width: 16,
+            height: 16,
+            child: CustomPaint(painter: _TasbihDiamondPainter()),
+          ),
         ),
         if (lines)
           Container(
@@ -513,40 +527,60 @@ class _TasbihAtmosphere extends CustomPainter {
         ..lineTo(right, size.height);
       canvas.drawPath(arch, line);
     }
-
   }
 
   @override
   bool shouldRepaint(_TasbihAtmosphere oldDelegate) => base != oldDelegate.base;
 }
 
-
 /// Reuses the owned optimized botanical artwork, cropped to edge foliage only.
 class _TasbihFoliage extends StatelessWidget {
   const _TasbihFoliage();
   @override
   Widget build(BuildContext context) => IgnorePointer(
-    child: ExcludeSemantics(child: RepaintBoundary(child: ShaderMask(
-      blendMode: BlendMode.dstIn,
-      shaderCallback: (rect) => const LinearGradient(
-        begin: Alignment.topCenter, end: Alignment.bottomCenter,
-        colors: [Colors.transparent, Colors.white, Colors.white, Colors.transparent],
-        stops: [0, .12, .28, 1],
-      ).createShader(rect),
-      child: ShaderMask(
-        blendMode: BlendMode.dstIn,
-        shaderCallback: (rect) => const LinearGradient(
-          begin: Alignment.centerLeft, end: Alignment.centerRight,
-          colors: [Colors.transparent, Colors.white, Colors.white, Colors.transparent],
-          stops: [0, .12, .28, 1],
-        ).createShader(rect),
-        child: Opacity(opacity: .56, child: Image.asset(
-          'assets/home/botanical-serenity.webp',
-          fit: BoxFit.cover, alignment: Alignment.topLeft, cacheWidth: 720,
-          excludeFromSemantics: true, filterQuality: FilterQuality.medium,
-        )),
+    child: ExcludeSemantics(
+      child: RepaintBoundary(
+        child: ShaderMask(
+          blendMode: BlendMode.dstIn,
+          shaderCallback: (rect) => const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.transparent,
+              Colors.white,
+              Colors.white,
+              Colors.transparent,
+            ],
+            stops: [0, .12, .28, 1],
+          ).createShader(rect),
+          child: ShaderMask(
+            blendMode: BlendMode.dstIn,
+            shaderCallback: (rect) => const LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [
+                Colors.transparent,
+                Colors.white,
+                Colors.white,
+                Colors.transparent,
+              ],
+              stops: [0, .12, .28, 1],
+            ).createShader(rect),
+            child: Opacity(
+              opacity: .56,
+              child: Image.asset(
+                'assets/home/botanical-serenity.webp',
+                fit: BoxFit.cover,
+                alignment: Alignment.topLeft,
+                cacheWidth: 720,
+                excludeFromSemantics: true,
+                filterQuality: FilterQuality.medium,
+              ),
+            ),
+          ),
+        ),
       ),
-    ))),
+    ),
   );
 }
 
@@ -557,11 +591,25 @@ class _TasbihDiamondPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()..color = homeGold;
     final r = size.width * .17;
-    for (final point in const [Offset(.5,.18), Offset(.18,.5), Offset(.82,.5), Offset(.5,.82)]) {
-      final x=point.dx*size.width, y=point.dy*size.height;
-      canvas.drawPath(Path()..moveTo(x,y-r)..lineTo(x+r,y)..lineTo(x,y+r)..lineTo(x-r,y)..close(),paint);
+    for (final point in const [
+      Offset(.5, .18),
+      Offset(.18, .5),
+      Offset(.82, .5),
+      Offset(.5, .82),
+    ]) {
+      final x = point.dx * size.width, y = point.dy * size.height;
+      canvas.drawPath(
+        Path()
+          ..moveTo(x, y - r)
+          ..lineTo(x + r, y)
+          ..lineTo(x, y + r)
+          ..lineTo(x - r, y)
+          ..close(),
+        paint,
+      );
     }
   }
+
   @override
   bool shouldRepaint(_TasbihDiamondPainter oldDelegate) => false;
 }
