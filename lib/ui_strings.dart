@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
 
 const themeArabic = <String, String>{
-  'Olive & Cream': 'زيتوني وكريمي',
-  'Ocean Blue': 'أزرق المحيط',
-  'Mocha & Sand': 'الموكا والرمال',
-  'Soft Lavender': 'لافندر ناعم',
-  'Emerald & Gold': 'الزمرد والذهب',
-  'Midnight Blue': 'أزرق منتصف الليل',
-  'Charcoal & Sage': 'فحمي ومريمي',
-  'Dusty Rose & Stone': 'وردي غباري وحجري',
-  'Stone & Teal': 'حجري وفيروزي',
-  'Sage & Ivory': 'أخضر مريمي وعاجي',
+  'Midnight Teal': 'داكن — Midnight Teal',
+  'Ivory Serenity': 'فاتح — Ivory Serenity',
 };
 
 const uiEnglish = <String, String>{

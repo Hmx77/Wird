@@ -17,22 +17,22 @@ class SettingsPage extends StatelessWidget {
         child: ColoredBox(
           color: p.homeBackground,
           child: SingleChildScrollView(
-            key: const PageStorageKey('settings-scroll'),
+            key: PageStorageKey('settings-scroll'),
             child: Center(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 700),
+                constraints: BoxConstraints(maxWidth: 700),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     _SettingsHeader(palette: p),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
+                      padding: EdgeInsets.fromLTRB(16, 0, 16, 28),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           if (store.storageError != null)
                             Padding(
-                              padding: const EdgeInsets.all(12),
+                              padding: EdgeInsets.all(12),
                               child: UiText(store.storageError!),
                             ),
                           SettingsPanel(
@@ -42,15 +42,15 @@ class SettingsPage extends StatelessWidget {
                               subtitle: 'اختر لغة التطبيق',
                               control: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
-                                  key: const Key('language-picker'),
+                                  key: Key('language-picker'),
                                   value: store.languageCode,
                                   dropdownColor: p.homeSurface,
-                                  style: const TextStyle(
-                                    color: homeCream,
+                                  style: TextStyle(
+                                    color: AppAppearance.of(context).ink,
                                     fontFamily: 'NotoSansArabic',
                                     fontSize: 15,
                                   ),
-                                  items: const [
+                                  items: [
                                     DropdownMenuItem(
                                       value: 'ar',
                                       child: Text('العربية'),
@@ -68,21 +68,21 @@ class SettingsPage extends StatelessWidget {
                             ),
                           ),
                           if (store.languageCode == 'en')
-                            const Padding(
+                            Padding(
                               padding: EdgeInsets.symmetric(vertical: 8),
                               child: UiText(
                                 'النص الديني بالعربية؛ الترجمة الإنجليزية قيد المراجعة.',
                                 style: TextStyle(
-                                  color: homeCream,
+                                  color: AppAppearance.of(context).ink,
                                   fontSize: 12,
                                 ),
                               ),
                             ),
-                          const SizedBox(height: 10),
+                          SizedBox(height: 10),
                           SettingsPanel(
                             highlighted: true,
                             child: InkWell(
-                              key: const Key('appearance-picker'),
+                              key: Key('appearance-picker'),
                               borderRadius: BorderRadius.circular(22),
                               onTap: () => _appearance(context),
                               child: _SettingsControl(
@@ -92,11 +92,11 @@ class SettingsPage extends StatelessWidget {
                                 control: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    ...{store.themeIndex, 5, 9}
-                                        .take(3)
+                                    ...{0, 1}
+                                        .take(2)
                                         .map(
                                           (i) => Padding(
-                                            padding: const EdgeInsets.all(3),
+                                            padding: EdgeInsets.all(3),
                                             child: Container(
                                               width: 28,
                                               height: 28,
@@ -105,8 +105,8 @@ class SettingsPage extends StatelessWidget {
                                                 color: themes[i].primary,
                                                 border: Border.all(
                                                   color: i == store.themeIndex
-                                                      ? homeGold
-                                                      : homeCream.withOpacity(
+                                                      ? AppAppearance.of(context).gold
+                                                      : AppAppearance.of(context).ink.withOpacity(
                                                           .3,
                                                         ),
                                                   width: i == store.themeIndex
@@ -129,30 +129,30 @@ class SettingsPage extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 12),
-                          const ReminderPanel(),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12),
+                          ReminderPanel(),
+                          SizedBox(height: 12),
                           SettingsPanel(
                             highlighted: true,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                const SettingsHeading(
+                                SettingsHeading(
                                   'حجم الخط',
                                   icon: Icons.text_fields_rounded,
                                 ),
                                 Row(
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Aa',
                                       style: TextStyle(
-                                        color: homeGold,
+                                        color: AppAppearance.of(context).gold,
                                         fontSize: 14,
                                       ),
                                     ),
                                     Expanded(
                                       child: Slider(
-                                        key: const Key('reading-font-slider'),
+                                        key: Key('reading-font-slider'),
                                         value: store.fontSize,
                                         min: 19,
                                         max: 38,
@@ -163,20 +163,20 @@ class SettingsPage extends StatelessWidget {
                                     ),
                                     Text(
                                       '${store.fontSize.round()}',
-                                      style: const TextStyle(
-                                        color: homeGold,
+                                      style: TextStyle(
+                                        color: AppAppearance.of(context).gold,
                                         fontSize: 18,
                                       ),
                                     ),
                                   ],
                                 ),
                                 Container(
-                                  key: const Key('reading-font-preview'),
-                                  padding: const EdgeInsets.all(14),
+                                  key: Key('reading-font-preview'),
+                                  padding: EdgeInsets.all(14),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(18),
                                     border: Border.all(
-                                      color: homeGold.withOpacity(.32),
+                                      color: AppAppearance.of(context).gold.withOpacity(.32),
                                     ),
                                     color: p.homeBackground.withOpacity(.55),
                                   ),
@@ -184,7 +184,7 @@ class SettingsPage extends StatelessWidget {
                                     'هذا مثال على حجم القراءة',
                                     style: TextStyle(
                                       fontSize: store.fontSize,
-                                      color: homeCream,
+                                      color: AppAppearance.of(context).ink,
                                       height: 1.7,
                                     ),
                                     textAlign: TextAlign.center,
@@ -193,37 +193,37 @@ class SettingsPage extends StatelessWidget {
                               ],
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12),
                           SettingsPanel(
                             highlighted: true,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                const SettingsHeading(
+                                SettingsHeading(
                                   'السبحة الشخصية',
                                   icon: Icons.grain_rounded,
                                 ),
-                                const SizedBox(height: 8),
-                                const UiText(
+                                SizedBox(height: 8),
+                                UiText(
                                   'هدف شخصي، وليس عددًا تعبديًا منصوصًا.',
                                   style: TextStyle(
-                                    color: homeCream,
+                                    color: AppAppearance.of(context).ink,
                                     fontSize: 12,
                                     height: 1.8,
                                   ),
                                 ),
-                                const SizedBox(height: 12),
+                                SizedBox(height: 12),
                                 LayoutBuilder(
                                   builder: (context, c) {
                                     final counter = Container(
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: EdgeInsets.symmetric(
                                         vertical: 16,
                                         horizontal: 24,
                                       ),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(22),
                                         border: Border.all(
-                                          color: homeGold.withOpacity(.3),
+                                          color: AppAppearance.of(context).gold.withOpacity(.3),
                                         ),
                                         gradient: RadialGradient(
                                           colors: [
@@ -237,12 +237,12 @@ class SettingsPage extends StatelessWidget {
                                         label: tr(context, 'السبحة الشخصية'),
                                         child: Text(
                                           '${store.tasbih}',
-                                          key: const Key(
+                                          key: Key(
                                             'settings-tasbih-value',
                                           ),
                                           textAlign: TextAlign.center,
-                                          style: const TextStyle(
-                                            color: homeCream,
+                                          style: TextStyle(
+                                            color: AppAppearance.of(context).ink,
                                             fontSize: 46,
                                             height: 1.3,
                                             fontWeight: FontWeight.w500,
@@ -256,7 +256,7 @@ class SettingsPage extends StatelessWidget {
                                       alignment: WrapAlignment.center,
                                       children: [
                                         FilledButton.icon(
-                                          key: const Key('settings-tasbih-add'),
+                                          key: Key('settings-tasbih-add'),
                                           onPressed: () {
                                             store.setTasbih(store.tasbih + 1);
                                             if (store.haptics)
@@ -264,19 +264,19 @@ class SettingsPage extends StatelessWidget {
                                                 HapticFeedback.selectionClick(),
                                               );
                                           },
-                                          icon: const Icon(Icons.add, size: 18),
-                                          label: const UiText('تسبيح +'),
+                                          icon: Icon(Icons.add, size: 18),
+                                          label: UiText('تسبيح +'),
                                         ),
                                         OutlinedButton.icon(
-                                          key: const Key(
+                                          key: Key(
                                             'settings-tasbih-reset',
                                           ),
                                           onPressed: () => store.setTasbih(0),
-                                          icon: const Icon(
+                                          icon: Icon(
                                             Icons.restart_alt,
                                             size: 18,
                                           ),
-                                          label: const UiText('إعادة'),
+                                          label: UiText('إعادة'),
                                         ),
                                       ],
                                     );
@@ -290,14 +290,14 @@ class SettingsPage extends StatelessWidget {
                                             CrossAxisAlignment.stretch,
                                         children: [
                                           counter,
-                                          const SizedBox(height: 12),
+                                          SizedBox(height: 12),
                                           buttons,
                                         ],
                                       );
                                     return Row(
                                       children: [
                                         Expanded(flex: 2, child: buttons),
-                                        const SizedBox(width: 16),
+                                        SizedBox(width: 16),
                                         Expanded(child: counter),
                                       ],
                                     );
@@ -306,7 +306,7 @@ class SettingsPage extends StatelessWidget {
                               ],
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12),
                           SettingsPanel(
                             child: Column(
                               children: [
@@ -316,16 +316,16 @@ class SettingsPage extends StatelessWidget {
                                   control: Semantics(
                                     label: tr(context, 'اهتزاز خفيف عند العد'),
                                     child: Switch(
-                                      key: const Key('haptics-switch'),
+                                      key: Key('haptics-switch'),
                                       value: store.haptics,
                                       onChanged: (v) =>
                                           store.preferences(feedback: v),
                                     ),
                                   ),
                                 ),
-                                const Divider(
+                                Divider(
                                   height: 18,
-                                  color: Color(0x335F9D92),
+                                  color: appearanceTone(context, 0x335F9D92),
                                 ),
                                 _SettingsControl(
                                   icon: Icons.skip_next_rounded,
@@ -336,7 +336,7 @@ class SettingsPage extends StatelessWidget {
                                       'الانتقال تلقائيًا بعد إكمال الذكر',
                                     ),
                                     child: Switch(
-                                      key: const Key('auto-advance-switch'),
+                                      key: Key('auto-advance-switch'),
                                       value: store.autoAdvance,
                                       onChanged: (v) =>
                                           store.preferences(advance: v),
@@ -346,43 +346,43 @@ class SettingsPage extends StatelessWidget {
                               ],
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12),
                           SettingsPanel(
                             highlighted: true,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                const SettingsHeading(
+                                SettingsHeading(
                                   'خصوصيتك ومصادرك',
                                   icon: Icons.verified_user_outlined,
                                 ),
-                                const SizedBox(height: 10),
-                                const UiText(
+                                SizedBox(height: 10),
+                                UiText(
                                   'تحفظ المتابعة على جهازك.',
                                   style: TextStyle(
-                                    color: homeCream,
+                                    color: AppAppearance.of(context).ink,
                                     height: 1.8,
                                     fontSize: 13,
                                   ),
                                 ),
                                 ExpansionTile(
-                                  key: const Key('privacy-details'),
+                                  key: Key('privacy-details'),
                                   tilePadding: EdgeInsets.zero,
-                                  childrenPadding: const EdgeInsets.only(
+                                  childrenPadding: EdgeInsets.only(
                                     bottom: 14,
                                   ),
-                                  title: const UiText(
+                                  title: UiText(
                                     'التفاصيل والمصادر',
                                     style: TextStyle(
-                                      color: homeGold,
+                                      color: AppAppearance.of(context).gold,
                                       fontSize: 14,
                                     ),
                                   ),
-                                  children: const [
+                                  children: [
                                     UiText(
                                       settingsPrivacyCopy,
                                       style: TextStyle(
-                                        color: homeCream,
+                                        color: AppAppearance.of(context).ink,
                                         height: 1.9,
                                         fontSize: 13,
                                       ),
@@ -390,7 +390,7 @@ class SettingsPage extends StatelessWidget {
                                   ],
                                 ),
                                 _SettingsAction(
-                                  key: const Key('settings-licenses'),
+                                  key: Key('settings-licenses'),
                                   icon: Icons.description_outlined,
                                   title: 'تراخيص البرمجيات',
                                   onTap: () => showLicensePage(
@@ -398,9 +398,9 @@ class SettingsPage extends StatelessWidget {
                                     applicationName: 'ورد — Wird',
                                   ),
                                 ),
-                                const Divider(color: Color(0x335F9D92)),
+                                Divider(color: appearanceTone(context, 0x335F9D92)),
                                 _SettingsAction(
-                                  key: const Key('settings-erase'),
+                                  key: Key('settings-erase'),
                                   icon: Icons.delete_outline_rounded,
                                   title: 'مسح بياناتي المحلية',
                                   onTap: () => _erase(context),
@@ -434,29 +434,31 @@ class SettingsPage extends StatelessWidget {
             maxHeight: MediaQuery.sizeOf(c).height * .8,
           ),
           child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 24),
             child: Column(
               children: [
-                const SettingsHeading('المظهر', icon: Icons.palette_outlined),
-                const SizedBox(height: 12),
+                SettingsHeading('المظهر', icon: Icons.palette_outlined),
+                SizedBox(height: 12),
                 ...themes.indexed.map(
                   (e) => RadioListTile<int>(
                     key: Key('settings-theme-${e.$1}'),
                     value: e.$1,
                     groupValue: store.themeIndex,
-                    activeColor: homeGold,
+                    activeColor: AppAppearance.of(context).gold,
                     secondary: Container(
-                      width: 36,
-                      height: 36,
+                      width: 56, height: 56,
                       decoration: BoxDecoration(
-                        color: e.$2.primary,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: homeGold.withOpacity(.5)),
+                        gradient: LinearGradient(colors: [e.$2.homeSurface, e.$2.homeBackground]),
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(color: e.$1 == store.themeIndex
+                          ? AppAppearance.of(context).gold : e.$2.homeOutline),
                       ),
+                      child: Icon(e.$2.dark ? Icons.dark_mode_outlined : Icons.light_mode_outlined,
+                        color: e.$2.dark ? homeGold : e.$2.ink, size: 28),
                     ),
                     title: UiText(
                       e.$2.name,
-                      style: const TextStyle(color: homeCream, fontSize: 14),
+                      style: TextStyle(color: AppAppearance.of(context).ink, fontSize: 14),
                     ),
                     onChanged: (i) {
                       if (i != null) store.changeTheme(i);
@@ -479,23 +481,23 @@ class SettingsPage extends StatelessWidget {
         palette: store.palette,
         child: AlertDialog(
           backgroundColor: store.palette.homeSurface,
-          title: const UiText(
+          title: UiText(
             'مسح المتابعة والمفضلة؟',
-            style: TextStyle(color: homeCream),
+            style: TextStyle(color: AppAppearance.of(context).ink),
           ),
-          content: const UiText(
+          content: UiText(
             'سيمسح تقدم القراءة والمفضلة وتتبع الصلاة والسبحة الشخصية. لا يمكن التراجع. تبقى إعدادات المظهر والتذكيرات.',
-            style: TextStyle(color: homeCream, height: 1.8),
+            style: TextStyle(color: AppAppearance.of(context).ink, height: 1.8),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(c, false),
-              child: const UiText('إلغاء'),
+              child: UiText('إلغاء'),
             ),
             TextButton(
-              key: const Key('confirm-local-erase'),
+              key: Key('confirm-local-erase'),
               onPressed: () => Navigator.pop(c, true),
-              child: const UiText('مسح'),
+              child: UiText('مسح'),
             ),
           ],
         ),
@@ -507,7 +509,7 @@ class SettingsPage extends StatelessWidget {
       } catch (_) {
         if (context.mounted)
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: UiText('تعذر مسح البيانات. حاول مجددًا.')),
+            SnackBar(content: UiText('تعذر مسح البيانات. حاول مجددًا.')),
           );
       }
     }
@@ -521,38 +523,38 @@ class SettingsStyle extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Theme(
     data: Theme.of(context).copyWith(
-      colorScheme: ColorScheme.dark(
-        primary: homeGold,
-        onPrimary: const Color(0xFF173A36),
+      colorScheme: Theme.of(context).colorScheme.copyWith(
+        primary: AppAppearance.of(context).gold,
+        onPrimary: appearanceTone(context, 0xFF173A36),
         surface: palette.homeSurface,
-        onSurface: homeCream,
+        onSurface: AppAppearance.of(context).ink,
         secondary: palette.homeAccent,
       ),
-      iconTheme: const IconThemeData(color: homeGold),
+      iconTheme: IconThemeData(color: AppAppearance.of(context).gold),
       textTheme: Theme.of(
         context,
-      ).textTheme.apply(bodyColor: homeCream, displayColor: homeCream),
+      ).textTheme.apply(bodyColor: AppAppearance.of(context).ink, displayColor: AppAppearance.of(context).ink),
       switchTheme: SwitchThemeData(
-        thumbColor: const WidgetStatePropertyAll(homeCream),
+        thumbColor: WidgetStatePropertyAll(AppAppearance.of(context).ink),
         trackColor: WidgetStateProperty.resolveWith(
           (s) => s.contains(WidgetState.selected)
-              ? const Color(0xFFB99A54)
+              ? appearanceTone(context, 0xFFB99A54)
               : palette.homeBackground,
         ),
-        trackOutlineColor: WidgetStatePropertyAll(homeGold.withOpacity(.4)),
+        trackOutlineColor: WidgetStatePropertyAll(AppAppearance.of(context).gold.withOpacity(.4)),
       ),
       sliderTheme: SliderTheme.of(context).copyWith(
-        activeTrackColor: homeGold,
-        thumbColor: homeGold,
-        inactiveTrackColor: homeCream.withOpacity(.25),
-        overlayColor: homeGold.withOpacity(.12),
+        activeTrackColor: AppAppearance.of(context).gold,
+        thumbColor: AppAppearance.of(context).gold,
+        inactiveTrackColor: AppAppearance.of(context).ink.withOpacity(.25),
+        overlayColor: AppAppearance.of(context).gold.withOpacity(.12),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: homeGold,
-          foregroundColor: const Color(0xFF173A36),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          minimumSize: const Size(48, 48),
+          backgroundColor: AppAppearance.of(context).gold,
+          foregroundColor: appearanceTone(context, 0xFF173A36),
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          minimumSize: Size(48, 48),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(17),
           ),
@@ -560,10 +562,10 @@ class SettingsStyle extends StatelessWidget {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: homeGold,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          side: BorderSide(color: homeGold.withOpacity(.65)),
-          minimumSize: const Size(48, 48),
+          foregroundColor: AppAppearance.of(context).gold,
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          side: BorderSide(color: AppAppearance.of(context).gold.withOpacity(.65)),
+          minimumSize: Size(48, 48),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(17),
           ),
@@ -571,11 +573,11 @@ class SettingsStyle extends StatelessWidget {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: homeGold,
-          minimumSize: const Size(48, 48),
+          foregroundColor: AppAppearance.of(context).gold,
+          minimumSize: Size(48, 48),
         ),
       ),
-      dividerTheme: const DividerThemeData(color: Color(0x335F9D92)),
+      dividerTheme: DividerThemeData(color: appearanceTone(context, 0x335F9D92)),
     ),
     child: child,
   );
@@ -591,31 +593,31 @@ class SettingsPanel extends StatelessWidget {
   final bool highlighted;
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(16),
+    padding: EdgeInsets.all(16),
     clipBehavior: Clip.antiAlias,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(24),
       border: Border.all(
-        color: highlighted ? homeGold.withOpacity(.6) : const Color(0x665F9D92),
+        color: highlighted ? AppAppearance.of(context).gold.withOpacity(.6) : appearanceTone(context, 0x665F9D92),
       ),
       gradient: LinearGradient(
         begin: Alignment.topRight,
         end: Alignment.bottomLeft,
         colors: [
           Theme.of(context).colorScheme.surface,
-          const Color(0xFF002C2C),
+          appearanceTone(context, 0xFF002C2C),
         ],
       ),
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(.15),
           blurRadius: 18,
-          offset: const Offset(0, 6),
+          offset: Offset(0, 6),
         ),
       ],
     ),
     child: CustomPaint(
-      painter: highlighted ? const _SettingsOrnament() : null,
+      painter: highlighted ? _SettingsOrnament() : null,
       child: child,
     ),
   );
@@ -629,12 +631,12 @@ class SettingsHeading extends StatelessWidget {
   Widget build(BuildContext context) => Row(
     children: [
       _SettingsMedallion(icon),
-      const SizedBox(width: 12),
+      SizedBox(width: 12),
       Expanded(
         child: UiText(
           title,
-          style: const TextStyle(
-            color: homeCream,
+          style: TextStyle(
+            color: AppAppearance.of(context).ink,
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
@@ -653,17 +655,17 @@ class _SettingsMedallion extends StatelessWidget {
     height: 44,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(17),
-      border: Border.all(color: homeGold.withOpacity(.35)),
-      gradient: const LinearGradient(
-        colors: [Color(0xFF294944), Color(0xFF092D2C)],
+      border: Border.all(color: AppAppearance.of(context).gold.withOpacity(.35)),
+      gradient: LinearGradient(
+        colors: [appearanceTone(context, 0xFF294944), appearanceTone(context, 0xFF092D2C)],
       ),
     ),
     child: icon == Icons.grain_rounded
-        ? const Padding(
+        ? Padding(
             padding: EdgeInsets.all(8),
             child: CustomPaint(painter: _BeadsPainter()),
           )
-        : Icon(icon, color: homeGold, size: 23),
+        : Icon(icon, color: AppAppearance.of(context).gold, size: 23),
   );
 }
 
@@ -684,15 +686,15 @@ class _SettingsControl extends StatelessWidget {
       final label = Row(
         children: [
           _SettingsMedallion(icon),
-          const SizedBox(width: 11),
+          SizedBox(width: 11),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 UiText(
                   title,
-                  style: const TextStyle(
-                    color: homeCream,
+                  style: TextStyle(
+                    color: AppAppearance.of(context).ink,
                     fontSize: 16,
                     height: 1.7,
                   ),
@@ -701,7 +703,7 @@ class _SettingsControl extends StatelessWidget {
                   UiText(
                     subtitle!,
                     style: TextStyle(
-                      color: homeCream.withOpacity(.72),
+                      color: AppAppearance.of(context).ink.withOpacity(.72),
                       fontSize: 12,
                       height: 1.7,
                     ),
@@ -722,7 +724,7 @@ class _SettingsControl extends StatelessWidget {
       return Row(
         children: [
           Expanded(child: label),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           control,
         ],
       );
@@ -745,16 +747,16 @@ class _SettingsAction extends StatelessWidget {
     onTap: onTap,
     borderRadius: BorderRadius.circular(16),
     child: Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
           _SettingsMedallion(icon),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: UiText(
               title,
-              style: const TextStyle(
-                color: homeCream,
+              style: TextStyle(
+                color: AppAppearance.of(context).ink,
                 fontSize: 15,
                 height: 1.8,
               ),
@@ -764,7 +766,7 @@ class _SettingsAction extends StatelessWidget {
             Directionality.of(context) == TextDirection.rtl
                 ? Icons.chevron_left
                 : Icons.chevron_right,
-            color: homeGold,
+            color: AppAppearance.of(context).gold,
             size: 20,
           ),
         ],
@@ -784,7 +786,7 @@ class _SettingsHeader extends StatelessWidget {
           child: Opacity(
             opacity: .28,
             child: Image.asset(
-              'assets/home/botanical-serenity.webp',
+              botanicalAsset(context),
               fit: BoxFit.cover,
               alignment: Alignment.topLeft,
             ),
@@ -806,27 +808,27 @@ class _SettingsHeader extends StatelessWidget {
         ),
       ),
       Padding(
-        padding: const EdgeInsets.fromLTRB(24, 32, 24, 26),
+        padding: EdgeInsets.fromLTRB(24, 32, 24, 26),
         child: Row(
           children: [
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const UiText(
+                  UiText(
                     'الإعدادات',
                     style: TextStyle(
-                      color: homeGold,
+                      color: AppAppearance.of(context).gold,
                       fontSize: 34,
                       height: 1.5,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   UiText(
                     'المظهر والقراءة والخصوصية',
                     style: TextStyle(
-                      color: homeCream.withOpacity(.85),
+                      color: AppAppearance.of(context).ink.withOpacity(.85),
                       fontSize: 14,
                       height: 1.8,
                     ),
@@ -834,8 +836,8 @@ class _SettingsHeader extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 12),
-            const Icon(Icons.spa_outlined, color: homeGold, size: 31),
+            SizedBox(width: 12),
+            Icon(Icons.spa_outlined, color: AppAppearance.of(context).gold, size: 31),
           ],
         ),
       ),
@@ -892,6 +894,6 @@ class _DeferredSettingsPageState extends State<DeferredSettingsPage> {
     _opened = _opened || widget.active;
     return _opened
         ? SettingsPage(store: widget.store)
-        : const SizedBox.shrink();
+        : SizedBox.shrink();
   }
 }

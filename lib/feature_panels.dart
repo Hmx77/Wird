@@ -101,28 +101,28 @@ class _ReminderPanelState extends State<ReminderPanel> {
   @override
   Widget build(BuildContext context) {
     if (loadFailed)
-      return const Padding(
+      return Padding(
         padding: EdgeInsets.all(19),
         child: UiText(
           'تعذر فتح الحفظ المحلي. يمكنك القراءة؛ قد لا تحفظ التغييرات.',
         ),
       );
-    if (prefs == null) return const SizedBox.shrink();
+    if (prefs == null) return SizedBox.shrink();
     return SettingsPanel(
       highlighted: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SettingsHeading(
+          SettingsHeading(
             'تذكيراتك',
             icon: Icons.notifications_none_rounded,
           ),
-          const SizedBox(height: 9),
-          const UiText(
+          SizedBox(height: 9),
+          UiText(
             'أوقات تختارها أنت. قد يؤخر النظام التنبيه لتوفير البطارية.',
-            style: TextStyle(color: homeCream, fontSize: 12, height: 1.8),
+            style: TextStyle(color: AppAppearance.of(context).ink, fontSize: 12, height: 1.8),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           ...DhikrSection.values.map((section) {
             final key = 'reminder.${section.name}';
             final enabled = prefs!.getBool('$key.enabled') ?? false;
@@ -139,15 +139,15 @@ class _ReminderPanelState extends State<ReminderPanel> {
                     Icons.wb_twilight_rounded,
                     Icons.nightlight_round,
                   ][section.index],
-                  color: homeGold,
+                  color: AppAppearance.of(context).gold,
                   size: 22,
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10),
                 Expanded(
                   child: UiText(
                     sectionLabel(section),
                     style: TextStyle(
-                      color: homeCream.withOpacity(enabled ? 1 : .72),
+                      color: AppAppearance.of(context).ink.withOpacity(enabled ? 1 : .72),
                       fontSize: 15,
                       height: 1.7,
                     ),
@@ -176,7 +176,7 @@ class _ReminderPanelState extends State<ReminderPanel> {
                   child: Text(
                     time.format(context),
                     style: TextStyle(
-                      color: homeCream.withOpacity(enabled ? 1 : .7),
+                      color: AppAppearance.of(context).ink.withOpacity(enabled ? 1 : .7),
                       fontSize: 13,
                     ),
                   ),
@@ -193,12 +193,12 @@ class _ReminderPanelState extends State<ReminderPanel> {
               ],
             );
             return Container(
-              margin: const EdgeInsets.only(top: 7),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              margin: EdgeInsets.only(top: 7),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: homeGold.withOpacity(enabled ? .3 : .12),
+                  color: AppAppearance.of(context).gold.withOpacity(enabled ? .3 : .12),
                 ),
               ),
               child: LayoutBuilder(
@@ -218,7 +218,7 @@ class _ReminderPanelState extends State<ReminderPanel> {
                   return Row(
                     children: [
                       Expanded(child: title),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       controls,
                     ],
                   );
@@ -317,7 +317,7 @@ class _AudioPanelState extends State<AudioPanel> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     if (track == null)
-      return const Padding(
+      return Padding(
         padding: EdgeInsets.only(bottom: 14),
         child: UiText(
           'التسجيل الصوتي بانتظار ترخيص ومراجعة',
@@ -350,7 +350,7 @@ class _AudioPanelState extends State<AudioPanel> with WidgetsBindingObserver {
           ),
         UiText(
           '${track!.reciter} • ${track!.license}',
-          style: const TextStyle(fontSize: 11),
+          style: TextStyle(fontSize: 11),
         ),
         if (error != null) UiText(error!),
       ],
@@ -375,7 +375,7 @@ class _ProgressCalendarState extends State<ProgressCalendar> {
     final firstWeekday = localizations.firstDayOfWeekIndex;
     final offset = (month.weekday % 7 - firstWeekday + 7) % 7;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(19, 0, 19, 18),
+      padding: EdgeInsets.fromLTRB(19, 0, 19, 18),
       child: Surface(
         child: Column(
           children: [
@@ -387,7 +387,7 @@ class _ProgressCalendarState extends State<ProgressCalendar> {
                   onPressed: () => setState(
                     () => month = DateTime(month.year, month.month - 1),
                   ),
-                  icon: const Icon(Icons.chevron_right),
+                  icon: Icon(Icons.chevron_right),
                 ),
                 UiText(
                   MaterialLocalizations.of(context).formatMonthYear(month),
@@ -401,7 +401,7 @@ class _ProgressCalendarState extends State<ProgressCalendar> {
                       : () => setState(
                           () => month = DateTime(month.year, month.month + 1),
                         ),
-                  icon: const Icon(Icons.chevron_left),
+                  icon: Icon(Icons.chevron_left),
                 ),
               ],
             ),
@@ -419,9 +419,9 @@ class _ProgressCalendarState extends State<ProgressCalendar> {
             GridView.count(
               crossAxisCount: 7,
               shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
+              physics: NeverScrollableScrollPhysics(),
               children: List.generate(count + offset, (cell) {
-                if (cell < offset) return const SizedBox.shrink();
+                if (cell < offset) return SizedBox.shrink();
                 final i = cell - offset;
                 final date = DateTime(month.year, month.month, i + 1);
                 final done = entries
@@ -433,7 +433,7 @@ class _ProgressCalendarState extends State<ProgressCalendar> {
                   child: Tooltip(
                     message: '$done / ${entries.length}',
                     child: Container(
-                      margin: const EdgeInsets.all(3),
+                      margin: EdgeInsets.all(3),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: done == 0 ? p.background : p.primary,
@@ -450,7 +450,7 @@ class _ProgressCalendarState extends State<ProgressCalendar> {
                 );
               }),
             ),
-            const UiText(
+            UiText(
               'الأيام الملوّنة: أتممت فيها ذكرًا واحدًا أو أكثر',
               style: TextStyle(fontSize: 11),
             ),

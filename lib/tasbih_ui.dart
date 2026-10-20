@@ -12,7 +12,7 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
     with SingleTickerProviderStateMixin {
   late final AnimationController _pulse = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 300),
+    duration: Duration(milliseconds: 300),
   );
   bool _resetOpen = false;
   bool get _still =>
@@ -40,13 +40,13 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
         context: context,
         builder: (dialog) => AlertDialog(
           backgroundColor: widget.store.palette.homeSurface,
-          titleTextStyle: const TextStyle(
-            color: homeCream,
+          titleTextStyle: TextStyle(
+            color: AppAppearance.of(context).ink,
             fontFamily: 'NotoSansArabic',
             fontSize: 21,
           ),
-          contentTextStyle: const TextStyle(
-            color: homeCream,
+          contentTextStyle: TextStyle(
+            color: AppAppearance.of(context).ink,
             fontFamily: 'NotoSansArabic',
             height: 1.8,
           ),
@@ -59,14 +59,14 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
           ),
           actions: [
             TextButton(
-              key: const Key('tasbih-reset-cancel'),
+              key: Key('tasbih-reset-cancel'),
               onPressed: () => Navigator.pop(dialog, false),
-              child: const UiText('إلغاء', style: TextStyle(color: homeCream)),
+              child: UiText('إلغاء', style: TextStyle(color: AppAppearance.of(context).ink)),
             ),
             TextButton(
-              key: const Key('tasbih-reset-confirm'),
+              key: Key('tasbih-reset-confirm'),
               onPressed: () => Navigator.pop(dialog, true),
-              child: const UiText('إعادة', style: TextStyle(color: homeGold)),
+              child: UiText('إعادة', style: TextStyle(color: AppAppearance.of(context).gold)),
             ),
           ],
         ),
@@ -82,13 +82,13 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
     animation: widget.store,
     builder: (context, _) {
       final store = widget.store;
-      final base = Color.lerp(
-        const Color(0xFF031C1B),
+      final base = !store.palette.dark ? store.palette.homeBackground : Color.lerp(
+        appearanceTone(context, 0xFF031C1B),
         store.palette.primary,
         .045,
       )!;
       return AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light.copyWith(
+        value: (store.palette.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark).copyWith(
           statusBarColor: Colors.transparent,
           systemNavigationBarColor: base,
         ),
@@ -103,7 +103,7 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                   ),
                 ),
               ),
-              const Positioned(
+              Positioned(
                 top: -20,
                 left: -30,
                 width: 180,
@@ -117,7 +117,7 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                 height: 290,
                 child: Transform.rotate(
                   angle: 3.141592653589793,
-                  child: const _TasbihFoliage(),
+                  child: _TasbihFoliage(),
                 ),
               ),
               SafeArea(
@@ -129,8 +129,8 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                     );
                     final gap = (bounds.maxHeight * .065).clamp(22.0, 56.0);
                     return SingleChildScrollView(
-                      key: const Key('tasbih-scroll'),
-                      padding: const EdgeInsets.fromLTRB(24, 14, 24, 24),
+                      key: Key('tasbih-scroll'),
+                      padding: EdgeInsets.fromLTRB(24, 14, 24, 24),
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
                           minHeight: (bounds.maxHeight - 38).clamp(
@@ -140,15 +140,15 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                         ),
                         child: Center(
                           child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 520),
+                            constraints: BoxConstraints(maxWidth: 520),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Row(
                                   children: [
                                     BackButton(
-                                      key: const Key('tasbih-back'),
-                                      color: homeGold,
+                                      key: Key('tasbih-back'),
+                                      color: AppAppearance.of(context).gold,
                                       onPressed: () =>
                                           Navigator.maybePop(context),
                                     ),
@@ -156,20 +156,20 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                                       child: UiText(
                                         'السبحة الشخصية',
                                         textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                          color: homeCream,
+                                        style: TextStyle(
+                                          color: AppAppearance.of(context).ink,
                                           fontSize: 23,
                                           fontWeight: FontWeight.w500,
                                           height: 1.6,
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(width: 48),
+                                    SizedBox(width: 48),
                                   ],
                                 ),
                                 SizedBox(height: gap),
-                                const _TasbihOrnament(),
-                                const SizedBox(height: 22),
+                                _TasbihOrnament(),
+                                SizedBox(height: 22),
                                 AnimatedBuilder(
                                   animation: _pulse,
                                   builder: (context, _) {
@@ -188,25 +188,25 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                                         liveRegion: true,
                                         child: ExcludeSemantics(
                                           child: Container(
-                                            key: const Key('tasbih-circle'),
+                                            key: Key('tasbih-circle'),
                                             width: diameter,
                                             height: diameter,
-                                            padding: const EdgeInsets.all(2.5),
+                                            padding: EdgeInsets.all(2.5),
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
-                                              gradient: const LinearGradient(
+                                              gradient: LinearGradient(
                                                 begin: Alignment.topLeft,
                                                 end: Alignment.bottomRight,
                                                 colors: [
-                                                  Color(0xFFFFE7AC),
-                                                  Color(0xFFA1824C),
-                                                  Color(0xFFDEC38D),
-                                                  Color(0xFFFFE5A1),
+                                                  appearanceTone(context, 0xFFFFE7AC),
+                                                  appearanceTone(context, 0xFFA1824C),
+                                                  appearanceTone(context, 0xFFDEC38D),
+                                                  appearanceTone(context, 0xFFFFE5A1),
                                                 ],
                                               ),
                                               boxShadow: [
                                                 BoxShadow(
-                                                  color: homeGold.withValues(
+                                                  color: AppAppearance.of(context).gold.withValues(
                                                     alpha: .12 + glow * .14,
                                                   ),
                                                   blurRadius: 28 + glow * 10,
@@ -218,13 +218,13 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
                                                 border: Border.all(
-                                                  color: const Color(
+                                                  color: Color(
                                                     0xFF122D27,
                                                   ),
                                                   width: 3,
                                                 ),
                                                 gradient: RadialGradient(
-                                                  center: const Alignment(
+                                                  center: Alignment(
                                                     -.55,
                                                     -.7,
                                                   ),
@@ -241,7 +241,7 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                                               ),
                                               child: Padding(
                                                 padding:
-                                                    const EdgeInsets.symmetric(
+                                                    EdgeInsets.symmetric(
                                                       horizontal: 22,
                                                     ),
                                                 child: Column(
@@ -257,7 +257,7 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                                                         child: AnimatedSwitcher(
                                                           duration: _still
                                                               ? Duration.zero
-                                                              : const Duration(
+                                                              : Duration(
                                                                   milliseconds:
                                                                       140,
                                                                 ),
@@ -276,12 +276,12 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                                                             ),
                                                             child: Text(
                                                               '${store.tasbih}',
-                                                              key: const Key(
+                                                              key: Key(
                                                                 'home-tasbih-count',
                                                               ),
                                                               style: TextStyle(
                                                                 color:
-                                                                    homeCream,
+                                                                    AppAppearance.of(context).ink,
                                                                 fontSize:
                                                                     diameter *
                                                                     .40,
@@ -297,8 +297,8 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                                                         ),
                                                       ),
                                                     ),
-                                                    const SizedBox(height: 4),
-                                                    const _TasbihOrnament(
+                                                    SizedBox(height: 4),
+                                                    _TasbihOrnament(
                                                       lines: true,
                                                     ),
                                                     SizedBox(
@@ -318,10 +318,10 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                                 SizedBox(
                                   width: diameter,
                                   child: _TasbihPill(
-                                    controlKey: const Key('home-tasbih-add'),
+                                    controlKey: Key('home-tasbih-add'),
                                     prominent: true,
                                     onPressed: _increment,
-                                    child: const UiText(
+                                    child: UiText(
                                       'تسبيح +',
                                       style: TextStyle(
                                         fontSize: 25,
@@ -330,38 +330,38 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 18),
+                                SizedBox(height: 18),
                                 SizedBox(
                                   width: 154,
                                   child: _TasbihPill(
-                                    controlKey: const Key('tasbih-reset'),
+                                    controlKey: Key('tasbih-reset'),
                                     onPressed: _reset,
-                                    child: const UiText(
+                                    child: UiText(
                                       'إعادة',
                                       style: TextStyle(fontSize: 20),
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 28),
+                                SizedBox(height: 28),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Padding(
+                                    Padding(
                                       padding: EdgeInsets.only(top: 4),
                                       child: Icon(
                                         Icons.info_outline_rounded,
-                                        color: homeGold,
+                                        color: AppAppearance.of(context).gold,
                                         size: 19,
                                       ),
                                     ),
-                                    const SizedBox(width: 9),
+                                    SizedBox(width: 9),
                                     Flexible(
                                       child: UiText(
                                         'هدف شخصي، وليس عددًا تعبديًا منصوصًا.',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          color: homeCream.withValues(
+                                          color: AppAppearance.of(context).ink.withValues(
                                             alpha: .8,
                                           ),
                                           fontSize: 13,
@@ -373,13 +373,13 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                                 ),
                                 if (store.storageError != null)
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 16),
+                                    padding: EdgeInsets.only(top: 16),
                                     child: Semantics(
                                       liveRegion: true,
                                       child: UiText(
                                         store.storageError!,
-                                        style: const TextStyle(
-                                          color: homeCream,
+                                        style: TextStyle(
+                                          color: AppAppearance.of(context).ink,
                                         ),
                                       ),
                                     ),
@@ -418,32 +418,32 @@ class _TasbihPill extends StatelessWidget {
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(60),
       gradient: prominent
-          ? const LinearGradient(
+          ? LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xFF3F6651), Color(0xFF123C31), Color(0xFF082924)],
+              colors: [appearanceTone(context, 0xFF3F6651), appearanceTone(context, 0xFF123C31), appearanceTone(context, 0xFF082924)],
               stops: [0, .35, 1],
             )
           : null,
       boxShadow: prominent
-          ? [BoxShadow(color: homeGold.withValues(alpha: .10), blurRadius: 18)]
+          ? [BoxShadow(color: AppAppearance.of(context).gold.withValues(alpha: .10), blurRadius: 18)]
           : null,
     ),
     child: OutlinedButton(
       key: controlKey,
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
-        foregroundColor: homeCream,
+        foregroundColor: AppAppearance.of(context).ink,
         backgroundColor: prominent
             ? Colors.transparent
-            : const Color(0xFF092724),
+            : appearanceTone(context, 0xFF092724),
         side: BorderSide(
-          color: homeGold.withValues(alpha: prominent ? .9 : .55),
+          color: AppAppearance.of(context).gold.withValues(alpha: prominent ? .9 : .55),
           width: prominent ? 1.7 : 1,
         ),
-        shape: const StadiumBorder(),
+        shape: StadiumBorder(),
         minimumSize: Size(48, prominent ? 64 : 48),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       ),
       child: child,
     ),
@@ -462,9 +462,9 @@ class _TasbihOrnament extends StatelessWidget {
           Container(
             width: 22,
             height: 1,
-            color: homeGold.withValues(alpha: .6),
+            color: AppAppearance.of(context).gold.withValues(alpha: .6),
           ),
-        const Padding(
+        Padding(
           padding: EdgeInsets.symmetric(horizontal: 9),
           child: SizedBox(
             width: 16,
@@ -476,7 +476,7 @@ class _TasbihOrnament extends StatelessWidget {
           Container(
             width: 22,
             height: 1,
-            color: homeGold.withValues(alpha: .6),
+            color: AppAppearance.of(context).gold.withValues(alpha: .6),
           ),
       ],
     ),
@@ -542,7 +542,7 @@ class _TasbihFoliage extends StatelessWidget {
       child: RepaintBoundary(
         child: ShaderMask(
           blendMode: BlendMode.dstIn,
-          shaderCallback: (rect) => const LinearGradient(
+          shaderCallback: (rect) => LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
@@ -555,7 +555,7 @@ class _TasbihFoliage extends StatelessWidget {
           ).createShader(rect),
           child: ShaderMask(
             blendMode: BlendMode.dstIn,
-            shaderCallback: (rect) => const LinearGradient(
+            shaderCallback: (rect) => LinearGradient(
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
               colors: [
@@ -569,7 +569,7 @@ class _TasbihFoliage extends StatelessWidget {
             child: Opacity(
               opacity: .56,
               child: Image.asset(
-                'assets/home/botanical-serenity.webp',
+                botanicalAsset(context),
                 fit: BoxFit.cover,
                 alignment: Alignment.topLeft,
                 cacheWidth: 720,
