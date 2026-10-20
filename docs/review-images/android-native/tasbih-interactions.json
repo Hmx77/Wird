@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "offline": true,
+  "checks": [
+    "six individual taps => 6",
+    "25 rapid native taps => 31",
+    "31 survives actual process restart",
+    "reset clears personal count only",
+    "200% system text: scrollable increment/reset",
+    "320dp small-phone native layout and controls"
+  ],
+  "haptics": "platform-channel true/false widget tests; physical feel needs device review"
+}

@@ -1,0 +1,459 @@
+{
+  "base": "ef788a8ef3966668f1e3deb81f46627256c80243",
+  "files": [
+    {
+      "path": "android/.gitignore",
+      "sha": "be82512e5cebd91e9bd55223247c352fddfb8881"
+    },
+    {
+      "path": "android/app/build.gradle.kts",
+      "sha": "7711e1762d84f37b06fe376e3ea54b3b1fc649c7"
+    },
+    {
+      "path": "android/app/src/debug/AndroidManifest.xml",
+      "sha": "399f6981d5d35475eb18e6068ae67cdd7c731978"
+    },
+    {
+      "path": "android/app/src/main/AndroidManifest.xml",
+      "sha": "eb92ebc3b906a0958409a8cfb13ed95231defc55"
+    },
+    {
+      "path": "android/app/src/main/kotlin/ae/wird/app/EntryActivity.kt",
+      "sha": "bea0abbffe0d5acbc6fd0d3556788cb83a8798d5"
+    },
+    {
+      "path": "android/app/src/main/kotlin/ae/wird/app/MainActivity.kt",
+      "sha": "4c1b76a77a386ea3e4c0de9de866bcc2bcc2e6d5"
+    },
+    {
+      "path": "android/app/src/main/kotlin/ae/wird/app/WirdWidgetProvider.kt",
+      "sha": "faf3ba78e2257a8532d6dbc47def97f3826c665f"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-nodpi/wird_adaptive_foreground.png",
+      "sha": "751865cbe4b5b2cd7717422909c99a481f510997"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-nodpi/wird_launch_scene.png",
+      "sha": "47c4ecd6a5c1a0e181c0fba6e4cfa96fbb904453"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-nodpi/wird_logo.png",
+      "sha": "bfbd49a277bad2f66b3ee8f1ee4313ce7bb9a314"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-nodpi/wird_splash_icon.png",
+      "sha": "2ea77f1e4651e8ea8479d122464d99713b65fa72"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-v21/launch_background.xml",
+      "sha": "deebf7f54c02b04f4828af2a1f41374dbfce4358"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/ic_notification.xml",
+      "sha": "1180dbcc143b71e2054e40edcc3c89154df8645a"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/launch_background.xml",
+      "sha": "deebf7f54c02b04f4828af2a1f41374dbfce4358"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/widget_background.xml",
+      "sha": "63c873255ef4150ce4ebea209a72a9f91aaeb413"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/wird_icon_background.xml",
+      "sha": "6147c4a57ca05cc78e2cda51bc2307a9981fe044"
+    },
+    {
+      "path": "android/app/src/main/res/layout/wird_widget.xml",
+      "sha": "fca34bcfd89753ac78d1a2d06235fb872e8add3a"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
+      "sha": "18eb0de9a932e9bd0d688a12be90ccb0745a2a5c"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-hdpi/ic_launcher.png",
+      "sha": "199774718ce033132e4159078ef26fe0ff5cd06c"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-mdpi/ic_launcher.png",
+      "sha": "fd77d3e310314a533d54603a462da9ecf689f5fd"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+      "sha": "4c8f138c58b0ed1ec096cca41a62176eb376a664"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+      "sha": "6c863ef3524dd032e1850db9970f0461b0263864"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+      "sha": "9df46b399fd4a7e6a589ed4683c69c536683802c"
+    },
+    {
+      "path": "android/app/src/main/res/raw/keep.xml",
+      "sha": "d7c4eac1a675321ec7df1458fab2de777a77e102"
+    },
+    {
+      "path": "android/app/src/main/res/values-night-v31/styles.xml",
+      "sha": "27f26f7849643d889744029d91a9cfb8fa3a1d2e"
+    },
+    {
+      "path": "android/app/src/main/res/values-night/styles.xml",
+      "sha": "f1811a3e81e7f8fa532a43f9f6bdf10024b1e420"
+    },
+    {
+      "path": "android/app/src/main/res/values-v31/styles.xml",
+      "sha": "27f26f7849643d889744029d91a9cfb8fa3a1d2e"
+    },
+    {
+      "path": "android/app/src/main/res/values/brand_colors.xml",
+      "sha": "09c61f2579fa0c98c42e80de2a3b52bf712cc48e"
+    },
+    {
+      "path": "android/app/src/main/res/values/ids.xml",
+      "sha": "d6e59f0efd41bae0e9fed8173d2063459821463b"
+    },
+    {
+      "path": "android/app/src/main/res/values/styles.xml",
+      "sha": "b261a55e6c4bc5de3f199c5a0ee898b9f6095058"
+    },
+    {
+      "path": "android/app/src/main/res/xml/wird_widget_info.xml",
+      "sha": "c05b5e869e28d77e8e9fda009409c9a8a5d316d1"
+    },
+    {
+      "path": "android/app/src/profile/AndroidManifest.xml",
+      "sha": "399f6981d5d35475eb18e6068ae67cdd7c731978"
+    },
+    {
+      "path": "android/build.gradle.kts",
+      "sha": "c15dcf584e072f405136398d88d447907931955d"
+    },
+    {
+      "path": "android/gradle.properties",
+      "sha": "f018a61817f55e78bb92ce8df2dda423ec570a4a"
+    },
+    {
+      "path": "android/gradle/wrapper/gradle-wrapper.jar",
+      "sha": "a4b76b9530d66f5e68d973ea569d8e19de379189"
+    },
+    {
+      "path": "android/gradle/wrapper/gradle-wrapper.properties",
+      "sha": "efdcc4ace985c5ba52a6f69755faa66af2ff37f7"
+    },
+    {
+      "path": "android/gradlew",
+      "sha": "d95bf6131dc41079a1665889f84d4cfec92a2bc1"
+    },
+    {
+      "path": "android/gradlew.bat",
+      "sha": "640d68685c14950470c82031e02198e220b96e62"
+    },
+    {
+      "path": "android/key.properties.example",
+      "sha": "876ee0d74e3d30a6fdfd838286cd634e6eb8bd64"
+    },
+    {
+      "path": "android/settings.gradle.kts",
+      "sha": "fb605bc840f7bb713a721358bd422dd94c0755c2"
+    },
+    {
+      "path": "android/wird_android.iml",
+      "sha": "131e6b97e8759bef7a53fd5a531f9908441e0d54"
+    },
+    {
+      "path": "assets/audio/manifest.json",
+      "sha": "2914003a5d48f0dd32ac2a4c87b95a9318dd3411"
+    },
+    {
+      "path": "assets/brand/concept_icon_preview.png",
+      "sha": "ccf537b8a06513787e95118e904278b8ad44447a"
+    },
+    {
+      "path": "assets/brand/wird_artwork_20261015.png",
+      "sha": "5b798e17bd5f347944edcff12284c79bb291972f"
+    },
+    {
+      "path": "assets/brand/wird_logo.png",
+      "sha": "ff179d05bdc7e5d7f6fd57c2ad7a498616fa3f8b"
+    },
+    {
+      "path": "assets/brand/wird_sanctuary_20261017.png",
+      "sha": "20894b06374a22492b5bc6ded2ed1701a6b83f57"
+    },
+    {
+      "path": "assets/brand/wird_wordmark.png",
+      "sha": "751865cbe4b5b2cd7717422909c99a481f510997"
+    },
+    {
+      "path": "assets/fonts/NotoSansArabic.ttf",
+      "sha": "f1d01edce4ebaedcbe9a06fc75fec07b304ec3df"
+    },
+    {
+      "path": "assets/fonts/OFL.txt",
+      "sha": "32d57a768bc3c2f6837fec411a3256fd97af4f07"
+    },
+    {
+      "path": "assets/home/botanical-serenity.webp",
+      "sha": "0a5dd6e1a4be35a53608625939e548c52c8b3bb3"
+    },
+    {
+      "path": "assets/home/evening.webp",
+      "sha": "60758ddd8423ca7fdb58bba4edac9a00c8241375"
+    },
+    {
+      "path": "assets/home/morning.webp",
+      "sha": "9b445817760c021c71b89a9b0d7f52d028fa2ae9"
+    },
+    {
+      "path": "assets/home/night.webp",
+      "sha": "581f2ce00145b2c8ff20c8ae6cafa7c7ae1133ed"
+    },
+    {
+      "path": "assets/home/serenity.webp",
+      "sha": "060ded38948c13b4a600b185dcca7d2cdc0978a5"
+    },
+    {
+      "path": "ios/.gitignore",
+      "sha": "7a7f9873ad7dceb4dc17087fb06c800fa0191376"
+    },
+    {
+      "path": "ios/Flutter/AppFrameworkInfo.plist",
+      "sha": "163000d85c76fa5375a7fdedaa54e3cf2637cbda"
+    },
+    {
+      "path": "ios/Flutter/Debug.xcconfig",
+      "sha": "592ceee85b89bd111b779db6116b130509ab6d4b"
+    },
+    {
+      "path": "ios/Flutter/Release.xcconfig",
+      "sha": "592ceee85b89bd111b779db6116b130509ab6d4b"
+    },
+    {
+      "path": "ios/Podfile",
+      "sha": "c2c1dc5432d374b5f957efa509d5e8de7475186b"
+    },
+    {
+      "path": "ios/Podfile.lock",
+      "sha": "8494cdb62bca5a3e862ab7661972f69d9b94247d"
+    },
+    {
+      "path": "ios/Runner.xcodeproj/project.pbxproj",
+      "sha": "284dfafea9550c22d80afbd559af29a69d62a2bd"
+    },
+    {
+      "path": "ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata",
+      "sha": "919434a6254f0e9651f402737811be6634a03e9c"
+    },
+    {
+      "path": "ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist",
+      "sha": "18d981003d68d0546c4804ac2ff47dd97c6e7921"
+    },
+    {
+      "path": "ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings",
+      "sha": "f9b0d7c5ea15f194be85eb6ee8e6721a87ff4644"
+    },
+    {
+      "path": "ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme",
+      "sha": "cfa6276b1cf4eb58ccc751499dcecdd12492d452"
+    },
+    {
+      "path": "ios/Runner.xcworkspace/contents.xcworkspacedata",
+      "sha": "1d526a16ed0f1cd0c2409d848bf489b93fefa3b2"
+    },
+    {
+      "path": "ios/Runner.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist",
+      "sha": "18d981003d68d0546c4804ac2ff47dd97c6e7921"
+    },
+    {
+      "path": "ios/Runner.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings",
+      "sha": "f9b0d7c5ea15f194be85eb6ee8e6721a87ff4644"
+    },
+    {
+      "path": "ios/Runner/AppDelegate.swift",
+      "sha": "59c66bcc9f2752cd64816c05e2f5df8af06cc9b0"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json",
+      "sha": "d36b1fab2d9dea668a4f83df94d525897d9e68dd"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024@1x.png",
+      "sha": "63b4846ad0c92350fe336a7ca71a813b0fdccab3"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@1x.png",
+      "sha": "e7c4464b5c8010b15ce882474b75575a58d3346f"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png",
+      "sha": "b9920dd60600bcbd9dd11a619050d77c0f7729ae"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@3x.png",
+      "sha": "8671b0382cc2b01efa8a1427d4e421733a2f4362"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@1x.png",
+      "sha": "17d0ded03bb4e3297fdfca3bc71f81948434fc2e"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@2x.png",
+      "sha": "b932b3e5a3abbc4c89e8978a6b0eb348098338aa"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@3x.png",
+      "sha": "edd3f6b34c715dcf969b5a0a49fa9c735ecfaa66"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@1x.png",
+      "sha": "b9920dd60600bcbd9dd11a619050d77c0f7729ae"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@2x.png",
+      "sha": "0065c8cfcb8253105ab9ef376a34522847b6eef6"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@3x.png",
+      "sha": "f0dfdd4eaf79be78f76b3f6e0d3c211fe8474937"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@2x.png",
+      "sha": "f0dfdd4eaf79be78f76b3f6e0d3c211fe8474937"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@3x.png",
+      "sha": "068811cd3e8dd9368f07d07b4de1cfb6f0cb6539"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@1x.png",
+      "sha": "9b6301ebcd1bc90411fb3aa930843c91d092ca48"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@2x.png",
+      "sha": "073ec95eb4fdf51f67b8e02959fe77e302487e7c"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-83.5x83.5@2x.png",
+      "sha": "c2acb22801233c4d50665755754810ce57c3e802"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/LaunchImage.imageset/Contents.json",
+      "sha": "0bedcf2fd46788ae3a01a423467513ff59b5c120"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage.png",
+      "sha": "1e88d5ad746c201796953cf357b028b1a2517884"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png",
+      "sha": "47c4ecd6a5c1a0e181c0fba6e4cfa96fbb904453"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@3x.png",
+      "sha": "f875bf54b144e1ad71b8d8818490b3bbd7f4766e"
+    },
+    {
+      "path": "ios/Runner/Assets.xcassets/LaunchImage.imageset/README.md",
+      "sha": "89c2725b70f1882be97f5214fafe22d27a0ec01e"
+    },
+    {
+      "path": "ios/Runner/Base.lproj/LaunchScreen.storyboard",
+      "sha": "867b1a1eddbe33490f012b70b1f6be8cce45f01c"
+    },
+    {
+      "path": "ios/Runner/Base.lproj/Main.storyboard",
+      "sha": "f3c28516fb38e64d88cfcf5fb1791175df078f2f"
+    },
+    {
+      "path": "ios/Runner/Info.plist",
+      "sha": "add084d9ee62a45dbab6b804cbd7c161ab56c2a8"
+    },
+    {
+      "path": "ios/Runner/Runner-Bridging-Header.h",
+      "sha": "308a2a560b42f17aaf3c36e4e9c8cd07182fbb7e"
+    },
+    {
+      "path": "ios/Runner/Runner.entitlements",
+      "sha": "828cdb34a82348b93b77d37d49c8da178bb159c1"
+    },
+    {
+      "path": "ios/RunnerTests/RunnerTests.swift",
+      "sha": "030eb59d577577f725fc30030d6c442c7177b66f"
+    },
+    {
+      "path": "ios/WirdWidget/Info.plist",
+      "sha": "a26b2809e202dbf3fc9c4f7d2a42b3503d2c6fb3"
+    },
+    {
+      "path": "ios/WirdWidget/WirdWidget.entitlements",
+      "sha": "828cdb34a82348b93b77d37d49c8da178bb159c1"
+    },
+    {
+      "path": "ios/WirdWidget/WirdWidget.swift",
+      "sha": "a8fb51559e15a5776e40bfeee5d4d9c79f28dc5f"
+    },
+    {
+      "path": "lib/cinematic_opening.dart",
+      "sha": "b0891e0dd5e8999cc849fb28ed25affdd9b8b675"
+    },
+    {
+      "path": "lib/content.dart",
+      "sha": "1e22a145cc77b3414ba1ba9ea9407c8db9e18d2d"
+    },
+    {
+      "path": "lib/feature_panels.dart",
+      "sha": "4d9f53c528d85b35b22353910fee98e3aa101a20"
+    },
+    {
+      "path": "lib/nawafil_ui.dart",
+      "sha": "693b09550507e1173b51127dd32172c040d91494"
+    },
+    {
+      "path": "lib/quran_text.dart",
+      "sha": "11869d41adf92c91f207a905323ec9230e9622b2"
+    },
+    {
+      "path": "lib/reading_ui.dart",
+      "sha": "312785fc58e6b8566991c61fb109af8175fcf3ae"
+    },
+    {
+      "path": "lib/services/audio_library.dart",
+      "sha": "96fd72e2d58620f84d855be7f4faba49043f78cd"
+    },
+    {
+      "path": "lib/services/reminders.dart",
+      "sha": "c8908c79771555363633316df9b6a8aaebd5b04f"
+    },
+    {
+      "path": "lib/services/widgets.dart",
+      "sha": "e779524d2983df87816c2041c5361f1105b4758c"
+    },
+    {
+      "path": "lib/settings_ui.dart",
+      "sha": "ffc88b8822789ad85dce3290fec8f75e8ffdaf04"
+    },
+    {
+      "path": "lib/share_card.dart",
+      "sha": "e2b922487af6b1e52afa5cf69533377cebdf5eea"
+    },
+    {
+      "path": "lib/ui_strings.dart",
+      "sha": "7873e3dc2840e564a3c3cd33009535cfb6510848"
+    }
+  ],
+  "normalized": [
+    {
+      "path": "lib/main.dart",
+      "sha": "dcb2c4e5d5b965ee16b251b9c05e756e44143366"
+    },
+    {
+      "path": "lib/premium_ui.dart",
+      "sha": "b4c8c1ee88f000b8c990ff55a83e0ea4e7fcfeca"
+    }
+  ]
+}

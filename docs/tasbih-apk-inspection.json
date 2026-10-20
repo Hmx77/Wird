@@ -1,0 +1,50 @@
+{
+  "file": "app-debug.apk",
+  "size_bytes": 168565858,
+  "apk_sha256": "94fb363f1e17003c9fb3788004243f2e9ef3aa7340975668eaff3768eaad128f",
+  "debug_certificate_sha256": "9663e649709c0cec2d265d9990a934d465113e517431a17d0e68a4184a3c8195",
+  "abis": [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "x86_64"
+  ],
+  "assets": {
+    "assets/audio/manifest.json": "2914003a5d48f0dd32ac2a4c87b95a9318dd3411",
+    "assets/brand/wird_artwork_20261015.png": "5b798e17bd5f347944edcff12284c79bb291972f",
+    "assets/brand/wird_logo.png": "ff179d05bdc7e5d7f6fd57c2ad7a498616fa3f8b",
+    "assets/brand/wird_sanctuary_20261017.png": "20894b06374a22492b5bc6ded2ed1701a6b83f57",
+    "assets/brand/wird_wordmark.png": "751865cbe4b5b2cd7717422909c99a481f510997",
+    "assets/fonts/NotoSansArabic.ttf": "f1d01edce4ebaedcbe9a06fc75fec07b304ec3df",
+    "assets/fonts/OFL.txt": "32d57a768bc3c2f6837fec411a3256fd97af4f07",
+    "assets/home/botanical-serenity.webp": "0a5dd6e1a4be35a53608625939e548c52c8b3bb3",
+    "assets/home/evening.webp": "60758ddd8423ca7fdb58bba4edac9a00c8241375",
+    "assets/home/morning.webp": "9b445817760c021c71b89a9b0d7f52d028fa2ae9",
+    "assets/home/night.webp": "581f2ce00145b2c8ff20c8ae6cafa7c7ae1133ed",
+    "assets/home/serenity.webp": "060ded38948c13b4a600b185dcca7d2cdc0978a5"
+  },
+  "approved_asset_checks": {
+    "assets/audio/manifest.json": true,
+    "assets/brand/wird_artwork_20261015.png": true,
+    "assets/brand/wird_logo.png": true,
+    "assets/brand/wird_sanctuary_20261017.png": true,
+    "assets/brand/wird_wordmark.png": true,
+    "assets/fonts/NotoSansArabic.ttf": true,
+    "assets/fonts/OFL.txt": true,
+    "assets/home/botanical-serenity.webp": true,
+    "assets/home/evening.webp": true,
+    "assets/home/morning.webp": true,
+    "assets/home/night.webp": true,
+    "assets/home/serenity.webp": true
+  },
+  "all_approved_assets_unchanged": true,
+  "build_run": 39375572583,
+  "native_run": 39376665711,
+  "artifact_name": "wird-debug-apk",
+  "contained_file": "app-debug.apk",
+  "artifact_id": 12243887475,
+  "artifact_zip_sha256": "8d76b0678e0e35890acf6e60e626ca4c28dfaf67a148f200d8a97c3fbc5a814a",
+  "same_apk_as_build_121": true,
+  "native_checks_passed": true,
+  "previous_reader_certificate_sha256": "fe0e4292abf42b3eafa2ca84f873ec702544cefa685c17083ff1833d0eb4c9ad",
+  "in_place_update_from_previous_reader_debug_build": false
+}
