@@ -83,9 +83,14 @@ void main() {
       final key=GlobalKey();await t.pumpWidget(app(s,capture:key,before:before));await t.pumpAndSettle();
       final boundary=key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
       boundary.markNeedsPaint();await t.pump();
-      final image=await boundary.toImage(pixelRatio:2);
-      final data=await image.toByteData(format:ui.ImageByteFormat.png);
-      await t.runAsync(() async {final f=File('verification/screenshots/tasbih-${before?'before':'premium'}-ar.png');await f.parent.create(recursive:true);await f.writeAsBytes(data!.buffer.asUint8List());});image.dispose();
+      await t.runAsync(() async {
+        final image=await boundary.toImage(pixelRatio:2);
+        final data=await image.toByteData(format:ui.ImageByteFormat.png);
+        final f=File('verification/screenshots/tasbih-${before?'before':'premium'}-ar.png');
+        await f.parent.create(recursive:true);
+        await f.writeAsBytes(data!.buffer.asUint8List());
+        image.dispose();
+      });
     }
     await close(t,s);
   });
