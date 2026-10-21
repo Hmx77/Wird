@@ -2,7 +2,13 @@
 
 Arabic-first, offline Flutter application for Android and iOS, expanded from the supplied starter.
 
-**Current review:** [Premium Personal Tasbih — draft PR #4](https://github.com/Hmx77/Wird/pull/4), branch `redesign/premium-tasbih-20261019`, targets the Reader review branch. The real standalone screen now has a gold-rimmed counter, deep-teal botanical atmosphere, refined controls, saved-count integration, optional haptics, reduced motion and accessible scrolling. Approved screens, original branding, ten themes, religious catalog and local data keys remain preserved.
+**Current review:** [Two premium appearances — draft PR #5](https://github.com/Hmx77/Wird/pull/5), on `redesign/two-premium-themes-20261020`, targeting the approved Tasbih review branch. Exactly **Midnight Teal (default)** and **Ivory Serenity** are available throughout the existing app, with safe legacy-preference migration and preserved offline worship data.
+
+[Successful final Android verification #130](https://github.com/Hmx77/Wird/actions/runs/39558077077) · [Download wird-debug-apk / app-debug.apk](https://github.com/Hmx77/Wird/actions/runs/39558077077/artifacts/12327556051) · [Actual paired screenshots, results, migration and limitations](docs/TWO_PREMIUM_THEMES_2026-10-21.md).
+
+Android and macOS analysis and **92 app tests + 1 branding test on each platform passed** in the #129 build jobs. Android debug and unsigned iOS device/simulator builds and actual iOS simulator install/launch passed. #129 was canceled only after both build jobs succeeded to stop its duplicate native review. #130 completed the full offline Android suite on the identical APK: live two-theme switching/restart with all other saved preferences unchanged, existing feature regressions, small/large-text/tablet checks and settled major-screen captures. No merge or publication. Debug signing differs from earlier review builds; uninstalling can erase local progress. See the report for exact test scopes and signing requirements.
+
+**Previous Tasbih review:** [Premium Personal Tasbih — draft PR #4](https://github.com/Hmx77/Wird/pull/4), branch `redesign/premium-tasbih-20261019`, targets the Reader review branch. The real standalone screen now has a gold-rimmed counter, deep-teal botanical atmosphere, refined controls, saved-count integration, optional haptics, reduced motion and accessible scrolling. Approved screens, original branding, ten themes, religious catalog and local data keys remain preserved.
 
 [Actual Android screen](docs/review-images/android-native/android-tasbih-six.png) · [Counter/restart/reset recording](docs/review-images/android-native/tasbih-interactions.mp4) · [Full verified report and before/after](docs/PREMIUM_TASBIH_2026-10-20.md) · [Download wird-debug-apk](https://github.com/Hmx77/Wird/actions/runs/39376665711/artifacts/12243887475) · [Successful native review #122](https://github.com/Hmx77/Wird/actions/runs/39376665711).
 
@@ -33,7 +39,7 @@ Repository visibility was observed as **public** on 16 October 2026 and was left
 ## Implemented source
 
 - Both exact owner-supplied logo source files remain unchanged. The latest high-resolution artwork, including its original kasra, is used in-app. Native adaptive icon and splash assets are reproducibly derived and checked for safe-zone placement, alpha handling and iOS opacity.
-- All ten starter palettes, default **Stone & Teal**: Olive & Cream, Ocean Blue, Mocha & Sand, Soft Lavender, Emerald & Gold, Midnight Blue, Charcoal & Sage, Dusty Rose & Stone, Stone & Teal, Sage & Ivory.
+- Exactly two premium appearances: **Midnight Teal** (default) and **Ivory Serenity**. Retired palette preferences migrate safely to stable local IDs without resetting worship data.
 - Arabic-first interface with saved Arabic/English UI selection, RTL religious text, scalable text, focus mode, and source/benefit/meaning panels. Religious text remains in Arabic; English religious translations await review.
 - **49 category-specific source-checked entries:** 18 morning, 15 evening, 16 bedtime. All 66 attached reference screens are mapped; 17 screens remain withheld under the strict Quran/Sahih policy. The catalog contains 36 distinct Arabic bodies and 35 underlying recitation/guidance units, not 66 unique Athkar. Full Al-Mulk includes all 30 verses from the verbatim attributed Tanzil dataset.
 - Persistent repetition counters, undo, long-press reset, optional haptics and auto-advance; separate local-date progress with midnight refresh. Tahlil offers independently sourced 1/10/100 alternatives in one entry; changing a target resets today’s count while preserving historical targets. Source notes distinguish daily/general practice from timed morning/evening prescriptions.
@@ -85,5 +91,6 @@ iOS: open `ios/Runner.xcworkspace`; select your Apple team for Runner and WirdWi
 See `docs/RELEASE_READINESS.md`, `docs/CONTENT_REVIEW.md`, `docs/AUDIO_PERMISSIONS.md`, and `docs/PRIVACY.md`.
 
 All three supplied PDFs (25 morning, 23 evening, 18 bedtime screens) have now been visually inspected and compared. See `docs/CONTENT_VERIFICATION_2026-10-14.md`, `docs/reference-comparison.csv`, `docs/reference-screen-map.json` and `docs/content-audit.json` for every correction, preserved variant, source, pending item and counting definition. The sevenfold حسبي الله attribution warning and other disputed, Hasan-only or weak routes remain in the development review queue, outside the reader/search/share catalog. No qualified scholarly approval is claimed; independent Arabic/religious proofreading remains required before public release. Earlier redesign manifests describe the historical 19-entry baseline.
+
 
 
