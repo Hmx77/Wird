@@ -31,16 +31,16 @@ class NawafilPage extends StatelessWidget {
           final count = rawatibPractices.where((r) => store.prayerDone(r.$4)).length;
           final units = rawatibPractices.fold<int>(0, (sum, r) => sum + (store.prayerDone(r.$4) ? r.$5 : 0));
           return SingleChildScrollView(
-            key: const PageStorageKey('nawafil-scroll'),
+            key: PageStorageKey('nawafil-scroll'),
             child: Center(child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 680),
+              constraints: BoxConstraints(maxWidth: 680),
               child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
                 _NawafilHeader(palette: p),
                 Padding(
                   padding: EdgeInsets.fromLTRB(wide ? 28 : 18, 0, wide ? 28 : 18, 30),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
                     _NawafilSummary(palette: p, groups: count, rakahs: units),
-                    const SizedBox(height: 14),
+                    SizedBox(height: 14),
                     ...rawatibPractices.indexed.map((entry) {
                       final r = entry.$2;
                       return _WorshipRow(
@@ -53,18 +53,18 @@ class NawafilPage extends StatelessWidget {
                         onChanged: () => store.togglePrayer(r.$4),
                       );
                     }),
-                    const SizedBox(height: 5),
+                    SizedBox(height: 5),
                     _NawafilPanel(
-                      key: const Key('nawafil-note'), palette: p, highlighted: true,
+                      key: Key('nawafil-note'), palette: p, highlighted: true,
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        const Row(children: [Icon(Icons.menu_book_rounded, color: homeGold, size: 25), SizedBox(width: 10), Flexible(child: UiText('المراجع والتنبيه', style: TextStyle(color: homeGold, fontSize: 15, fontWeight: FontWeight.w700)))]),
-                        const SizedBox(height: 11),
-                        const _NawafilDirectionalCopy(rawatibSourceNote, style: TextStyle(color: homeCream, fontSize: 13, height: 1.95)),
+                        Row(children: [Icon(Icons.menu_book_rounded, color: AppAppearance.of(context).gold, size: 25), SizedBox(width: 10), Flexible(child: UiText('المراجع والتنبيه', style: TextStyle(color: AppAppearance.of(context).gold, fontSize: 15, fontWeight: FontWeight.w700)))]),
+                        SizedBox(height: 11),
+                        _NawafilDirectionalCopy(rawatibSourceNote, style: TextStyle(color: AppAppearance.of(context).ink, fontSize: 13, height: 1.95)),
                       ]),
                     ),
-                    const SizedBox(height: 24),
-                    const Row(children: [Icon(Icons.spa_outlined, color: homeGold, size: 26), SizedBox(width: 10), Expanded(child: UiText('نوافل أخرى', style: TextStyle(color: homeGold, fontSize: 23, fontWeight: FontWeight.w700))), SizedBox(width: 12), SizedBox(width: 30, child: Divider(color: Color(0x665F9D92)))]),
-                    const SizedBox(height: 13),
+                    SizedBox(height: 24),
+                    Row(children: [Icon(Icons.spa_outlined, color: AppAppearance.of(context).gold, size: 26), SizedBox(width: 10), Expanded(child: UiText('نوافل أخرى', style: TextStyle(color: AppAppearance.of(context).gold, fontSize: 23, fontWeight: FontWeight.w700))), SizedBox(width: 12), SizedBox(width: 30, child: Divider(color: appearanceTone(context, 0x665F9D92)))]),
+                    SizedBox(height: 13),
                     ...otherPractices.indexed.map((entry) {
                       final r = entry.$2;
                       return _WorshipRow(
@@ -91,16 +91,16 @@ class _NawafilHeader extends StatelessWidget {
   final WirdPalette palette;
   @override
   Widget build(BuildContext context) => Stack(children: [
-    Positioned.fill(child: ExcludeSemantics(child: Image.asset('assets/home/botanical-serenity.webp', fit: BoxFit.cover, alignment: Alignment.topCenter))),
-    Positioned.fill(child: DecoratedBox(decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [palette.homeBackground.withOpacity(.05), palette.homeBackground.withOpacity(.36), palette.homeBackground], stops: const [0, .55, 1])))),
+    Positioned.fill(child: ExcludeSemantics(child: Image.asset(botanicalAsset(context), fit: BoxFit.cover, alignment: Alignment.topCenter))),
+    Positioned.fill(child: DecoratedBox(decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [palette.homeBackground.withOpacity(.05), palette.homeBackground.withOpacity(.36), palette.homeBackground], stops: [0, .55, 1])))),
     Padding(
-      padding: const EdgeInsets.fromLTRB(25, 38, 25, 27),
+      padding: EdgeInsets.fromLTRB(25, 38, 25, 27),
       child: SizedBox(width: double.infinity, child: Column(children: [
-        Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(shape: BoxShape.circle, color: palette.homeBackground.withOpacity(.45), border: Border.all(color: homeGold.withOpacity(.24))), child: const IconTheme(data: IconThemeData(color: homeGold), child: SujoodIcon(size: 43))),
-        const SizedBox(height: 14),
-        const UiText('السُّنن والنوافل', textAlign: TextAlign.center, style: TextStyle(color: homeCream, fontSize: 29, fontWeight: FontWeight.w700, height: 1.55, shadows: [Shadow(color: Color(0xFF00262B), blurRadius: 18)])),
-        const SizedBox(height: 5),
-        const UiText('تتبّع شخصي اختياري — دون إلزام أو تنبيهات ضاغطة', textAlign: TextAlign.center, style: TextStyle(color: homeCream, fontSize: 12, height: 1.8)),
+        Container(padding: EdgeInsets.all(12), decoration: BoxDecoration(shape: BoxShape.circle, color: palette.homeBackground.withOpacity(.45), border: Border.all(color: AppAppearance.of(context).gold.withOpacity(.24))), child: IconTheme(data: IconThemeData(color: AppAppearance.of(context).gold), child: SujoodIcon(size: 43))),
+        SizedBox(height: 14),
+        UiText('السُّنن والنوافل', textAlign: TextAlign.center, style: TextStyle(color: AppAppearance.of(context).ink, fontSize: 29, fontWeight: FontWeight.w700, height: 1.55, shadows: [Shadow(color: appearanceTone(context, 0xFF00262B), blurRadius: 18)])),
+        SizedBox(height: 5),
+        UiText('تتبّع شخصي اختياري — دون إلزام أو تنبيهات ضاغطة', textAlign: TextAlign.center, style: TextStyle(color: AppAppearance.of(context).ink, fontSize: 12, height: 1.8)),
       ])),
     ),
   ]);
@@ -116,25 +116,25 @@ class _NawafilSummary extends StatelessWidget {
     final large = scale > 1.3;
     final diameter = 80.0 * scale.clamp(1.0, 2.5);
     final copy = Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const UiText('السنن الرواتب الاثنتا عشرة', style: TextStyle(color: homeGold, fontSize: 20, height: 1.6, fontWeight: FontWeight.w700)),
-      const SizedBox(height: 6),
-      _NawafilDirectionalCopy('$groups / 5 مجموعات سُجّلت اليوم', style: const TextStyle(color: homeCream, fontSize: 12, height: 1.8)),
+      UiText('السنن الرواتب الاثنتا عشرة', style: TextStyle(color: AppAppearance.of(context).gold, fontSize: 20, height: 1.6, fontWeight: FontWeight.w700)),
+      SizedBox(height: 6),
+      _NawafilDirectionalCopy('$groups / 5 مجموعات سُجّلت اليوم', style: TextStyle(color: AppAppearance.of(context).ink, fontSize: 12, height: 1.8)),
     ]);
     final ring = Semantics(
       label: uiString('ركعات سُجّلت اليوم', Localizations.localeOf(context).languageCode), value: '$rakahs / 12',
       child: SizedBox(width: diameter, height: diameter, child: Stack(alignment: Alignment.center, children: [
-        Positioned.fill(child: CircularProgressIndicator(value: rakahs / 12, strokeWidth: 5, color: homeGold, backgroundColor: const Color(0xFF27595E))),
+        Positioned.fill(child: CircularProgressIndicator(value: rakahs / 12, strokeWidth: 5, color: AppAppearance.of(context).gold, backgroundColor: appearanceTone(context, 0xFF27595E))),
         Column(mainAxisSize: MainAxisSize.min, children: [
-          Text('$rakahs/12', textDirection: TextDirection.ltr, style: const TextStyle(color: homeCream, fontSize: 18, fontWeight: FontWeight.w600, height: 1.4)),
-          const UiText('ركعات', style: TextStyle(color: homeCream, fontSize: 10, height: 1.5)),
+          Text('$rakahs/12', textDirection: TextDirection.ltr, style: TextStyle(color: AppAppearance.of(context).ink, fontSize: 18, fontWeight: FontWeight.w600, height: 1.4)),
+          UiText('ركعات', style: TextStyle(color: AppAppearance.of(context).ink, fontSize: 10, height: 1.5)),
         ]),
       ])),
     );
     return _NawafilPanel(
-      key: const Key('nawafil-summary'), palette: palette, highlighted: true,
+      key: Key('nawafil-summary'), palette: palette, highlighted: true,
       child: large
-        ? Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [copy, const SizedBox(height: 18), Align(child: ring)])
-        : Row(children: [Expanded(child: copy), const SizedBox(width: 12), ring]),
+        ? Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [copy, SizedBox(height: 18), Align(child: ring)])
+        : Row(children: [Expanded(child: copy), SizedBox(width: 12), ring]),
     );
   }
 }
@@ -146,12 +146,12 @@ class _NawafilPanel extends StatelessWidget {
   final bool highlighted;
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(18),
+    padding: EdgeInsets.all(18),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(25),
-      gradient: LinearGradient(begin: Alignment.topRight, end: Alignment.bottomLeft, colors: [Color.lerp(palette.homeSurface, const Color(0xFF366259), .24)!, palette.homeBackground]),
-      border: Border.all(color: highlighted ? homeGold.withOpacity(.55) : palette.homeOutline),
-      boxShadow: [BoxShadow(color: Colors.black.withOpacity(.11), blurRadius: 16, offset: const Offset(0, 7))],
+      gradient: LinearGradient(begin: Alignment.topRight, end: Alignment.bottomLeft, colors: [Color.lerp(palette.homeSurface, appearanceTone(context, 0xFF366259), .24)!, palette.homeBackground]),
+      border: Border.all(color: highlighted ? AppAppearance.of(context).gold.withOpacity(.55) : palette.homeOutline),
+      boxShadow: [BoxShadow(color: Colors.black.withOpacity(.11), blurRadius: 16, offset: Offset(0, 7))],
     ), child: child,
   );
 }
@@ -165,7 +165,7 @@ class _WorshipRow extends StatelessWidget {
   final VoidCallback onChanged;
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 10),
+    padding: EdgeInsets.only(bottom: 10),
     child: Semantics(
       checked: checked, label: '${uiString(title, Localizations.localeOf(context).languageCode)}. ${uiString(subtitle, Localizations.localeOf(context).languageCode)}',
       onTap: onChanged,
@@ -173,23 +173,23 @@ class _WorshipRow extends StatelessWidget {
         color: Colors.transparent,
         child: Ink(decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(22),
-          gradient: LinearGradient(colors: [Color.lerp(palette.homeSurface, const Color(0xFF356457), checked ? .45 : .15)!, palette.homeBackground]),
-          border: Border.all(color: checked ? homeGold.withOpacity(.72) : const Color(0xFF49716C)),
+          gradient: LinearGradient(colors: [Color.lerp(palette.homeSurface, appearanceTone(context, 0xFF356457), checked ? .45 : .15)!, palette.homeBackground]),
+          border: Border.all(color: checked ? AppAppearance.of(context).gold.withOpacity(.72) : appearanceTone(context, 0xFF49716C)),
         ), child: InkWell(
           onTap: onChanged, borderRadius: BorderRadius.circular(22),
-          splashColor: homeGold.withOpacity(.1), highlightColor: homeGold.withOpacity(.06),
-          child: Padding(padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14), child: Row(children: [
+          splashColor: AppAppearance.of(context).gold.withOpacity(.1), highlightColor: AppAppearance.of(context).gold.withOpacity(.06),
+          child: Padding(padding: EdgeInsets.symmetric(horizontal: 15, vertical: 14), child: Row(children: [
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              UiText(title, style: const TextStyle(color: homeCream, fontSize: 17, fontWeight: FontWeight.w600, height: 1.6)),
-              const SizedBox(height: 3),
-              _NawafilDirectionalCopy(subtitle, style: const TextStyle(color: Color(0xFFCFD9CD), fontSize: 12, height: 1.85)),
+              UiText(title, style: TextStyle(color: AppAppearance.of(context).ink, fontSize: 17, fontWeight: FontWeight.w600, height: 1.6)),
+              SizedBox(height: 3),
+              _NawafilDirectionalCopy(subtitle, style: TextStyle(color: appearanceTone(context, 0xFFCFD9CD), fontSize: 12, height: 1.85)),
             ])),
-            const SizedBox(width: 12),
-            IconTheme(data: const IconThemeData(color: homeGold, size: 28), child: prostration ? const SujoodIcon(size: 34) : Icon(icon)),
-            const SizedBox(width: 16),
-            AnimatedContainer(duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : const Duration(milliseconds: 170), width: 26, height: 26,
-              decoration: BoxDecoration(color: checked ? homeGold : Colors.transparent, borderRadius: BorderRadius.circular(7), border: Border.all(color: homeGold, width: 1.6)),
-              child: checked ? const Icon(Icons.check_rounded, size: 20, color: Color(0xFF003439)) : null),
+            SizedBox(width: 12),
+            IconTheme(data: IconThemeData(color: AppAppearance.of(context).gold, size: 28), child: prostration ? SujoodIcon(size: 34) : Icon(icon)),
+            SizedBox(width: 16),
+            AnimatedContainer(duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : Duration(milliseconds: 170), width: 26, height: 26,
+              decoration: BoxDecoration(color: checked ? AppAppearance.of(context).gold : Colors.transparent, borderRadius: BorderRadius.circular(7), border: Border.all(color: AppAppearance.of(context).gold, width: 1.6)),
+              child: checked ? Icon(Icons.check_rounded, size: 20, color: appearanceTone(context, 0xFF003439)) : null),
           ])),
         )),
       )),

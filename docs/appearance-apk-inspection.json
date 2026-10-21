@@ -1,0 +1,32 @@
+{
+  "sourceRun": 39556769240,
+  "sourceCommit": "1dae01da4243aa9d5cb8db30550d124839f2df65",
+  "deliveryRun": 39558077077,
+  "deliveryArtifact": 12327556051,
+  "artifactContains": [
+    "app-debug.apk"
+  ],
+  "apkBytes": 168739868,
+  "apkSHA256": "2458cc8a1bc457a1f3d7bf41506a35fa694f57be870c843680fc55aa4d5b7d07",
+  "artifactZipSHA256": "6b73ec0fc8f78ae4550b0914d2d1b1e06c3e2b260f7478c41268b70a5059e246",
+  "debugPublicCertificateSHA256": "4048f3a4a20c7a543d73b9a117192d19be3f4387d1fa91857b6a698402561315",
+  "previousTasbihDebugCertificateSHA256": "9663e649709c0cec2d265d9990a934d465113e517431a17d0e68a4184a3c8195",
+  "sameDebugSigningCertificateAsPrevious": false,
+  "originalAssetMatches": 12,
+  "newIvoryAssetMatches": 1,
+  "assetGitBlobs": {
+    "assets/audio/manifest.json": "2914003a5d48f0dd32ac2a4c87b95a9318dd3411",
+    "assets/brand/wird_artwork_20261015.png": "5b798e17bd5f347944edcff12284c79bb291972f",
+    "assets/brand/wird_logo.png": "ff179d05bdc7e5d7f6fd57c2ad7a498616fa3f8b",
+    "assets/brand/wird_sanctuary_20261017.png": "20894b06374a22492b5bc6ded2ed1701a6b83f57",
+    "assets/brand/wird_wordmark.png": "751865cbe4b5b2cd7717422909c99a481f510997",
+    "assets/fonts/NotoSansArabic.ttf": "f1d01edce4ebaedcbe9a06fc75fec07b304ec3df",
+    "assets/fonts/OFL.txt": "32d57a768bc3c2f6837fec411a3256fd97af4f07",
+    "assets/home/botanical-serenity.webp": "0a5dd6e1a4be35a53608625939e548c52c8b3bb3",
+    "assets/home/evening.webp": "60758ddd8423ca7fdb58bba4edac9a00c8241375",
+    "assets/home/morning.webp": "9b445817760c021c71b89a9b0d7f52d028fa2ae9",
+    "assets/home/night.webp": "581f2ce00145b2c8ff20c8ae6cafa7c7ae1133ed",
+    "assets/home/serenity.webp": "060ded38948c13b4a600b185dcca7d2cdc0978a5",
+    "assets/appearance/ivory-sanctuary.webp": "7c5b45180e59781d715b7599bcc00e0f0b7ee549"
+  }
+}

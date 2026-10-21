@@ -20,13 +20,13 @@ void main() {
     )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
   });
   Future<WirdState> state({
-    int theme = 8,
+    int theme = 0,
     String language = 'ar',
     int count = 6,
     bool haptics = false,
   }) async {
     SharedPreferences.setMockInitialValues({
-      'theme': theme,
+      appearancePreference: appearanceIds[theme],
       'language': language,
       'tasbih': count,
       'haptics': haptics,
@@ -75,7 +75,7 @@ void main() {
   }
 
   for (final language in ['ar', 'en']) {
-    for (var theme = 0; theme < 10; theme++) {
+    for (var theme = 0; theme < themes.length; theme++) {
       testWidgets('Tasbih $language theme $theme small phone 200% text', (
         t,
       ) async {

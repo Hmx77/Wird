@@ -30,6 +30,7 @@ flutter:
       fonts:
         - asset: assets/fonts/NotoSansArabic.ttf
   assets:
+    - assets/appearance/
     - assets/fonts/OFL.txt
     - assets/brand/wird_logo.png
     - assets/brand/wird_artwork_20261015.png

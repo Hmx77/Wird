@@ -11,8 +11,8 @@ void main() {
     expect(note, contains('\u20661180–1181\u2069'));
     expect(note.replaceAll(RegExp('[\u2066\u2069]'), ''), rawatibSourceNote);
   });
-  Future<WirdState> mount(WidgetTester tester, {int theme = 8, String language = 'ar', double scale = 1}) async {
-    SharedPreferences.setMockInitialValues({'haptics': false, 'theme': theme});
+  Future<WirdState> mount(WidgetTester tester, {int theme = 0, String language = 'ar', double scale = 1}) async {
+    SharedPreferences.setMockInitialValues({'haptics': false, appearancePreference: appearanceIds[theme]});
     final store = WirdState(now: () => DateTime(2026, 10, 18, 12));
     await store.initialize();
     await tester.pumpWidget(MaterialApp(
@@ -58,7 +58,7 @@ void main() {
     await finish(tester, store);
   });
   for(final language in ['ar', 'en']) {
-    for(var index=0; index<10; index++) {
+    for(var index=0; index<themes.length; index++) {
       testWidgets('botanical prayers theme $index $language small screen 200% text', (tester) async {
         tester.view.physicalSize=const Size(320, 700); tester.view.devicePixelRatio=1;
         addTearDown(tester.view.resetPhysicalSize); addTearDown(tester.view.resetDevicePixelRatio);

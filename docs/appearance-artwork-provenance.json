@@ -1,0 +1,13 @@
+{
+  "asset": "assets/appearance/ivory-sanctuary.webp",
+  "source": "Original decorative artwork generated for Wird with the built-in image generation tool, not a third-party photograph or recording",
+  "prompt": "Wide warm ivory carved Islamic arch on left, palm and olive foliage at edges, small brass lantern, distant pale sandstone mosque at right in golden morning light; cream negative space, soft sage, champagne gold; realistic restrained painterly illustration. No text, logo, UI, people or watermark.",
+  "sha256": "ce483f1e5588da485921db36a69d415affeb8d40145d8cd7326bfe9b1396b59f",
+  "bytes": 169246,
+  "dimensions": [
+    1200,
+    800
+  ],
+  "format": "WebP, quality 86",
+  "usage": "Local decorative artwork only; lettering remains the approved original alpha silhouette and all controls remain Flutter widgets."
+}

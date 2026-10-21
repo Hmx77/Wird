@@ -56,7 +56,7 @@ void main() {
     },
   );
   testWidgets(
-    'all ten themes load the original asset and English home labels',
+    'both premium themes load the original asset and English home labels',
     (tester) async {
       SharedPreferences.setMockInitialValues({'language': 'en'});
       final state = WirdState();
@@ -68,12 +68,14 @@ void main() {
             locale: const Locale('en'),
             supportedLocales: const [Locale('ar'), Locale('en')],
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            theme: wirdTheme(state.palette),
             home: Scaffold(body: HomePage(store: state)),
           ),
         );
         await tester.pump();
         expect(find.text('Morning Athkar'), findsOneWidget);
-        final logo = tester.widget<Image>(find.byKey(const Key('home-wordmark')));
+        final logo = tester.widget<Image>(find.descendant(
+          of: find.byKey(const Key('home-wordmark')), matching: find.byType(Image))); 
         expect(
           (logo.image as AssetImage).assetName,
           'assets/brand/wird_wordmark.png',

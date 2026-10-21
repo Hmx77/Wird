@@ -23,7 +23,7 @@ class DevotionBackdrop extends StatelessWidget {
             child: Opacity(
               opacity: .14,
               child: Image.asset(
-                'assets/home/botanical-serenity.webp',
+                botanicalAsset(context),
                 fit: BoxFit.cover,
                 excludeFromSemantics: true,
               ),
@@ -64,18 +64,18 @@ class DevotionCard extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(25),
-      border: Border.all(color: homeGold.withOpacity(.6)),
+      border: Border.all(color: AppAppearance.of(context).gold.withOpacity(.6)),
       gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
           color ?? Theme.of(context).colorScheme.surface,
-          const Color(0xFF002B2B),
+          appearanceTone(context, 0xFF002B2B),
         ],
       ),
-      boxShadow: const [
+      boxShadow: [
         BoxShadow(
-          color: Color(0x20000000),
+          color: appearanceTone(context, 0x20000000),
           blurRadius: 16,
           offset: Offset(0, 7),
         ),
@@ -84,7 +84,7 @@ class DevotionCard extends StatelessWidget {
     child: ClipRRect(
       borderRadius: BorderRadius.circular(24),
       child: CustomPaint(
-        painter: const _DevotionCorners(),
+        painter: _DevotionCorners(),
         child: Padding(padding: padding, child: child),
       ),
     ),
@@ -169,10 +169,10 @@ class DevotionCounter extends StatelessWidget {
         height: diameter,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: homeGold.withOpacity(.4)),
+          border: Border.all(color: AppAppearance.of(context).gold.withOpacity(.4)),
           gradient: RadialGradient(
-            center: const Alignment(-.4, -.5),
-            colors: [homeGold.withOpacity(.2), palette.homeBackground],
+            center: Alignment(-.4, -.5),
+            colors: [AppAppearance.of(context).gold.withOpacity(.2), palette.homeBackground],
             radius: 1.1,
           ),
         ),
@@ -184,17 +184,17 @@ class DevotionCounter extends StatelessWidget {
                 tween: Tween(end: progress / target),
                 duration: MediaQuery.disableAnimationsOf(context)
                     ? Duration.zero
-                    : const Duration(milliseconds: 180),
+                    : Duration(milliseconds: 180),
                 builder: (context, value, _) => CircularProgressIndicator(
                   value: value,
                   strokeWidth: 2,
-                  color: homeGold,
-                  backgroundColor: homeGold.withOpacity(.18),
+                  color: AppAppearance.of(context).gold,
+                  backgroundColor: AppAppearance.of(context).gold.withOpacity(.18),
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(12),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -202,22 +202,22 @@ class DevotionCounter extends StatelessWidget {
                     progress >= target
                         ? Icons.check_rounded
                         : Icons.touch_app_outlined,
-                    color: homeGold,
+                    color: AppAppearance.of(context).gold,
                     size: 23,
                   ),
-                  const SizedBox(height: 5),
+                  SizedBox(height: 5),
                   Text(
                     '$progress / $target',
                     textDirection: TextDirection.ltr,
-                    style: const TextStyle(
-                      color: homeCream,
+                    style: TextStyle(
+                      color: AppAppearance.of(context).ink,
                       fontSize: 24,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const UiText(
+                  UiText(
                     'اضغط للعدّ',
-                    style: TextStyle(color: homeCream, fontSize: 12),
+                    style: TextStyle(color: AppAppearance.of(context).ink, fontSize: 12),
                   ),
                 ],
               ),
@@ -271,55 +271,55 @@ class _LibraryPageState extends State<LibraryPage> {
         child: DevotionBackdrop(
           palette: p,
           child: CustomScrollView(
-            key: const PageStorageKey('premium-library-scroll'),
+            key: PageStorageKey('premium-library-scroll'),
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             slivers: [
               SliverToBoxAdapter(
                 child: CustomPaint(
-                  painter: const _DevotionArch(),
+                  painter: _DevotionArch(),
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+                    padding: EdgeInsets.fromLTRB(20, 24, 20, 20),
                     child: Column(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.spa_outlined,
-                          color: homeGold,
+                          color: AppAppearance.of(context).gold,
                           size: 24,
                         ),
-                        const SizedBox(height: 10),
-                        const UiText(
+                        SizedBox(height: 10),
+                        UiText(
                           'الأذكار',
                           style: TextStyle(
-                            color: homeGold,
+                            color: AppAppearance.of(context).gold,
                             fontSize: 32,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const SizedBox(height: 6),
-                        const UiText(
+                        SizedBox(height: 6),
+                        UiText(
                           'ابحث واقرأ واحفظ أذكارك المفضلة',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: homeCream,
+                            color: AppAppearance.of(context).ink,
                             fontSize: 14,
                             height: 1.7,
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        SizedBox(height: 20),
                         TextField(
-                          key: const Key('library-search'),
+                          key: Key('library-search'),
                           controller: search,
                           textDirection: Directionality.of(context),
-                          style: const TextStyle(
-                            color: homeCream,
+                          style: TextStyle(
+                            color: AppAppearance.of(context).ink,
                             fontFamily: 'NotoSansArabic',
                           ),
                           onChanged: (value) =>
                               setState(() => query = value.trim()),
                           decoration: InputDecoration(
-                            prefixIcon: const Icon(
+                            prefixIcon: Icon(
                               Icons.search_rounded,
-                              color: homeGold,
+                              color: AppAppearance.of(context).gold,
                             ),
                             suffixIcon: query.isEmpty
                                 ? null
@@ -329,72 +329,72 @@ class _LibraryPageState extends State<LibraryPage> {
                                       search.clear();
                                       setState(() => query = '');
                                     },
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.close,
-                                      color: homeGold,
+                                      color: AppAppearance.of(context).gold,
                                     ),
                                   ),
                             hintText: tr(context, 'ابحث عن ذكر'),
                             hintStyle: TextStyle(
-                              color: homeCream.withOpacity(.7),
+                              color: AppAppearance.of(context).ink.withOpacity(.7),
                             ),
                             filled: true,
                             fillColor: p.homeSurface.withOpacity(.8),
-                            contentPadding: const EdgeInsets.symmetric(
+                            contentPadding: EdgeInsets.symmetric(
                               horizontal: 20,
                               vertical: 16,
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(24),
                               borderSide: BorderSide(
-                                color: homeGold.withOpacity(.55),
+                                color: AppAppearance.of(context).gold.withOpacity(.55),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(24),
-                              borderSide: const BorderSide(
-                                color: homeGold,
+                              borderSide: BorderSide(
+                                color: AppAppearance.of(context).gold,
                                 width: 1.5,
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                         Wrap(
                           spacing: 14,
                           runSpacing: 10,
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
                             FilterChip(
-                              key: const Key('library-favorites'),
+                              key: Key('library-favorites'),
                               avatar: Icon(
                                 favoriteOnly
                                     ? Icons.favorite
                                     : Icons.favorite_border,
                                 color: favoriteOnly
-                                    ? const Color(0xFF002B2B)
-                                    : homeGold,
+                                    ? appearanceTone(context, 0xFF002B2B)
+                                    : AppAppearance.of(context).gold,
                                 size: 20,
                               ),
                               label: UiText(
                                 'المفضلة',
                                 style: TextStyle(
                                   color: favoriteOnly
-                                      ? const Color(0xFF002B2B)
-                                      : homeCream,
+                                      ? appearanceTone(context, 0xFF002B2B)
+                                      : AppAppearance.of(context).ink,
                                 ),
                               ),
                               selected: favoriteOnly,
                               color: WidgetStateProperty.resolveWith(
                                 (states) =>
                                     states.contains(WidgetState.selected)
-                                    ? homeGold
+                                    ? AppAppearance.of(context).gold
                                     : p.homeBackground,
                               ),
-                              selectedColor: homeGold,
+                              selectedColor: AppAppearance.of(context).gold,
                               backgroundColor: p.homeBackground,
                               side: BorderSide(
-                                color: homeGold.withOpacity(.65),
+                                color: AppAppearance.of(context).gold.withOpacity(.65),
                               ),
                               showCheckmark: false,
                               onSelected: (v) =>
@@ -402,9 +402,9 @@ class _LibraryPageState extends State<LibraryPage> {
                             ),
                             UiText(
                               '${filtered.length} ذكر',
-                              key: const Key('library-count'),
+                              key: Key('library-count'),
                               style: TextStyle(
-                                color: homeCream.withOpacity(.85),
+                                color: AppAppearance.of(context).ink.withOpacity(.85),
                                 fontSize: 14,
                               ),
                             ),
@@ -416,32 +416,32 @@ class _LibraryPageState extends State<LibraryPage> {
                 ),
               ),
               if (filtered.isEmpty)
-                const SliverToBoxAdapter(
+                SliverToBoxAdapter(
                   child: Padding(
                     padding: EdgeInsets.all(32),
                     child: Column(
                       children: [
                         Icon(
                           Icons.search_off_rounded,
-                          color: homeGold,
+                          color: AppAppearance.of(context).gold,
                           size: 34,
                         ),
                         SizedBox(height: 12),
                         UiText(
                           'لا توجد نتائج',
-                          style: TextStyle(color: homeCream, fontSize: 18),
+                          style: TextStyle(color: AppAppearance.of(context).ink, fontSize: 18),
                         ),
                       ],
                     ),
                   ),
                 ),
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                padding: EdgeInsets.fromLTRB(16, 0, 16, 20),
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate((context, index) {
                     final e = filtered[index];
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
+                      padding: EdgeInsets.only(bottom: 12),
                       child: DevotionCard(
                         padding: EdgeInsets.zero,
                         child: Material(
@@ -458,7 +458,7 @@ class _LibraryPageState extends State<LibraryPage> {
                               ).indexWhere((x) => x.id == e.id),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.fromLTRB(12, 18, 8, 18),
+                              padding: EdgeInsets.fromLTRB(12, 18, 8, 18),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -467,20 +467,20 @@ class _LibraryPageState extends State<LibraryPage> {
                                     height: 44,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: homeGold.withOpacity(.08),
+                                      color: AppAppearance.of(context).gold.withOpacity(.08),
                                       border: Border.all(
-                                        color: homeGold.withOpacity(.45),
+                                        color: AppAppearance.of(context).gold.withOpacity(.45),
                                       ),
                                     ),
                                     child: Icon(
                                       e.isQuran
                                           ? Icons.menu_book_outlined
                                           : Icons.auto_stories_outlined,
-                                      color: homeGold,
+                                      color: AppAppearance.of(context).gold,
                                       size: 22,
                                     ),
                                   ),
-                                  const SizedBox(width: 12),
+                                  SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
@@ -488,18 +488,18 @@ class _LibraryPageState extends State<LibraryPage> {
                                       children: [
                                         UiText(
                                           e.title,
-                                          style: const TextStyle(
-                                            color: homeCream,
+                                          style: TextStyle(
+                                            color: AppAppearance.of(context).ink,
                                             fontSize: 18,
                                             fontWeight: FontWeight.w600,
                                             height: 1.7,
                                           ),
                                         ),
-                                        const SizedBox(height: 5),
+                                        SizedBox(height: 5),
                                         UiText(
                                           '${sectionLabel(e.section)} • ${e.source}',
                                           style: TextStyle(
-                                            color: homeCream.withOpacity(.8),
+                                            color: AppAppearance.of(context).ink.withOpacity(.8),
                                             fontSize: 12,
                                             height: 1.85,
                                           ),
@@ -516,7 +516,7 @@ class _LibraryPageState extends State<LibraryPage> {
                                       store.favorites.contains(e.id)
                                           ? Icons.bookmark_rounded
                                           : Icons.bookmark_border_rounded,
-                                      color: homeGold,
+                                      color: AppAppearance.of(context).gold,
                                     ),
                                   ),
                                 ],
@@ -582,7 +582,7 @@ class _ReaderPageState extends State<ReaderPage> {
     final p = widget.store.palette;
     final sectionEntries = inSection(widget.section);
     if (sectionEntries.isEmpty)
-      return const Scaffold(body: Center(child: UiText('لا توجد أذكار بعد')));
+      return Scaffold(body: Center(child: UiText('لا توجد أذكار بعد')));
     final e = sectionEntries[index.clamp(0, sectionEntries.length - 1)];
     final progress = widget.store.count(e);
     final target = widget.store.target(e);
@@ -598,17 +598,17 @@ class _ReaderPageState extends State<ReaderPage> {
               context,
               e,
               p.homeBackground,
-              homeCream,
+              AppAppearance.of(context).ink,
               repetitionTarget: target,
             );
           } catch (_) {
             if (context.mounted)
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: UiText('تعذرت المشاركة، حاول مجددًا.')),
+                SnackBar(content: UiText('تعذرت المشاركة، حاول مجددًا.')),
               );
           }
         },
-        icon: const Icon(Icons.ios_share),
+        icon: Icon(Icons.ios_share),
       ),
       IconButton(
         tooltip: tr(context, 'وضع التركيز'),
@@ -628,26 +628,26 @@ class _ReaderPageState extends State<ReaderPage> {
     return SettingsStyle(
       palette: p,
       child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
+        value: p.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
         child: Scaffold(
           backgroundColor: p.homeBackground,
           appBar: AppBar(
             backgroundColor: p.homeBackground,
-            foregroundColor: homeGold,
+            foregroundColor: AppAppearance.of(context).gold,
             surfaceTintColor: Colors.transparent,
             toolbarHeight: MediaQuery.textScalerOf(context).scale(1) > 1.3
                 ? 100
                 : 68,
-            titleTextStyle: const TextStyle(
+            titleTextStyle: TextStyle(
               fontFamily: "NotoSansArabic",
               fontSize: 18,
-              color: homeCream,
+              color: AppAppearance.of(context).ink,
             ),
             title: UiText(sectionLabel(widget.section)),
             actions: largeHeader ? null : controls,
             bottom: largeHeader
                 ? PreferredSize(
-                    preferredSize: const Size.fromHeight(48),
+                    preferredSize: Size.fromHeight(48),
                     child: Align(
                       alignment: AlignmentDirectional.centerEnd,
                       child: Wrap(children: controls),
@@ -663,19 +663,19 @@ class _ReaderPageState extends State<ReaderPage> {
                 children: [
                   if (!focus)
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(22, 5, 22, 8),
+                      padding: EdgeInsets.fromLTRB(22, 5, 22, 8),
                       child: Row(
                         children: [
                           UiText(
                             '${index + 1} / ${sectionEntries.length}',
                             textDirection: TextDirection.ltr,
-                            style: TextStyle(color: homeCream),
+                            style: TextStyle(color: AppAppearance.of(context).ink),
                           ),
-                          const SizedBox(width: 14),
+                          SizedBox(width: 14),
                           Expanded(
                             child: LinearProgressIndicator(
                               value: (index + 1) / sectionEntries.length,
-                              color: homeGold,
+                              color: AppAppearance.of(context).gold,
                               backgroundColor: p.homeSurface,
                               minHeight: 5,
                             ),
@@ -686,39 +686,39 @@ class _ReaderPageState extends State<ReaderPage> {
                   Expanded(
                     child: ListView(
                       key: ValueKey('reader-scroll-${e.id}'),
-                      padding: const EdgeInsets.fromLTRB(18, 13, 18, 18),
+                      padding: EdgeInsets.fromLTRB(18, 13, 18, 18),
                       children: [
                         DevotionCard(
-                          padding: const EdgeInsets.all(23),
+                          padding: EdgeInsets.all(23),
                           child: Column(
                             children: [
                               UiText(
                                 e.title,
                                 style: TextStyle(
-                                  color: homeGold,
+                                  color: AppAppearance.of(context).gold,
                                   fontSize: 17,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(height: 24),
+                              SizedBox(height: 24),
                               SelectableText(
                                 e.arabic,
-                                key: const Key('reader-arabic'),
+                                key: Key('reader-arabic'),
                                 textDirection: TextDirection.rtl,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: homeCream,
+                                  color: AppAppearance.of(context).ink,
                                   fontSize: widget.store.fontSize,
                                   height: 2.05,
                                 ),
                               ),
-                              const SizedBox(height: 21),
+                              SizedBox(height: 21),
                               AudioPanel(key: ValueKey(e.id), entry: e),
                               UiText(
                                 e.source,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: homeCream.withOpacity(.65),
+                                  color: AppAppearance.of(context).ink.withOpacity(.65),
                                   fontSize: 12,
                                 ),
                               ),
@@ -726,9 +726,9 @@ class _ReaderPageState extends State<ReaderPage> {
                           ),
                         ),
                         if (!focus) ...[
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12),
                           InkWell(
-                            key: const Key('reader-evidence-toggle'),
+                            key: Key('reader-evidence-toggle'),
                             onTap: () => setState(() => expanded = !expanded),
                             borderRadius: BorderRadius.circular(19),
                             child: DevotionCard(
@@ -736,14 +736,14 @@ class _ReaderPageState extends State<ReaderPage> {
                                 children: [
                                   Icon(
                                     Icons.menu_book_outlined,
-                                    color: homeGold,
+                                    color: AppAppearance.of(context).gold,
                                   ),
-                                  const SizedBox(width: 10),
+                                  SizedBox(width: 10),
                                   Expanded(
                                     child: UiText(
                                       'الفضل والدليل والمعنى',
                                       style: TextStyle(
-                                        color: homeCream,
+                                        color: AppAppearance.of(context).ink,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -752,7 +752,7 @@ class _ReaderPageState extends State<ReaderPage> {
                                     expanded
                                         ? Icons.keyboard_arrow_up
                                         : Icons.keyboard_arrow_down,
-                                    color: homeGold,
+                                    color: AppAppearance.of(context).gold,
                                   ),
                                 ],
                               ),
@@ -761,12 +761,12 @@ class _ReaderPageState extends State<ReaderPage> {
                           AnimatedSize(
                             duration: MediaQuery.disableAnimationsOf(context)
                                 ? Duration.zero
-                                : const Duration(milliseconds: 220),
+                                : Duration(milliseconds: 220),
                             curve: Curves.easeOutCubic,
                             alignment: Alignment.topCenter,
                             child: expanded
                                 ? Padding(
-                                    padding: const EdgeInsets.only(top: 8),
+                                    padding: EdgeInsets.only(top: 8),
                                     child: DevotionCard(
                                       child: Column(
                                         crossAxisAlignment:
@@ -775,54 +775,54 @@ class _ReaderPageState extends State<ReaderPage> {
                                           UiText(
                                             'المعنى',
                                             style: TextStyle(
-                                              color: homeGold,
+                                              color: AppAppearance.of(context).gold,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          const SizedBox(height: 7),
+                                          SizedBox(height: 7),
                                           UiText(
                                             e.meaning,
                                             style: TextStyle(
-                                              color: homeCream,
+                                              color: AppAppearance.of(context).ink,
                                               height: 1.7,
                                             ),
                                           ),
-                                          const SizedBox(height: 14),
+                                          SizedBox(height: 14),
                                           UiText(
                                             'الفضل',
                                             style: TextStyle(
-                                              color: homeGold,
+                                              color: AppAppearance.of(context).gold,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          const SizedBox(height: 7),
+                                          SizedBox(height: 7),
                                           UiText(
                                             e.benefit,
                                             style: TextStyle(
-                                              color: homeCream,
+                                              color: AppAppearance.of(context).ink,
                                               height: 1.7,
                                             ),
                                           ),
-                                          const SizedBox(height: 14),
+                                          SizedBox(height: 14),
                                           UiText(
                                             'الدليل',
                                             style: TextStyle(
-                                              color: homeGold,
+                                              color: AppAppearance.of(context).gold,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          const SizedBox(height: 7),
+                                          SizedBox(height: 7),
                                           UiText(
                                             e.evidence,
                                             style: TextStyle(
-                                              color: homeCream,
+                                              color: AppAppearance.of(context).ink,
                                               height: 1.7,
                                             ),
                                           ),
-                                          const SizedBox(height: 12),
+                                          SizedBox(height: 12),
                                           UiText(
                                             e.timing,
-                                            style: TextStyle(color: homeCream),
+                                            style: TextStyle(color: AppAppearance.of(context).ink),
                                           ),
                                           TextButton.icon(
                                             onPressed: () async {
@@ -840,15 +840,15 @@ class _ReaderPageState extends State<ReaderPage> {
                                                 ScaffoldMessenger.of(
                                                   context,
                                                 ).showSnackBar(
-                                                  const SnackBar(
+                                                  SnackBar(
                                                     content: UiText(
                                                       'تعذر فتح المرجع. يحتاج اتصالًا بالإنترنت.',
                                                     ),
                                                   ),
                                                 );
                                             },
-                                            icon: const Icon(Icons.open_in_new),
-                                            label: const UiText(
+                                            icon: Icon(Icons.open_in_new),
+                                            label: UiText(
                                               'فتح المصدر — يحتاج إنترنت',
                                             ),
                                           ),
@@ -869,7 +869,7 @@ class _ReaderPageState extends State<ReaderPage> {
                                                   ScaffoldMessenger.of(
                                                     context,
                                                   ).showSnackBar(
-                                                    const SnackBar(
+                                                    SnackBar(
                                                       content: UiText(
                                                         'تعذر فتح المرجع. يحتاج اتصالًا بالإنترنت.',
                                                       ),
@@ -877,18 +877,18 @@ class _ReaderPageState extends State<ReaderPage> {
                                                   );
                                                 }
                                               },
-                                              icon: const Icon(
+                                              icon: Icon(
                                                 Icons.open_in_new,
                                               ),
-                                              label: const UiText(
+                                              label: UiText(
                                                 'نص القرآن — Tanzil',
                                               ),
                                             ),
-                                          const SizedBox(height: 12),
+                                          SizedBox(height: 12),
                                           UiText(
                                             e.isQuran ? 'آية قرآنية' : 'صحيح',
                                             style: TextStyle(
-                                              color: homeGold,
+                                              color: AppAppearance.of(context).gold,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
@@ -896,47 +896,47 @@ class _ReaderPageState extends State<ReaderPage> {
                                       ),
                                     ),
                                   )
-                                : const SizedBox.shrink(),
+                                : SizedBox.shrink(),
                           ),
-                          const SizedBox(height: 10),
+                          SizedBox(height: 10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               IconButton(
-                                key: const Key('reader-font-increase'),
+                                key: Key('reader-font-increase'),
                                 tooltip: tr(context, 'تكبير الخط'),
                                 onPressed: () => widget.store.changeFont(
                                   widget.store.fontSize + 2,
                                 ),
                                 icon: Icon(
                                   Icons.text_increase,
-                                  color: homeCream,
+                                  color: AppAppearance.of(context).ink,
                                 ),
                               ),
                               IconButton(
-                                key: const Key('reader-font-decrease'),
+                                key: Key('reader-font-decrease'),
                                 tooltip: tr(context, 'تصغير الخط'),
                                 onPressed: () => widget.store.changeFont(
                                   widget.store.fontSize - 2,
                                 ),
                                 icon: Icon(
                                   Icons.text_decrease,
-                                  color: homeCream,
+                                  color: AppAppearance.of(context).ink,
                                 ),
                               ),
                             ],
                           ),
                         ],
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12),
                         if (e.countAlternatives.isNotEmpty)
                           Center(
                             child: Semantics(
                               label: tr(context, 'عدد التكرار'),
                               child: DropdownButton<int>(
-                                key: const Key('reader-count-choice'),
+                                key: Key('reader-count-choice'),
                                 dropdownColor: p.homeSurface,
-                                style: const TextStyle(
-                                  color: homeCream,
+                                style: TextStyle(
+                                  color: AppAppearance.of(context).ink,
                                   fontFamily: 'NotoSansArabic',
                                 ),
                                 value: target,
@@ -959,8 +959,8 @@ class _ReaderPageState extends State<ReaderPage> {
                           ),
                         Center(
                           child: InkWell(
-                            key: const Key('reader-counter'),
-                            customBorder: const CircleBorder(),
+                            key: Key('reader-counter'),
+                            customBorder: CircleBorder(),
                             onTap: progress >= target
                                 ? null
                                 : () {
@@ -982,52 +982,52 @@ class _ReaderPageState extends State<ReaderPage> {
                           ),
                         ),
                         TextButton.icon(
-                          key: const Key('reader-undo'),
+                          key: Key('reader-undo'),
                           onPressed: progress > 0
                               ? () => widget.store.setCount(e, progress - 1)
                               : null,
-                          icon: const Icon(Icons.undo),
-                          label: const UiText('تراجع عن ضغطة'),
+                          icon: Icon(Icons.undo),
+                          label: UiText('تراجع عن ضغطة'),
                         ),
                         if (e.countDescription.isNotEmpty)
                           Padding(
-                            padding: const EdgeInsets.all(10),
+                            padding: EdgeInsets.all(10),
                             child: UiText(
                               e.countDescription,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: homeCream.withOpacity(.7),
+                                color: AppAppearance.of(context).ink.withOpacity(.7),
                                 fontSize: 12,
                               ),
                             ),
                           ),
-                        const SizedBox(height: 18),
+                        SizedBox(height: 18),
                         Wrap(
                           alignment: WrapAlignment.spaceBetween,
                           spacing: 12,
                           runSpacing: 12,
                           children: [
                             OutlinedButton.icon(
-                              key: const Key('reader-previous'),
+                              key: Key('reader-previous'),
                               onPressed: index > 0
                                   ? () => setState(() {
                                       index--;
                                       expanded = false;
                                     })
                                   : null,
-                              icon: const Icon(Icons.arrow_forward),
-                              label: const UiText('السابق'),
+                              icon: Icon(Icons.arrow_forward),
+                              label: UiText('السابق'),
                             ),
                             FilledButton.icon(
-                              key: const Key('reader-next'),
+                              key: Key('reader-next'),
                               onPressed: index < sectionEntries.length - 1
                                   ? () => setState(() {
                                       index++;
                                       expanded = false;
                                     })
                                   : null,
-                              icon: const Icon(Icons.arrow_back),
-                              label: const UiText('التالي'),
+                              icon: Icon(Icons.arrow_back),
+                              label: UiText('التالي'),
                             ),
                           ],
                         ),

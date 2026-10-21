@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'content.dart';
 import 'quran_text.dart';
 part 'premium_ui.dart';
+part 'appearance.dart';
 part 'tasbih_ui.dart';
 part 'nawafil_ui.dart';
 part 'settings_ui.dart';
@@ -45,87 +46,23 @@ class WirdPalette {
   final String name;
   final Color background, card, primary, ink;
   final bool dark;
-  // A restrained slate foundation; every theme retains its original identity.
-  Color get homeBackground =>
-      Color.lerp(const Color(0xFF002C32), primary, .09)!;
-  Color get homeSurface => Color.lerp(homeBackground, primary, .065)!;
-  Color get homeOutline => const Color(0xFFE3E0D5).withOpacity(.16);
-  Color get homeAccent => Color.lerp(primary, const Color(0xFFB5CBC3), .7)!;
+  Color get homeBackground => dark
+      ? Color.lerp(const Color(0xFF002C32), primary, .09)!
+      : const Color(0xFFF6F0DF);
+  Color get homeSurface => dark
+      ? Color.lerp(homeBackground, primary, .065)!
+      : const Color(0xFFFFF8E8);
+  Color get homeOutline => dark ? const Color(0x29E3E0D5) : const Color(0x669D8959);
+  Color get homeAccent => dark
+      ? Color.lerp(primary, const Color(0xFFB5CBC3), .7)!
+      : const Color(0xFF567759);
 }
 
 const themes = <WirdPalette>[
-  WirdPalette(
-    'Olive & Cream',
-    Color(0xFFF8F5ED),
-    Color(0xFFE5E7D8),
-    Color(0xFF77856A),
-    Color(0xFF293E32),
-  ),
-  WirdPalette(
-    'Ocean Blue',
-    Color(0xFFF4F8FA),
-    Color(0xFFDDECF1),
-    Color(0xFF618DA5),
-    Color(0xFF1D425A),
-  ),
-  WirdPalette(
-    'Mocha & Sand',
-    Color(0xFFFAF6EF),
-    Color(0xFFE6D9C8),
-    Color(0xFFA8896C),
-    Color(0xFF4C3A30),
-  ),
-  WirdPalette(
-    'Soft Lavender',
-    Color(0xFFF9F7FC),
-    Color(0xFFE9E3F2),
-    Color(0xFFA595C5),
-    Color(0xFF50466F),
-  ),
-  WirdPalette(
-    'Emerald & Gold',
-    Color(0xFFF6F2E8),
-    Color(0xFFE8DABC),
-    Color(0xFFB49A60),
-    Color(0xFF174D42),
-  ),
-  WirdPalette(
-    'Midnight Blue',
-    Color(0xFF101B2B),
-    Color(0xFF21334A),
-    Color(0xFF50748E),
-    Color(0xFFE6C796),
-    dark: true,
-  ),
-  WirdPalette(
-    'Charcoal & Sage',
-    Color(0xFF181F22),
-    Color(0xFF293639),
-    Color(0xFF728D82),
-    Color(0xFFE1E5D7),
-    dark: true,
-  ),
-  WirdPalette(
-    'Dusty Rose & Stone',
-    Color(0xFFFBF7F4),
-    Color(0xFFF1E2DC),
-    Color(0xFFBB9289),
-    Color(0xFF624C49),
-  ),
-  WirdPalette(
-    'Stone & Teal',
-    Color(0xFFF6F7F5),
-    Color(0xFFE0E8E7),
-    Color(0xFF427C7A),
-    Color(0xFF263C40),
-  ),
-  WirdPalette(
-    'Sage & Ivory',
-    Color(0xFFF7F5EE),
-    Color(0xFFB3C6B5),
-    Color(0xFF355E50),
-    Color(0xFF263B32),
-  ),
+  WirdPalette('Midnight Teal', Color(0xFF002F37), Color(0xFF07373D),
+      Color(0xFF427C7A), Color(0xFFF5EAD0), dark: true),
+  WirdPalette('Ivory Serenity', Color(0xFFF6F0DF), Color(0xFFFFF8E8),
+      Color(0xFF456B51), Color(0xFF153F35)),
 ];
 
 String dayKey([DateTime? d]) {
@@ -142,7 +79,7 @@ class WirdState extends ChangeNotifier {
   }
 
   String languageCode = 'ar';
-  int themeIndex = 8; // Stone & Teal default
+  int themeIndex = 0; // Approved Midnight Teal is the new-user default.
   double fontSize = 25;
   Set<String> favorites = {};
   Map<String, int> counts = {};
@@ -261,7 +198,15 @@ class WirdState extends ChangeNotifier {
     _prefs = await SharedPreferences.getInstance();
     final p = _prefs!;
     languageCode = p.getString('language') == 'en' ? 'en' : 'ar';
-    themeIndex = (p.getInt('theme') ?? 8).clamp(0, themes.length - 1);
+    final savedAppearance = p.getString(appearancePreference);
+    final selectedAppearance = appearanceIds.indexOf(savedAppearance ?? '');
+    themeIndex = selectedAppearance >= 0
+        ? selectedAppearance : migratedAppearance(p.getInt('theme'));
+    if (selectedAppearance < 0) {
+      // Do not overwrite legacy indices or any unrelated preference.
+      final migratedId = appearanceIds[themeIndex];
+      save(() => p.setString(appearancePreference, migratedId));
+    }
     fontSize = (p.getDouble('font') ?? 25).clamp(19, 38);
     favorites = p.getStringList('favorites')?.toSet() ?? {};
     prayers = p.getStringList('prayers')?.toSet() ?? {};
@@ -305,7 +250,8 @@ class WirdState extends ChangeNotifier {
 
   void changeTheme(int idx) {
     themeIndex = idx.clamp(0, themes.length - 1);
-    save(() => _prefs!.setInt('theme', themeIndex));
+    final selectedId = appearanceIds[themeIndex];
+    save(() => _prefs!.setString(appearancePreference, selectedId));
     notifyListeners();
   }
 
@@ -367,33 +313,36 @@ class WirdState extends ChangeNotifier {
 }
 
 /// Shared by the running app and visual regression captures.
-ThemeData wirdTheme(WirdPalette p) => ThemeData(
-  useMaterial3: true,
-  fontFamily: 'NotoSansArabic',
-  navigationBarTheme: NavigationBarThemeData(
-    height: 76,
-    elevation: 0,
-    surfaceTintColor: Colors.transparent,
-    backgroundColor: p.homeBackground,
-    labelTextStyle: const WidgetStatePropertyAll(
-      TextStyle(color: Color(0xFFF3EEDF), fontSize: 12),
-    ),
-    iconTheme: const WidgetStatePropertyAll(
-      IconThemeData(color: Color(0xFFF3EEDF)),
-    ),
-  ),
-  brightness: p.dark ? Brightness.dark : Brightness.light,
-  scaffoldBackgroundColor: p.background,
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: p.primary,
-    brightness: p.dark ? Brightness.dark : Brightness.light,
-  ),
-  appBarTheme: AppBarTheme(
-    backgroundColor: p.background,
-    foregroundColor: p.ink,
-    elevation: 0,
-  ),
-);
+ThemeData wirdTheme(WirdPalette p) {
+  final a = AppAppearance(p);
+  final scheme = ColorScheme.fromSeed(seedColor: p.primary,
+    brightness: p.dark ? Brightness.dark : Brightness.light).copyWith(
+      primary: a.accent, onPrimary: p.dark ? const Color(0xFF002C32) : const Color(0xFFFFF8E8),
+      surface: p.homeSurface, onSurface: a.ink, secondary: a.gold,
+      onSecondary: p.dark ? const Color(0xFF002C32) : const Color(0xFFFFF8E8));
+  return ThemeData(useMaterial3: true, fontFamily: 'NotoSansArabic',
+    brightness: scheme.brightness, colorScheme: scheme,
+    extensions: [a], scaffoldBackgroundColor: p.homeBackground,
+    textTheme: ThemeData(brightness: scheme.brightness).textTheme.apply(
+      fontFamily: 'NotoSansArabic', bodyColor: a.ink, displayColor: a.ink),
+    iconTheme: IconThemeData(color: a.ink),
+    dividerColor: a.gold.withValues(alpha: .28),
+    navigationBarTheme: NavigationBarThemeData(height: 76, elevation: 0,
+      surfaceTintColor: Colors.transparent, backgroundColor: p.homeBackground,
+      labelTextStyle: WidgetStatePropertyAll(TextStyle(color: a.ink, fontSize: 12)),
+      iconTheme: WidgetStatePropertyAll(IconThemeData(color: a.ink))),
+    appBarTheme: AppBarTheme(backgroundColor: p.homeBackground,
+      foregroundColor: a.ink, surfaceTintColor: Colors.transparent, elevation: 0,
+      systemOverlayStyle: p.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark),
+    dialogTheme: DialogThemeData(backgroundColor: p.homeSurface,
+      titleTextStyle: TextStyle(color: a.ink, fontFamily: 'NotoSansArabic', fontSize: 22),
+      contentTextStyle: TextStyle(color: a.ink, fontFamily: 'NotoSansArabic', height: 1.8)),
+    bottomSheetTheme: BottomSheetThemeData(backgroundColor: p.homeSurface),
+    popupMenuTheme: PopupMenuThemeData(color: p.homeSurface),
+    snackBarTheme: SnackBarThemeData(backgroundColor: p.homeSurface,
+      contentTextStyle: TextStyle(color: a.ink, fontFamily: 'NotoSansArabic')),
+  );
+}
 
 class WirdApp extends StatefulWidget {
   const WirdApp({super.key, this.firstFrameRasterized});
@@ -549,7 +498,7 @@ class _WirdShellState extends State<WirdShell> {
       NawafilPage(store: store),
       DeferredSettingsPage(store: store, active: page == 3),
     ];
-    final darkSurface = page == 0 || page == 1 || page == 2 || page == 3 || p.dark;
+    final darkSurface = p.dark;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -558,7 +507,7 @@ class _WirdShellState extends State<WirdShell> {
             : Brightness.dark,
         statusBarBrightness: darkSurface ? Brightness.dark : Brightness.light,
         systemNavigationBarColor: p.homeBackground,
-        systemNavigationBarIconBrightness: Brightness.light,
+        systemNavigationBarIconBrightness: p.dark ? Brightness.light : Brightness.dark,
       ),
       child: Scaffold(
         backgroundColor: p.homeBackground,
@@ -566,7 +515,7 @@ class _WirdShellState extends State<WirdShell> {
           child: IndexedStack(index: page, children: screens),
         ),
         bottomNavigationBar: Container(
-          margin: const EdgeInsets.fromLTRB(10, 4, 10, 5),
+          margin: EdgeInsets.fromLTRB(10, 4, 10, 5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(29),
             border: Border.all(color: p.homeAccent.withOpacity(.3)),
@@ -577,33 +526,33 @@ class _WirdShellState extends State<WirdShell> {
           selectedIndex: page,
           onDestinationSelected: (index) => setState(() => page = index),
           backgroundColor: Colors.transparent,
-          indicatorColor: const Color(0xFFE4C47E).withOpacity(.18),
+          indicatorColor: Color(0xFFE4C47E).withOpacity(.18),
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           destinations: [
             NavigationDestination(
-              key: const Key('nav-home'),
-              icon: const Icon(Icons.home_outlined),
-              selectedIcon: const Icon(Icons.home_rounded, color: homeGold),
+              key: Key('nav-home'),
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home_rounded, color: AppAppearance.of(context).gold),
               label: tr(context, 'الرئيسية'),
             ),
             NavigationDestination(
-              key: const Key('nav-library'),
-              icon: const Icon(Icons.auto_stories_outlined),
-              selectedIcon: const Icon(Icons.auto_stories_outlined),
+              key: Key('nav-library'),
+              icon: Icon(Icons.auto_stories_outlined),
+              selectedIcon: Icon(Icons.auto_stories_outlined),
               label: tr(context, 'الأذكار'),
             ),
             NavigationDestination(
-              key: const Key('nav-nawafil'),
-              icon: const SujoodIcon(),
-              selectedIcon: const IconTheme(data: IconThemeData(color: homeGold), child: SujoodIcon(selected: true)),
+              key: Key('nav-nawafil'),
+              icon: SujoodIcon(),
+              selectedIcon: IconTheme(data: IconThemeData(color: AppAppearance.of(context).gold), child: SujoodIcon(selected: true)),
               label: tr(context, 'النوافل'),
             ),
             NavigationDestination(
-              key: const Key('nav-settings'),
-              icon: const Icon(Icons.settings_outlined),
-              selectedIcon: const Icon(Icons.settings, color: homeGold),
+              key: Key('nav-settings'),
+              icon: Icon(Icons.settings_outlined),
+              selectedIcon: Icon(Icons.settings, color: AppAppearance.of(context).gold),
               label: tr(context, 'الإعدادات'),
             ),
           ],
@@ -665,14 +614,7 @@ class Header extends StatelessWidget {
 /// Read the currently active palette from the nearest MaterialApp's color scheme.
 /// Palette inherited color choices are resolved by a thin holder below.
 class ThemeColors {
-  static WirdPalette of(BuildContext context) {
-    final root = context.findAncestorWidgetOfExactType<WirdShell>();
-    if (root != null) return root.store.palette;
-    final library = context.findAncestorWidgetOfExactType<LibraryPage>();
-    if (library != null) return library.store.palette;
-    final reader = context.findAncestorWidgetOfExactType<ReaderPage>();
-    return reader?.store.palette ?? themes[8];
-  }
+  static WirdPalette of(BuildContext context) => AppAppearance.of(context).palette;
 }
 
 class Surface extends StatelessWidget {
