@@ -58,7 +58,7 @@ void main() {
     await finish(tester, store);
   });
   for(final language in ['ar', 'en']) {
-    for(var index=0; index<10; index++) {
+    for(var index=0; index<themes.length; index++) {
       testWidgets('botanical prayers theme $index $language small screen 200% text', (tester) async {
         tester.view.physicalSize=const Size(320, 700); tester.view.devicePixelRatio=1;
         addTearDown(tester.view.resetPhysicalSize); addTearDown(tester.view.resetDevicePixelRatio);
