@@ -79,6 +79,9 @@ def expect(label):
     raise AssertionError(f'Destination missing: {label}')
 
 def capture(name):
+    # ADB input returns before Flutter's route/theme animations have finished.
+    # Capture only after the transition has settled, not the outgoing modal.
+    time.sleep(1)
     raw = adb('exec-out','screencap','-p',binary=True)
     assert raw.startswith(b'\x89PNG\r\n\x1a\n')
     (out/name).write_bytes(raw)
