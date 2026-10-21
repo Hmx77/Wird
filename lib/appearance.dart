@@ -36,6 +36,7 @@ Color appearanceTone(BuildContext context, int argb) {
   final rgb = argb & 0xffffff;
   final alpha = (argb >> 24) & 255;
   final role = switch (rgb) {
+    0x000000 => const Color(0xFF433A22),
     0xF5EAD0 || 0xF3EEDF || 0xE3E0D5 => a.ink,
     0xCAD9D3 || 0xB5CBC3 => a.muted,
     0xE4C47E || 0xB99A54 || 0xB49352 => a.gold,
@@ -73,7 +74,9 @@ class AppearanceWordmark extends StatelessWidget {
     if (AppAppearance.of(context).dark) return original;
     return ShaderMask(blendMode: BlendMode.srcIn,
       shaderCallback: (bounds) => const LinearGradient(
-        colors: [Color(0xFF23523F), Color(0xFF123D33)],
+        begin: Alignment.topCenter, end: Alignment.bottomCenter,
+        colors: [Color(0xFFB19743), Color(0xFF23523F), Color(0xFF123D33)],
+        stops: [0, .35, 1],
       ).createShader(bounds), child: original);
   }
 }

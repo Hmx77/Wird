@@ -422,6 +422,8 @@ class HomePage extends StatelessWidget {
 
   Widget _category(BuildContext context, DhikrSection section, {bool wide = false}) {
     final count = inSection(section).length;
+    final categoryInk = !store.palette.dark && section == DhikrSection.sleep
+        ? homeCream : AppAppearance.of(context).ink;
     final done = store.completed(section);
     final icon = switch (section) {
       DhikrSection.morning => Icons.wb_sunny_outlined,
@@ -438,13 +440,13 @@ class HomePage extends StatelessWidget {
           Container(padding: EdgeInsets.all(7),
             decoration: BoxDecoration(color: badge, borderRadius: BorderRadius.circular(13),
               border: Border.all(color: appearanceTone(context, 0x55E9D8AE))),
-            child: Icon(icon, color: AppAppearance.of(context).ink, size: 25)),
+            child: Icon(icon, color: categoryInk, size: 25)),
           SizedBox(width: 12),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            UiText(sectionLabel(section), style: TextStyle(color: AppAppearance.of(context).ink,
+            UiText(sectionLabel(section), style: TextStyle(color: categoryInk,
               fontSize: 18, fontWeight: FontWeight.w700, height: 1.5)),
             SizedBox(height: 3),
-            UiText('$count ذكر', style: TextStyle(color: AppAppearance.of(context).ink, fontSize: 11)),
+            UiText('$count ذكر', style: TextStyle(color: categoryInk, fontSize: 11)),
             if (done > 0) ...[
               SizedBox(height: 6),
               LinearProgressIndicator(value: done / count, minHeight: 3,
@@ -453,22 +455,22 @@ class HomePage extends StatelessWidget {
             ],
           ])),
           SizedBox(width: 8),
-          _HomeArrow(size: 28, complete: done == count),
+          _HomeArrow(ink: categoryInk, size: 28, complete: done == count),
         ]) : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Container(padding: EdgeInsets.all(7),
             decoration: BoxDecoration(color: badge, borderRadius: BorderRadius.circular(13),
               border: Border.all(color: appearanceTone(context, 0x55E9D8AE))),
-            child: Icon(icon, color: AppAppearance.of(context).ink, size: 29)),
+            child: Icon(icon, color: categoryInk, size: 29)),
           SizedBox(height: 12),
           Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              UiText(sectionLabel(section), style: TextStyle(color: AppAppearance.of(context).ink,
+              UiText(sectionLabel(section), style: TextStyle(color: categoryInk,
                 fontSize: 16, fontWeight: FontWeight.w700, height: 1.5)),
               SizedBox(height: 3),
-              UiText('$count ذكر', style: TextStyle(color: AppAppearance.of(context).ink, fontSize: 11)),
+              UiText('$count ذكر', style: TextStyle(color: categoryInk, fontSize: 11)),
             ])),
             SizedBox(width: 5),
-            _HomeArrow(size: 24, complete: done == count),
+            _HomeArrow(ink: categoryInk, size: 24, complete: done == count),
           ]),
           if (done > 0) ...[
             SizedBox(height: 8),
@@ -547,7 +549,7 @@ class _HomeIllustratedSurface extends StatelessWidget {
           gaplessPlayback: true, filterQuality: FilterQuality.medium)),
         if (shade || !AppAppearance.of(context).dark) Positioned.fill(child: DecoratedBox(decoration: BoxDecoration(gradient: LinearGradient(
           begin: Alignment.topCenter, end: Alignment.bottomCenter,
-          colors: AppAppearance.of(context).dark
+          colors: AppAppearance.of(context).dark || art == homeArt['sleep']
             ? [Color(0x00002128), Color(0xDA002128)]
             : [Color(0x00F6F0DF), Color(0xF0F6F0DF)])))),
         InkWell(key: actionKey, onTap: onTap, splashColor: AppAppearance.of(context).gold.withOpacity(.15),
@@ -557,7 +559,8 @@ class _HomeIllustratedSurface extends StatelessWidget {
 }
 
 class _HomeArrow extends StatelessWidget {
-  const _HomeArrow({this.filled = false, this.size = 28, this.complete = false});
+  const _HomeArrow({this.filled = false, this.size = 28, this.complete = false, this.ink});
+  final Color? ink;
   final bool filled, complete;
   final double size;
   @override
@@ -569,7 +572,7 @@ class _HomeArrow extends StatelessWidget {
       border: Border.all(color: AppAppearance.of(context).gold.withOpacity(.75))),
     child: Icon(complete ? Icons.check_rounded : Directionality.of(context) == TextDirection.rtl
       ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
-      textDirection: TextDirection.ltr, size: size * .7, color: filled ? appearanceTone(context, 0xFF143D3D) : AppAppearance.of(context).ink)));
+      textDirection: TextDirection.ltr, size: size * .7, color: filled ? appearanceTone(context, 0xFF143D3D) : (ink ?? AppAppearance.of(context).ink))));
 }
 
 class _HomeShortcut extends StatelessWidget {
