@@ -87,13 +87,13 @@ def top():
         adb('shell','input','swipe',str(width//2),str(int(height*.30)),str(width//2),str(int(height*.83)),'150')
 
 def home():
-    tap('الرئيسية',bottom=True,exact=True)
+    tap('الرئيسية',bottom=True)
     top()
     expect('وردك اليومي')
 
 checks=[]
 for mode,label in [('ivory','فاتح — Ivory Serenity'),('midnight','داكن — Midnight Teal')]:
-    tap('الإعدادات',bottom=True,exact=True)
+    tap('الإعدادات',bottom=True)
     top()
     tap('المظهر',scroll=True)
     nodes=snapshot()
@@ -106,7 +106,7 @@ for mode,label in [('ivory','فاتح — Ivory Serenity'),('midnight','داكن
     capture(f'android-appearance-{mode}-settings.png')
     home()
     capture(f'android-appearance-{mode}-home.png')
-    tap('الأذكار',bottom=True,exact=True)
+    tap('الأذكار',bottom=True)
     top()
     capture(f'android-appearance-{mode}-library.png')
     home()
@@ -115,7 +115,7 @@ for mode,label in [('ivory','فاتح — Ivory Serenity'),('midnight','داكن
     capture(f'android-appearance-{mode}-reader.png')
     adb('shell','input','keyevent','KEYCODE_BACK')
     home()
-    tap('النوافل',bottom=True,exact=True)
+    tap('النوافل',bottom=True)
     top()
     capture(f'android-appearance-{mode}-nawafil.png')
     home()
@@ -128,7 +128,7 @@ for mode,label in [('ivory','فاتح — Ivory Serenity'),('midnight','داكن
     adb('shell','am','start','-W','-n','ae.wird.app/.MainActivity')
     time.sleep(3)
     expect('وردك اليومي')
-    tap('الإعدادات',bottom=True,exact=True)
+    tap('الإعدادات',bottom=True)
     top()
     expect(label)
     checks.append(mode+': two choices, immediate switch, six screens, real restart persistence')
