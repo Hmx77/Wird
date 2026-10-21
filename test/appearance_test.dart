@@ -81,6 +81,13 @@ void main() {
       home: Scaffold(body: page),
     )));
     await t.pumpAndSettle();
+    await t.runAsync(() async {
+      final context = t.element(find.byKey(const Key('appearance-capture')));
+      await Future.wait([wirdWordmark, ivorySanctuary, ...homeArt.values,
+        const AssetImage('assets/home/botanical-serenity.webp')]
+        .map((image) => precacheImage(image, context)));
+    });
+    await t.pumpAndSettle();
   }
   Future<void> capture(WidgetTester t, String name) async {
     if (Platform.environment['WIRD_REVIEW_IMAGES'] != '1') return;
