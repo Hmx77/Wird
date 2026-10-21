@@ -442,7 +442,10 @@ class HomePage extends StatelessWidget {
               border: Border.all(color: appearanceTone(context, 0x55E9D8AE))),
             child: Icon(icon, color: categoryInk, size: 25)),
           SizedBox(width: 12),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Expanded(child: RepaintBoundary(
+            key: ValueKey('category-label-${section.name}-${store.themeIndex}-${store.languageCode}'),
+            child: Column(mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start, children: [
             UiText(sectionLabel(section), style: TextStyle(color: categoryInk,
               fontSize: 18, fontWeight: FontWeight.w700, height: 1.5)),
             SizedBox(height: 3),
@@ -453,7 +456,7 @@ class HomePage extends StatelessWidget {
                 color: AppAppearance.of(context).gold, backgroundColor: Colors.white12,
                 semanticsLabel: tr(context, sectionLabel(section)), semanticsValue: '$done / $count'),
             ],
-          ])),
+          ]))),
           SizedBox(width: 8),
           _HomeArrow(ink: categoryInk, size: 28, complete: done == count),
         ]) : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
