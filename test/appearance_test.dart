@@ -121,6 +121,23 @@ void main() {
           expect(t.takeException(), isNull, reason: entry.key);
           expect(Directionality.of(t.element(find.byKey(const Key('appearance-capture')))),
             language == 'ar' ? TextDirection.rtl : TextDirection.ltr);
+          if (entry.key == 'home') {
+            final label = find.byKey(ValueKey('category-label-sleep-$mode-$language'));
+            expect(label, findsOneWidget);
+            await t.ensureVisible(label); await t.pumpAndSettle();
+            final boundary = t.renderObject<RenderRepaintBoundary>(label);
+            await t.runAsync(() async {
+              final image = await boundary.toImage(pixelRatio: 2);
+              final pixels = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
+              var visible = 0;
+              for (var i = 0; i < pixels!.lengthInBytes; i += 4) {
+                if (pixels.getUint8(i + 3) > 180 && pixels.getUint8(i) > 170 &&
+                    pixels.getUint8(i + 1) > 150 && pixels.getUint8(i + 2) > 100) visible++;
+              }
+              image.dispose();
+              expect(visible, greaterThan(100), reason: 'Bedtime title/count must actually paint');
+            });
+          }
           await capture(t, 'appearance-$mode-$language-${entry.key}');
         }
         await t.ensureVisible(find.byKey(const Key('appearance-picker')));
