@@ -535,11 +535,11 @@ class SettingsStyle extends StatelessWidget {
         context,
       ).textTheme.apply(bodyColor: AppAppearance.of(context).ink, displayColor: AppAppearance.of(context).ink),
       switchTheme: SwitchThemeData(
-        thumbColor: WidgetStatePropertyAll(AppAppearance.of(context).ink),
+        thumbColor: WidgetStatePropertyAll(homeCream),
         trackColor: WidgetStateProperty.resolveWith(
           (s) => s.contains(WidgetState.selected)
-              ? appearanceTone(context, 0xFFB99A54)
-              : palette.homeBackground,
+              ? (palette.dark ? homeGold : palette.primary)
+              : (palette.dark ? palette.homeBackground : const Color(0xFFCAD0BD)),
         ),
         trackOutlineColor: WidgetStatePropertyAll(AppAppearance.of(context).gold.withOpacity(.4)),
       ),
@@ -663,7 +663,7 @@ class _SettingsMedallion extends StatelessWidget {
     child: icon == Icons.grain_rounded
         ? Padding(
             padding: EdgeInsets.all(8),
-            child: CustomPaint(painter: _BeadsPainter()),
+            child: CustomPaint(painter: _BeadsPainter(AppAppearance.of(context).gold)),
           )
         : Icon(icon, color: AppAppearance.of(context).gold, size: 23),
   );

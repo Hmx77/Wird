@@ -54,7 +54,7 @@ class DevotionCard extends StatelessWidget {
   const DevotionCard({
     super.key,
     required this.child,
-    this.padding = EdgeInsets.all(18),
+    this.padding = const EdgeInsets.all(18),
     this.color,
   });
   final Widget child;
