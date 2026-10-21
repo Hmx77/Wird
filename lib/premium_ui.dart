@@ -336,7 +336,7 @@ class HomePage extends StatelessWidget {
                 accent: AppAppearance.of(context).gold, onTap: () => destination(context, 2)),
               _HomeShortcut(key: Key('home-tasbih'), label: 'التسبيح',
                 subtitle: 'عداد رقمي', symbol: SizedBox.square(dimension: 34,
-                  child: CustomPaint(painter: _BeadsPainter())),
+                  child: CustomPaint(painter: _BeadsPainter(AppAppearance.of(context).dark ? homeGold : AppAppearance.of(context).accent))),
                 accent: AppAppearance.of(context).gold, onTap: () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => _HomeTasbihPage(store: store)))),
               _HomeShortcut(key: Key('home-all'), label: 'جميع الأذكار',
@@ -602,10 +602,11 @@ class _HomeShortcut extends StatelessWidget {
 }
 
 class _BeadsPainter extends CustomPainter {
-  const _BeadsPainter();
+  const _BeadsPainter(this.color);
+  final Color color;
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = homeGold;
+    final paint = Paint()..color = color;
     const beads = <Offset>[
       Offset(.26,.79),Offset(.15,.63),Offset(.12,.44),Offset(.16,.26),Offset(.29,.13),
       Offset(.47,.09),Offset(.64,.16),Offset(.76,.29),Offset(.81,.48),Offset(.75,.66),
@@ -616,7 +617,7 @@ class _BeadsPainter extends CustomPainter {
       paint..strokeWidth = size.width*.05..strokeCap = StrokeCap.round);
   }
   @override
-  bool shouldRepaint(_BeadsPainter oldDelegate) => false;
+  bool shouldRepaint(_BeadsPainter oldDelegate) => oldDelegate.color != color;
 }
 
 class _HomeTasbihPage extends PersonalTasbihPage {
