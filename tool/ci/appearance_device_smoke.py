@@ -25,12 +25,14 @@ def snapshot():
 size = re.findall(r'(\d+)x(\d+)', adb('shell', 'wm', 'size'))[-1]
 width, height = map(int, size)
 
-def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_bottom=False, prefix=False):
+def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_bottom=False, prefix=False, clickable=False):
     for attempt in range(50 if scroll else 3):
         candidates = []
         for n in snapshot():
             value = n.get('text', '') + ' ' + n.get('content-desc', '') + ' ' + n.get('hint', '')
             if node_class and n.get('class') != node_class:
+                continue
+            if clickable and n.get('clickable') != 'true':
                 continue
             values = [n.get(k, '') for k in ['text', 'content-desc', 'hint']]
             if prefix and not any(normal(v).strip().startswith(normal(label)) for v in values):
@@ -91,11 +93,18 @@ def home():
     top()
     expect('وردك اليومي')
 
+def worship_preferences():
+    xml = adb('shell','run-as','ae.wird.app','cat','shared_prefs/FlutterSharedPreferences.xml')
+    return {node.get('name'): ET.tostring(node,encoding='unicode')
+            for node in ET.fromstring(xml)
+            if node.get('name') != 'flutter.appearance.v2'}
+
 checks=[]
 for mode,label in [('ivory','فاتح — Ivory Serenity'),('midnight','داكن — Midnight Teal')]:
+    original_preferences = worship_preferences()
     tap('الإعدادات',bottom=True)
     top()
-    tap('المظهر',scroll=True)
+    tap('المظهر',scroll=True,clickable=True)
     nodes=snapshot()
     all_text=' '.join(n.get('text','')+' '+n.get('content-desc','') for n in nodes)
     for expected in ['Midnight Teal','Ivory Serenity']: assert expected in all_text
@@ -131,7 +140,8 @@ for mode,label in [('ivory','فاتح — Ivory Serenity'),('midnight','داكن
     tap('الإعدادات',bottom=True)
     top()
     expect(label)
-    checks.append(mode+': two choices, immediate switch, six screens, real restart persistence')
+    assert worship_preferences() == original_preferences, 'Theme switch altered unrelated local preferences'
+    checks.append(mode+': two choices, live switch, six screens, restart persistence; all other preferences unchanged')
     home()
 (out/'appearance-interactions.json').write_text(json.dumps({'passed':True,'offline':True,'checks':checks},ensure_ascii=False,indent=2))
 print('PASS: both appearances, only two choices, offline captures and restart persistence')
