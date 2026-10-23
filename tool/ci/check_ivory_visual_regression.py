@@ -12,7 +12,7 @@ after = Path('verification/ivory-after')
 before = Path('verification/ivory-before')
 for folder in [after, before]:
     folder.mkdir(parents=True, exist_ok=True)
-for image in images.glob('appearance-*.png'):
+for image in images.glob('appearance-*'):
     shutil.copyfile(image, after / image.name)
 assert len(list(after.glob('appearance-0-*.png'))) == 14
 original = {path: Path(path).read_bytes() for path in paths}
@@ -21,12 +21,12 @@ try:
         Path(path).write_bytes(subprocess.check_output(['git', 'show', f'{BASE}:{path}']))
     subprocess.run(['flutter', 'test', 'test/appearance_test.dart', '--reporter', 'expanded'],
                    env={**os.environ, 'WIRD_REVIEW_IMAGES': '1'}, check=True)
-    for image in images.glob('appearance-*.png'):
+    for image in images.glob('appearance-*'):
         shutil.copyfile(image, before / image.name)
 finally:
     for path, data in original.items():
         Path(path).write_bytes(data)
-    for image in after.glob('appearance-*.png'):
+    for image in after.glob('appearance-*'):
         shutil.copyfile(image, images / image.name)
 checks = {image.name: image.read_bytes() == (before / image.name).read_bytes()
           for image in after.glob('appearance-0-*.png')}
