@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -97,6 +98,19 @@ void main() {
       final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
       final output = Directory('verification/screenshots')..createSync(recursive: true);
       File('${output.path}/$name.png').writeAsBytesSync(bytes!.buffer.asUint8List());
+      final text = <Map<String, Object?>>[];
+      for (final e in find.byType(Text).evaluate()) {
+        final render = e.findRenderObject();
+        if (render is! RenderParagraph || !render.attached) continue;
+        final origin = render.localToGlobal(Offset.zero);
+        final color = render.text.style?.color;
+        if (color == null) continue;
+        text.add({'text': render.text.toPlainText(), 'argb': color.toARGB32(),
+          'left': origin.dx, 'top': origin.dy,
+          'width': render.size.width, 'height': render.size.height});
+      }
+      File('${output.path}/$name-text.json').writeAsStringSync(jsonEncode(
+        {'pixelRatio': 2, 'text': text}));
       image.dispose();
     });
   }
@@ -155,3 +169,4 @@ void main() {
     }
   }
 }
+
