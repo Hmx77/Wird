@@ -438,7 +438,7 @@ class _TasbihPill extends StatelessWidget {
             ? Colors.transparent
             : appearanceTone(context, 0xFF092724),
         side: BorderSide(
-          color: AppAppearance.of(context).gold.withValues(alpha: prominent ? .9 : .55),
+          color: AppAppearance.of(context).dark ? AppAppearance.of(context).gold.withValues(alpha: prominent ? .9 : .55) : IvoryContrast.outline,
           width: prominent ? 1.7 : 1,
         ),
         shape: StadiumBorder(),
@@ -613,3 +613,4 @@ class _TasbihDiamondPainter extends CustomPainter {
   @override
   bool shouldRepaint(_TasbihDiamondPainter oldDelegate) => false;
 }
+
