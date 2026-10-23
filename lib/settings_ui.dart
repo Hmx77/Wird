@@ -535,18 +535,18 @@ class SettingsStyle extends StatelessWidget {
         context,
       ).textTheme.apply(bodyColor: AppAppearance.of(context).ink, displayColor: AppAppearance.of(context).ink),
       switchTheme: SwitchThemeData(
-        thumbColor: WidgetStatePropertyAll(homeCream),
+        thumbColor: palette.dark ? WidgetStatePropertyAll(homeCream) : WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? IvoryContrast.cream : IvoryContrast.ink),
         trackColor: WidgetStateProperty.resolveWith(
           (s) => s.contains(WidgetState.selected)
-              ? (palette.dark ? homeGold : palette.primary)
-              : (palette.dark ? palette.homeBackground : const Color(0xFFCAD0BD)),
+              ? (palette.dark ? homeGold : IvoryContrast.accent)
+              : (palette.dark ? palette.homeBackground : IvoryContrast.sage),
         ),
-        trackOutlineColor: WidgetStatePropertyAll(AppAppearance.of(context).gold.withOpacity(.4)),
+        trackOutlineColor: WidgetStatePropertyAll(palette.dark ? AppAppearance.of(context).gold.withOpacity(.4) : IvoryContrast.outline),
       ),
       sliderTheme: SliderTheme.of(context).copyWith(
         activeTrackColor: AppAppearance.of(context).gold,
         thumbColor: AppAppearance.of(context).gold,
-        inactiveTrackColor: AppAppearance.of(context).ink.withOpacity(.25),
+        inactiveTrackColor: palette.dark ? AppAppearance.of(context).ink.withOpacity(.25) : IvoryContrast.outline,
         overlayColor: AppAppearance.of(context).gold.withOpacity(.12),
       ),
       filledButtonTheme: FilledButtonThemeData(
@@ -564,7 +564,7 @@ class SettingsStyle extends StatelessWidget {
         style: OutlinedButton.styleFrom(
           foregroundColor: AppAppearance.of(context).gold,
           padding: EdgeInsets.symmetric(horizontal: 12),
-          side: BorderSide(color: AppAppearance.of(context).gold.withOpacity(.65)),
+          side: BorderSide(color: palette.dark ? AppAppearance.of(context).gold.withOpacity(.65) : IvoryContrast.outline),
           minimumSize: Size(48, 48),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(17),
@@ -897,3 +897,4 @@ class _DeferredSettingsPageState extends State<DeferredSettingsPage> {
         : SizedBox.shrink();
   }
 }
+
