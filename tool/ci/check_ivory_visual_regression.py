@@ -20,7 +20,7 @@ try:
     for path in paths:
         Path(path).write_bytes(subprocess.check_output(['git', 'show', f'{BASE}:{path}']))
     subprocess.run(['flutter', 'test', 'test/appearance_test.dart', '--reporter', 'expanded'],
-                   env={**os.environ, 'WIRD_REVIEW_IMAGES': '1'}, check=True)
+                   env={**os.environ, 'WIRD_REVIEW_IMAGES': '1', 'WIRD_BASELINE_RENDER': '1'}, check=True)
     for image in images.glob('appearance-*'):
         shutil.copyfile(image, before / image.name)
 finally:
