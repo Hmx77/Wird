@@ -109,6 +109,36 @@ void main() {
           'left': origin.dx, 'top': origin.dy,
           'width': render.size.width, 'height': render.size.height});
       }
+      if (name == 'appearance-1-ar-home' &&
+          Platform.environment['WIRD_BASELINE_RENDER'] != '1') {
+        final raw = (await image.toByteData(format: ui.ImageByteFormat.rawRgba))!;
+        final checked = <Map<String, Object?>>[];
+        const labels = ['وردك اليومي', 'ذِكْرٌ يُرَافِقُ يَوْمَكَ',
+          'لحظات من السكينة', 'اختر وردك وابدأ القراءة', 'متابعة القراءة',
+          'أذكار الصباح', 'أذكار المساء', 'أذكار النوم'];
+        for (final item in text.where((item) => labels.contains(item['text']))) {
+          final y = ((item['top'] as double) * 2).floor() + 1;
+          if (y < 0 || y >= image.height) continue;
+          final left = ((item['left'] as double) * 2).floor().clamp(0, image.width - 1);
+          final end = (((item['left'] as double) + (item['width'] as double)) * 2)
+              .floor().clamp(0, image.width);
+          final foreground = Color(item['argb'] as int).computeLuminance();
+          var minimum = 100.0;
+          for (var x = left; x < end; x++) {
+            final i = (y * image.width + x) * 4;
+            final background = Color.fromARGB(raw.getUint8(i + 3), raw.getUint8(i),
+              raw.getUint8(i + 1), raw.getUint8(i + 2)).computeLuminance();
+            final ratio = ((foreground > background ? foreground : background) + .05) /
+                ((foreground < background ? foreground : background) + .05);
+            if (ratio < minimum) minimum = ratio;
+          }
+          checked.add({'text': item['text'], 'adjacentBackgroundMinRatio': minimum});
+          expect(minimum, greaterThanOrEqualTo(4.5),
+            reason: '${item['text']}: actual rendered background row must support the text');
+        }
+        expect(checked.length, labels.length);
+        File('${output.path}/$name-contrast.json').writeAsStringSync(jsonEncode(checked));
+      }
       File('${output.path}/$name-text.json').writeAsStringSync(jsonEncode(
         {'pixelRatio': 2, 'text': text}));
       image.dispose();
