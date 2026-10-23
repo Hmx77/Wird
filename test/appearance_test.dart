@@ -119,9 +119,9 @@ void main() {
         for (final item in text.where((item) => labels.contains(item['text']))) {
           final y = ((item['top'] as double) * 2).floor() + 1;
           if (y < 0 || y >= image.height) continue;
-          final left = ((item['left'] as double) * 2).floor().clamp(0, image.width - 1);
+          final left = ((item['left'] as double) * 2).floor().clamp(0, image.width - 1).toInt();
           final end = (((item['left'] as double) + (item['width'] as double)) * 2)
-              .floor().clamp(0, image.width);
+              .floor().clamp(0, image.width).toInt();
           final foreground = Color(item['argb'] as int).computeLuminance();
           var minimum = 100.0;
           for (var x = left; x < end; x++) {
