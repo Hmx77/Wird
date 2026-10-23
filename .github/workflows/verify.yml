@@ -39,6 +39,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 32
       - name: Free unused hosted-runner toolchains for Android packaging
         run: |
           df -h /
@@ -95,6 +96,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 32
       - name: Block cloud metadata before tool startup
         run: bash tool/ci/block_metadata.sh
       - name: Select installed Xcode 26.3 for current App Store SDK requirements
@@ -187,7 +189,7 @@ jobs:
           if-no-files-found: warn
   review-assets:
     needs: [android, android-device, ios]
-    if: always() && github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/redesign/two-premium-themes-20261020' && (needs.android.result == 'success' || (needs.android.result == 'skipped' && inputs.reuse_android_run != '')) && (needs['android-device'].result == 'success' || needs['android-device'].result == 'failure')
+    if: always() && github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/redesign/ivory-contrast-20261023' && (needs.android.result == 'success' || (needs.android.result == 'skipped' && inputs.reuse_android_run != '')) && (needs['android-device'].result == 'success' || needs['android-device'].result == 'failure')
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
@@ -263,13 +265,14 @@ jobs:
                   shutil.copyfile(source, target)
       - name: Commit reviewed outputs only on the unchanged review branch
         run: |
-          test "$(git ls-remote origin refs/heads/redesign/two-premium-themes-20261020 | cut -f1)" = "$GITHUB_SHA"
+          test "$(git ls-remote origin refs/heads/redesign/ivory-contrast-20261023 | cut -f1)" = "$GITHUB_SHA"
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A -- lib/tasbih_ui.dart test/tasbih_premium_test.dart lib/reading_ui.dart test/reading_premium_test.dart lib/settings_ui.dart lib/feature_panels.dart lib/ui_strings.dart test/settings_premium_test.dart test/redesign_test.dart assets/brand/wird_wordmark.png android/app/src/main/res/mipmap-*/ic_launcher.png android/app/src/main/res/drawable-nodpi/wird*.png ios/Runner/Assets.xcassets/AppIcon.appiconset/*.png ios/Runner/Assets.xcassets/LaunchImage.imageset/*.png docs/review-images/
           if ! git diff --cached --quiet; then
             git commit -m 'Preserve actual native captures and generated branding'
-            git push origin HEAD:redesign/two-premium-themes-20261020
+            git push origin HEAD:redesign/ivory-contrast-20261023
           fi
+
 
 
