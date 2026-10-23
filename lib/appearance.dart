@@ -106,5 +106,6 @@ class IvoryReadingBacking extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AppAppearance.of(context).dark ? child :
     DecoratedBox(decoration: BoxDecoration(color: IvoryContrast.readingBacking,
-      borderRadius: BorderRadius.circular(12)), child: child);
+      borderRadius: BorderRadius.circular(12)),
+      child: Padding(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4), child: child));
 }
