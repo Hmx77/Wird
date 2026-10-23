@@ -1,0 +1,12 @@
+{
+  "base": "9780862c90287eb726b182667ea46f783adada9a",
+  "runtimeFiles": [
+    "lib/appearance.dart",
+    "lib/premium_ui.dart",
+    "lib/main.dart",
+    "lib/settings_ui.dart",
+    "lib/tasbih_ui.dart"
+  ],
+  "policy": "Ivory presentation only; dark rendering must remain exact; no worship or persistence changes",
+  "verification": "pending final CI"
+}
