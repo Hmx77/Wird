@@ -8,5 +8,5 @@
     "lib/tasbih_ui.dart"
   ],
   "policy": "Ivory presentation only; dark rendering must remain exact; no worship or persistence changes",
-  "verification": "pending final CI"
+  "verification": "Final build includes actual rendered-background-row AA assertions and padded rounded text backings; pending execution"
 }
