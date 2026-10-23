@@ -32,7 +32,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   android:
-    if: github.event_name != 'workflow_dispatch' || inputs.build_android
+    if: (github.event_name != 'pull_request' || github.head_ref != 'redesign/ivory-contrast-20261023') && (github.event_name != 'workflow_dispatch' || inputs.build_android)
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     steps:
@@ -89,7 +89,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
   ios:
-    if: github.event_name == 'workflow_dispatch' && inputs.build_ios
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/redesign/ivory-contrast-20261023') || (github.event_name == 'workflow_dispatch' && inputs.build_ios)
     runs-on: macos-15
     timeout-minutes: 35
     steps:
@@ -189,7 +189,7 @@ jobs:
           if-no-files-found: warn
   review-assets:
     needs: [android, android-device, ios]
-    if: always() && github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/redesign/ivory-contrast-20261023' && (needs.android.result == 'success' || (needs.android.result == 'skipped' && inputs.reuse_android_run != '')) && (needs['android-device'].result == 'success' || needs['android-device'].result == 'failure')
+    if: always() && (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && github.ref == 'refs/heads/redesign/ivory-contrast-20261023' && (needs.android.result == 'success' || (needs.android.result == 'skipped' && inputs.reuse_android_run != '')) && (needs['android-device'].result == 'success' || needs['android-device'].result == 'failure')
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
@@ -210,7 +210,7 @@ jobs:
           name: wird-android-device-review
           path: reviewed-native
       - uses: actions/download-artifact@v4
-        if: inputs.build_ios || inputs.reuse_ios_run != ''
+        if: needs.ios.result == 'success' || inputs.build_ios || inputs.reuse_ios_run != ''
         continue-on-error: true
         with:
           name: wird-ios-verification
@@ -242,6 +242,14 @@ jobs:
               target.parent.mkdir(parents=True, exist_ok=True)
               shutil.copyfile(source, target)
           assert pathlib.Path('docs/review-images/home-ar-430.png').is_file()
+          for label in ['ivory-before', 'ivory-after']:
+              destination = pathlib.Path('docs/review-images') / label
+              destination.mkdir(parents=True, exist_ok=True)
+              for source in (root / 'verification' / label).glob('*'):
+                  if source.suffix in ['.png', '.json']:
+                      shutil.copyfile(source, destination / source.name)
+          shutil.copyfile(root / 'verification/midnight-exact-regression.json',
+                          pathlib.Path('docs/review-images/midnight-exact-regression.json'))
           if os.environ['WIRD_COPY_FORMATTED'] == 'true':
             for name in ['lib/settings_ui.dart', 'lib/feature_panels.dart', 'lib/ui_strings.dart',
                          'lib/reading_ui.dart', 'lib/tasbih_ui.dart', 'test/tasbih_premium_test.dart', 'test/reading_premium_test.dart',
