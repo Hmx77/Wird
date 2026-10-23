@@ -2,6 +2,7 @@ name: Wird verification
 on:
   push:
     branches: [main, "redesign/**"]
+    paths-ignore: ["tool/ci/appearance_device_smoke.py", ".github/workflows/ivory-native-recheck.yml"]
   pull_request:
   workflow_dispatch:
     inputs:
