@@ -361,7 +361,7 @@ class HomePage extends StatelessWidget {
                         SizedBox(height: 4),
                         Align(alignment: AlignmentDirectional.centerStart,
                           child: FractionallySizedBox(widthFactor: wideText ? .95 : .7,
-                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            child: IvoryReadingBacking(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                               UiText('لحظات من السكينة', style: TextStyle(
                                 color: AppAppearance.of(context).ink, fontSize: 20, height: 1.4, fontWeight: FontWeight.w700)),
                               SizedBox(height: 4),
@@ -369,9 +369,9 @@ class HomePage extends StatelessWidget {
                                 color: AppAppearance.of(context).ink, fontSize: 11, height: 1.5)),
                               SizedBox(height: 8),
                               Container(padding: EdgeInsets.all(8),
-                                decoration: BoxDecoration(color: appearanceTone(context, 0xD0083035),
+                                decoration: BoxDecoration(color: AppAppearance.of(context).dark ? appearanceTone(context, 0xD0083035) : IvoryContrast.cream,
                                   borderRadius: BorderRadius.circular(24),
-                                  border: Border.all(color: appearanceTone(context, 0x5585BCB2))),
+                                  border: Border.all(color: AppAppearance.of(context).dark ? appearanceTone(context, 0x5585BCB2) : IvoryContrast.border)),
                                 child: Row(children: [
                                   Icon(Icons.menu_book_outlined, color: AppAppearance.of(context).gold, size: 21),
                                   SizedBox(width: 8),
@@ -381,7 +381,8 @@ class HomePage extends StatelessWidget {
                                     LinearProgressIndicator(key: Key('home-progress'),
                                       value: done / entries.length, minHeight: 4,
                                       borderRadius: BorderRadius.circular(5),
-                                      color: appearanceTone(context, 0xFF7DDBCA), backgroundColor: appearanceTone(context, 0xFF31565A),
+                                      color: AppAppearance.of(context).dark ? appearanceTone(context, 0xFF7DDBCA) : IvoryContrast.accent,
+                                      backgroundColor: AppAppearance.of(context).dark ? appearanceTone(context, 0xFF31565A) : IvoryContrast.progressTrack,
                                       semanticsLabel: tr(context, 'تقدم اليوم'), semanticsValue: '$done / ${entries.length}'),
                                     SizedBox(height: 3),
                                     UiText('$done / ${entries.length} مكتمل', textDirection: TextDirection.ltr, style: TextStyle(
@@ -390,7 +391,7 @@ class HomePage extends StatelessWidget {
                                   SizedBox(width: 8),
                                   _HomeArrow(filled: true, size: 30),
                                 ])),
-                            ]))),
+                            ])))),
                       ])),
                   ),
                   SizedBox(height: 10),
@@ -430,7 +431,11 @@ class HomePage extends StatelessWidget {
       DhikrSection.evening => Icons.nightlight_outlined,
       DhikrSection.sleep => Icons.bedtime_outlined,
     };
-    final badge = section == DhikrSection.morning ? appearanceTone(context, 0xAA507B70) : appearanceTone(context, 0xAA343D88);
+    final badge = AppAppearance.of(context).dark
+        ? (section == DhikrSection.morning ? appearanceTone(context, 0xAA507B70) : appearanceTone(context, 0xAA343D88))
+        : section == DhikrSection.morning ? const Color(0xFFD4E2CB) : IvoryContrast.cream;
+    final badgeInk = !store.palette.dark && section == DhikrSection.sleep
+        ? const Color(0xFF426E8A) : categoryInk;
     return _HomeIllustratedSurface(
       art: homeArt[section.name]!, radius: 21,
       actionKey: Key('home-${section.name}'), onTap: () => openReader(context, store, section),
@@ -440,7 +445,7 @@ class HomePage extends StatelessWidget {
           Container(padding: EdgeInsets.all(7),
             decoration: BoxDecoration(color: badge, borderRadius: BorderRadius.circular(13),
               border: Border.all(color: appearanceTone(context, 0x55E9D8AE))),
-            child: Icon(icon, color: categoryInk, size: 25)),
+            child: Icon(icon, color: badgeInk, size: 25)),
           SizedBox(width: 12),
           Expanded(child: RepaintBoundary(
             key: ValueKey('category-label-${section.name}-${store.themeIndex}-${store.languageCode}'),
@@ -463,9 +468,9 @@ class HomePage extends StatelessWidget {
           Container(padding: EdgeInsets.all(7),
             decoration: BoxDecoration(color: badge, borderRadius: BorderRadius.circular(13),
               border: Border.all(color: appearanceTone(context, 0x55E9D8AE))),
-            child: Icon(icon, color: categoryInk, size: 29)),
+            child: Icon(icon, color: badgeInk, size: 29)),
           SizedBox(height: 12),
-          Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          IvoryReadingBacking(child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               UiText(sectionLabel(section), style: TextStyle(color: categoryInk,
                 fontSize: 16, fontWeight: FontWeight.w700, height: 1.5)),
@@ -474,7 +479,7 @@ class HomePage extends StatelessWidget {
             ])),
             SizedBox(width: 5),
             _HomeArrow(ink: categoryInk, size: 24, complete: done == count),
-          ]),
+          ])),
           if (done > 0) ...[
             SizedBox(height: 8),
             LinearProgressIndicator(value: done / count, minHeight: 3,
@@ -492,13 +497,15 @@ class _HomeHeader extends StatelessWidget {
   final VoidCallback onSearch, onSettings;
   @override
   Widget build(BuildContext context) => Stack(children: [
-    Positioned.fill(child: ClipRect(child: Opacity(opacity: .48, child: Transform(
+    Positioned.fill(child: ClipRect(child: Opacity(opacity: store.palette.dark ? .48 : 1, child: Transform(
       alignment: Alignment.center, transform: Matrix4.diagonal3Values(-1, 1, 1),
       child: Image(image: appearanceArt(context, homeArt['morning']!), fit: BoxFit.cover, alignment: Alignment.centerLeft,
         excludeFromSemantics: true))))),
     Positioned.fill(child: DecoratedBox(decoration: BoxDecoration(gradient: LinearGradient(
       begin: Alignment.topCenter, end: Alignment.bottomCenter,
-      colors: [store.palette.homeBackground.withOpacity(.35), store.palette.homeBackground.withOpacity(.82), store.palette.homeBackground])))),
+      colors: store.palette.dark
+        ? [store.palette.homeBackground.withOpacity(.35), store.palette.homeBackground.withOpacity(.82), store.palette.homeBackground]
+        : [store.palette.homeBackground.withOpacity(.02), store.palette.homeBackground.withOpacity(.10), store.palette.homeBackground.withOpacity(.82)])))),
     Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 16), child: Column(children: [
       Stack(alignment: Alignment.topCenter, children: [
         SizedBox(height: 96, child: Semantics(label: tr(context, 'شعار ورد'), image: true,
@@ -507,13 +514,13 @@ class _HomeHeader extends StatelessWidget {
         Align(alignment: AlignmentDirectional.topEnd, child: Row(mainAxisSize: MainAxisSize.min, textDirection: TextDirection.ltr, children: [
           IconButton.outlined(key: Key('home-settings'), tooltip: tr(context, 'الإعدادات'),
             onPressed: onSettings, icon: Icon(Icons.settings_outlined, size: 21),
-            style: IconButton.styleFrom(foregroundColor: AppAppearance.of(context).ink, backgroundColor: appearanceTone(context, 0x30002C32),
-              side: BorderSide(color: appearanceTone(context, 0x556DB9AF)))),
+            style: IconButton.styleFrom(foregroundColor: AppAppearance.of(context).ink, backgroundColor: store.palette.dark ? appearanceTone(context, 0x30002C32) : IvoryContrast.cream.withValues(alpha: .96),
+              side: BorderSide(color: store.palette.dark ? appearanceTone(context, 0x556DB9AF) : IvoryContrast.outline))),
           SizedBox(width: 6),
           IconButton.outlined(key: Key('home-search'), tooltip: tr(context, 'ابحث عن ذكر'),
             onPressed: onSearch, icon: Icon(Icons.search_rounded, size: 21),
-            style: IconButton.styleFrom(foregroundColor: AppAppearance.of(context).ink, backgroundColor: appearanceTone(context, 0x30002C32),
-              side: BorderSide(color: appearanceTone(context, 0x556DB9AF)))),
+            style: IconButton.styleFrom(foregroundColor: AppAppearance.of(context).ink, backgroundColor: store.palette.dark ? appearanceTone(context, 0x30002C32) : IvoryContrast.cream.withValues(alpha: .96),
+              side: BorderSide(color: store.palette.dark ? appearanceTone(context, 0x556DB9AF) : IvoryContrast.outline))),
         ])),
       ]),
       UiText('وردك اليومي', textAlign: TextAlign.center, style: TextStyle(
@@ -546,7 +553,7 @@ class _HomeIllustratedSurface extends StatelessWidget {
       BoxShadow(color: appearanceTone(context, 0x22000000), offset: Offset(0, 6), blurRadius: 18)]),
     child: Material(color: appearanceTone(context, 0xFF07373D), clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius),
-        side: BorderSide(color: Theme.of(context).colorScheme.primary.withOpacity(.65), width: 1)),
+        side: BorderSide(color: AppAppearance.of(context).dark ? Theme.of(context).colorScheme.primary.withOpacity(.65) : IvoryContrast.outline, width: 1)),
       child: Stack(children: [
         Positioned.fill(child: Image(image: !AppAppearance.of(context).dark && art == homeArt['serenity'] ? ivorySanctuary : art, fit: BoxFit.cover, alignment: Alignment.topCenter, excludeFromSemantics: true,
           gaplessPlayback: true, filterQuality: FilterQuality.medium)),
@@ -554,7 +561,9 @@ class _HomeIllustratedSurface extends StatelessWidget {
           begin: Alignment.topCenter, end: Alignment.bottomCenter,
           colors: AppAppearance.of(context).dark || art == homeArt['sleep']
             ? [Color(0x00002128), Color(0xDA002128)]
-            : [Color(0x00F6F0DF), Color(0xF0F6F0DF)])))),
+            : art == homeArt['serenity']
+              ? [Colors.transparent, Colors.transparent]
+              : [Color(0x00FFF8E8), Color(0xBFFFF8E8)])))),
         InkWell(key: actionKey, onTap: onTap, splashColor: AppAppearance.of(context).gold.withOpacity(.15),
           highlightColor: AppAppearance.of(context).gold.withOpacity(.07), child: child),
       ])),
@@ -567,7 +576,20 @@ class _HomeArrow extends StatelessWidget {
   final bool filled, complete;
   final double size;
   @override
-  Widget build(BuildContext context) => ExcludeSemantics(child: Container(
+  Widget build(BuildContext context) {
+    if (!AppAppearance.of(context).dark) {
+      final night = ink == homeCream && !filled;
+      return ExcludeSemantics(child: Container(width: size, height: size,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(shape: BoxShape.circle,
+          color: filled ? IvoryContrast.ink : night ? const Color(0xFF082A36) : IvoryContrast.cream,
+          border: Border.all(color: night ? homeGold : IvoryContrast.outline)),
+        child: Icon(complete ? Icons.check_rounded : Directionality.of(context) == TextDirection.rtl
+          ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
+          textDirection: TextDirection.ltr, size: size * .7,
+          color: filled || night ? IvoryContrast.cream : IvoryContrast.ink)));
+    }
+    return ExcludeSemantics(child: Container(
     width: size, height: size, alignment: Alignment.center,
     decoration: BoxDecoration(shape: BoxShape.circle,
       gradient: filled ? LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
@@ -576,6 +598,7 @@ class _HomeArrow extends StatelessWidget {
     child: Icon(complete ? Icons.check_rounded : Directionality.of(context) == TextDirection.rtl
       ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
       textDirection: TextDirection.ltr, size: size * .7, color: filled ? appearanceTone(context, 0xFF143D3D) : (ink ?? AppAppearance.of(context).ink))));
+  }
 }
 
 class _HomeShortcut extends StatelessWidget {
@@ -590,9 +613,12 @@ class _HomeShortcut extends StatelessWidget {
   Widget build(BuildContext context) => Material(
     color: Colors.transparent, clipBehavior: Clip.antiAlias,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(19),
-      side: BorderSide(color: accent.withOpacity(.35))),
+      side: BorderSide(color: AppAppearance.of(context).dark ? accent.withOpacity(.35) : IvoryContrast.border)),
     child: Ink(decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft,
-      end: Alignment.bottomRight, colors: [accent.withOpacity(.14), appearanceTone(context, 0xFF073035)])),
+      end: Alignment.bottomRight, colors: AppAppearance.of(context).dark
+        ? [accent.withOpacity(.14), appearanceTone(context, 0xFF073035)]
+        : label == 'جميع الأذكار' ? [IvoryContrast.sage, const Color(0xFFF0F3E5)]
+        : [IvoryContrast.cream, const Color(0xFFF6EDD9)])),
       child: InkWell(onTap: onTap, child: Padding(padding: EdgeInsets.symmetric(horizontal: 7, vertical: 13),
         child: Column(children: [
           IconTheme(data: IconThemeData(color: accent), child: SizedBox(height: 35,
@@ -629,3 +655,4 @@ class _BeadsPainter extends CustomPainter {
 class _HomeTasbihPage extends PersonalTasbihPage {
   const _HomeTasbihPage({required super.store});
 }
+
