@@ -22,10 +22,12 @@ python3 tool/ci/check_approved_opening.py --restore-assets
 python3 tool/static_check.py
 flutter analyze
 WIRD_REVIEW_IMAGES=1 flutter test --reporter expanded
+python3 tool/ci/check_ivory_visual_regression.py
 case "${1:-debug}" in
   debug) flutter build apk --debug ;;
   ios) flutter build ios --release --no-codesign ;;
   validate) ;;
   *) echo 'Usage: verify.sh debug|ios|validate' >&2; exit 1;;
 esac
+
 
