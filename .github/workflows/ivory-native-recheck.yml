@@ -1,0 +1,88 @@
+name: Ivory exact-APK native recheck
+on:
+  push:
+    branches: [redesign/ivory-contrast-20261023]
+    paths: [".github/workflows/ivory-native-recheck.yml", "tool/ci/appearance_device_smoke.py"]
+permissions:
+  contents: read
+jobs:
+  android-device:
+    if: contains(github.event.head_commit.message, '[ivory-native-recheck]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Free unused hosted-runner toolchains
+        run: sudo rm -rf /usr/share/dotnet /usr/local/.ghcup
+      - name: Block cloud metadata
+        run: bash tool/ci/block_metadata.sh
+      - uses: actions/download-artifact@v4
+        with:
+          name: wird-debug-apk
+          path: build/app/outputs/flutter-apk
+          run-id: 40000474329
+          github-token: ${{ github.token }}
+      - name: Require the already tested final APK bytes
+        run: echo 'f21aee368576dd14169715bf291b58fc55cb93d96221b9a8d7e4d100920481cf  build/app/outputs/flutter-apk/app-debug.apk' | sha256sum -c -
+      - name: Full offline Android native review
+        run: bash tool/ci/android_device_smoke.sh
+      - name: Preserve identical installable APK
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wird-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 14
+          if-no-files-found: error
+      - name: Preserve native evidence including failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wird-android-device-review
+          path: verification/device/
+          retention-days: 14
+          if-no-files-found: error
+  review-assets:
+    needs: android-device
+    if: always() && (needs.android-device.result == 'success' || needs.android-device.result == 'failure')
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Block cloud metadata
+        run: bash tool/ci/block_metadata.sh
+      - uses: actions/download-artifact@v4
+        with:
+          name: wird-android-device-review
+          path: reviewed-native
+      - name: Copy actual native evidence
+        shell: python
+        run: |
+          import pathlib, shutil
+          destination = pathlib.Path('docs/review-images/android-native')
+          destination.mkdir(parents=True, exist_ok=True)
+          retained = {'startup.mp4', 'startup-timeline.json', 'tasbih-interactions.mp4', 'tasbih-interactions.json', 'appearance-interactions.json'}
+          for old in destination.iterdir():
+              if old.suffix == '.png' or old.name in retained:
+                  old.unlink()
+          for source in pathlib.Path('reviewed-native').iterdir():
+              if source.suffix == '.png' or source.name in retained:
+                  assert source.is_file() and not source.is_symlink()
+                  shutil.copyfile(source, destination / source.name)
+      - name: Commit evidence on unchanged review branch only
+        run: |
+          test "$(git ls-remote origin refs/heads/redesign/ivory-contrast-20261023 | cut -f1)" = "$GITHUB_SHA"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A -- docs/review-images/android-native/
+          if ! git diff --cached --quiet; then
+            git commit -m 'Preserve exact-APK native recheck evidence'
+            git push origin HEAD:redesign/ivory-contrast-20261023
+          fi
