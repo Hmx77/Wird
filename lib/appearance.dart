@@ -8,14 +8,30 @@ int migratedAppearance(int? legacy) => switch (legacy) {
   _ => 0, // Previous signature Stone & Teal, dark variants, invalid/new users.
 };
 
+/// Opaque reading/control roles. Decorative artwork never supplies text contrast.
+abstract final class IvoryContrast {
+  static const ink = Color(0xFF103B2C);
+  static const muted = Color(0xFF465A45);
+  static const gold = Color(0xFF77551E);
+  static const accent = Color(0xFF2F6548);
+  static const outline = Color(0xFF88713E);
+  static const border = Color(0xFFB7A778);
+  static const cream = Color(0xFFFFF8E8);
+  static const sage = Color(0xFFE5ECD9);
+  static const selected = Color(0xFFF2E6C9);
+  static const progressTrack = Color(0xFFC5CFB7);
+  // Over the darkest possible image pixel this still yields a light backing.
+  static Color get readingBacking => cream.withValues(alpha: .96);
+}
+
 class AppAppearance extends ThemeExtension<AppAppearance> {
   const AppAppearance(this.palette);
   final WirdPalette palette;
   bool get dark => palette.dark;
-  Color get ink => dark ? homeCream : const Color(0xFF153F35);
-  Color get muted => dark ? const Color(0xFFCAD9D3) : const Color(0xFF526753);
-  Color get gold => dark ? homeGold : const Color(0xFF7B5B28);
-  Color get accent => dark ? const Color(0xFF86D8C8) : const Color(0xFF456B51);
+  Color get ink => dark ? homeCream : IvoryContrast.ink;
+  Color get muted => dark ? const Color(0xFFCAD9D3) : IvoryContrast.muted;
+  Color get gold => dark ? homeGold : IvoryContrast.gold;
+  Color get accent => dark ? const Color(0xFF86D8C8) : IvoryContrast.accent;
   Color get surface => palette.homeSurface;
   Color get background => palette.homeBackground;
   static AppAppearance of(BuildContext context) =>
@@ -75,8 +91,20 @@ class AppearanceWordmark extends StatelessWidget {
     return ShaderMask(blendMode: BlendMode.srcIn,
       shaderCallback: (bounds) => const LinearGradient(
         begin: Alignment.topCenter, end: Alignment.bottomCenter,
-        colors: [Color(0xFFB19743), Color(0xFF23523F), Color(0xFF123D33)],
+        colors: [Color(0xFF2F6548), Color(0xFF194A34), Color(0xFF103B2C)],
         stops: [0, .35, 1],
       ).createShader(bounds), child: original);
   }
+}
+
+
+/// Keep the approved dark widget tree exact; light text gets a bounded, reliable
+/// translucent cream surface instead of fading the entire illustration.
+class IvoryReadingBacking extends StatelessWidget {
+  const IvoryReadingBacking({super.key, required this.child});
+  final Widget child;
+  @override
+  Widget build(BuildContext context) => AppAppearance.of(context).dark ? child :
+    DecoratedBox(decoration: BoxDecoration(color: IvoryContrast.readingBacking,
+      borderRadius: BorderRadius.circular(12)), child: child);
 }
