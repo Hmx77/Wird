@@ -88,7 +88,7 @@ def capture(name):
 
 
 def top():
-    for _ in range(4):
+    for _ in range(16):
         adb('shell','input','swipe',str(width//2),str(int(height*.30)),str(width//2),str(int(height*.83)),'150')
 
 def home():
