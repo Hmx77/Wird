@@ -333,7 +333,7 @@ ThemeData wirdTheme(WirdPalette p) {
       iconTheme: WidgetStatePropertyAll(IconThemeData(color: a.ink))),
     appBarTheme: AppBarTheme(backgroundColor: p.homeBackground,
       foregroundColor: a.ink, surfaceTintColor: Colors.transparent, elevation: 0,
-      systemOverlayStyle: p.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark),
+      systemOverlayStyle: p.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark.copyWith(statusBarColor: p.homeBackground)),
     dialogTheme: DialogThemeData(backgroundColor: p.homeSurface,
       titleTextStyle: TextStyle(color: a.ink, fontFamily: 'NotoSansArabic', fontSize: 22),
       contentTextStyle: TextStyle(color: a.ink, fontFamily: 'NotoSansArabic', height: 1.8)),
@@ -501,7 +501,7 @@ class _WirdShellState extends State<WirdShell> {
     final darkSurface = p.dark;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
+        statusBarColor: p.dark ? Colors.transparent : p.homeBackground,
         statusBarIconBrightness: darkSurface
             ? Brightness.light
             : Brightness.dark,
