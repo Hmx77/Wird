@@ -431,47 +431,18 @@ class SettingsPage extends StatelessWidget {
               children: [
                 SettingsHeading('المظهر', icon: Icons.palette_outlined),
                 SizedBox(height: 12),
-                ...themes.indexed.map(
-                  (e) => RadioListTile<int>(
-                    key: Key('settings-theme-${e.$1}'),
-                    value: e.$1,
-                    groupValue: store.themeIndex,
-                    activeColor: AppAppearance.of(context).gold,
-                    secondary: Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [e.$2.homeSurface, e.$2.homeBackground],
-                        ),
-                        borderRadius: BorderRadius.circular(15),
-                        border: Border.all(
-                          color: e.$1 == store.themeIndex
-                              ? AppAppearance.of(context).gold
-                              : e.$2.homeOutline,
-                        ),
-                      ),
-                      child: Icon(
-                        e.$2.dark
-                            ? Icons.dark_mode_outlined
-                            : Icons.light_mode_outlined,
-                        color: e.$2.dark ? homeGold : e.$2.ink,
-                        size: 28,
-                      ),
-                    ),
-                    title: UiText(
-                      e.$2.name,
-                      style: TextStyle(
-                        color: AppAppearance.of(context).ink,
-                        fontSize: 14,
-                      ),
-                    ),
-                    onChanged: (i) {
-                      if (i != null) store.changeTheme(i);
-                      Navigator.pop(c);
-                    },
+                Align(alignment: AlignmentDirectional.centerStart,
+                  child: Text(Directionality.of(c) == TextDirection.rtl
+                    ? 'اختر المظهر المناسب لك' : 'Choose your appearance',
+                    style: TextStyle(color: AppAppearance.of(context).muted, fontSize: 14, height: 1.7))),
+                SizedBox(height: 16),
+                ...themes.indexed.map((e) => Padding(
+                  padding: EdgeInsets.only(bottom: 12),
+                  child: _AppearanceChoice(
+                    index: e.$1, selected: store.themeIndex == e.$1,
+                    onTap: () { store.changeTheme(e.$1); Navigator.pop(c); },
                   ),
-                ),
+                )),
               ],
             ),
           ),
@@ -729,8 +700,9 @@ class _SettingsControl extends StatelessWidget {
                   title,
                   style: TextStyle(
                     color: AppAppearance.of(context).ink,
-                    fontSize: 16,
-                    height: 1.7,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    height: 1.6,
                   ),
                 ),
                 if (subtitle != null)
@@ -738,8 +710,8 @@ class _SettingsControl extends StatelessWidget {
                     subtitle!,
                     style: TextStyle(
                       color: AppAppearance.of(context).ink.withOpacity(.72),
-                      fontSize: 12,
-                      height: 1.7,
+                      fontSize: 14,
+                      height: 1.6,
                     ),
                   ),
               ],
@@ -931,5 +903,51 @@ class _DeferredSettingsPageState extends State<DeferredSettingsPage> {
   Widget build(BuildContext context) {
     _opened = _opened || widget.active;
     return _opened ? SettingsPage(store: widget.store) : SizedBox.shrink();
+  }
+}
+
+class _AppearanceChoice extends StatelessWidget {
+  const _AppearanceChoice({required this.index, required this.selected, required this.onTap});
+  final int index;
+  final bool selected;
+  final VoidCallback onTap;
+  @override
+  Widget build(BuildContext context) {
+    final a = AppAppearance.of(context);
+    final rtl = Directionality.of(context) == TextDirection.rtl;
+    final name = index == 0 ? 'Midnight Teal' : 'Ivory Serenity';
+    return Semantics(selected: selected, inMutuallyExclusiveGroup: true, button: true,
+      child: Material(
+        color: selected ? (a.dark ? const Color(0xFF26483E) : IvoryContrast.selected) : a.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: selected ? a.gold : a.gold.withValues(alpha: .3),
+            width: selected ? 1.5 : .8)),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(key: Key('settings-theme-$index'), onTap: onTap,
+          child: ConstrainedBox(constraints: const BoxConstraints(minHeight: 100),
+            child: Padding(padding: const EdgeInsets.all(16),
+              child: Row(children: [
+                Container(width: 52, height: 52,
+                  decoration: BoxDecoration(
+                    color: index == 0 ? const Color(0xFF063B3B) : IvoryContrast.cream,
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: a.gold.withValues(alpha: .5))),
+                  child: Icon(index == 0 ? Icons.dark_mode_outlined : Icons.light_mode_outlined,
+                    color: index == 0 ? homeGold : IvoryContrast.gold, size: 27)),
+                const SizedBox(width: 12),
+                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(rtl ? (index == 0 ? 'الوضع الداكن' : 'الوضع الفاتح')
+                    : (index == 0 ? 'Dark appearance' : 'Light appearance'),
+                    style: TextStyle(color: a.ink, fontSize: 18,
+                      fontWeight: FontWeight.w600, height: 1.6)),
+                  const SizedBox(height: 3),
+                  Align(alignment: AlignmentDirectional.centerStart,
+                    child: Text(name, textDirection: TextDirection.ltr,
+                      style: TextStyle(color: a.muted, fontSize: 14, height: 1.5))),
+                ])),
+                const SizedBox(width: 12),
+                Icon(selected ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+                  color: selected ? a.gold : a.muted, size: 24),
+              ]))))));
   }
 }

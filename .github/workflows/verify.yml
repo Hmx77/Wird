@@ -33,7 +33,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   android:
-    if: (github.event_name != 'pull_request' || github.head_ref != 'redesign/ivory-contrast-20261023') && (github.event_name != 'workflow_dispatch' || inputs.build_android)
+    if: (github.event_name != 'pull_request' || github.head_ref != 'redesign/ivory-settings-integration-20261024') && (github.event_name != 'workflow_dispatch' || inputs.build_android)
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     steps:
@@ -90,7 +90,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
   ios:
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/redesign/ivory-contrast-20261023') || (github.event_name == 'workflow_dispatch' && inputs.build_ios)
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/redesign/ivory-settings-integration-20261024') || (github.event_name == 'workflow_dispatch' && inputs.build_ios)
     runs-on: macos-15
     timeout-minutes: 35
     steps:
@@ -145,7 +145,7 @@ jobs:
           retention-days: 14
   android-device:
     needs: android
-    if: always() && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/redesign/ivory-contrast-20261023')) && startsWith(github.ref, 'refs/heads/redesign/') && (needs.android.result == 'success' || (!inputs.build_android && inputs.reuse_android_run != ''))
+    if: always() && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/redesign/ivory-settings-integration-20261024')) && startsWith(github.ref, 'refs/heads/redesign/') && (needs.android.result == 'success' || (!inputs.build_android && inputs.reuse_android_run != ''))
     permissions:
       contents: read
       actions: read
@@ -190,7 +190,7 @@ jobs:
           if-no-files-found: warn
   review-assets:
     needs: [android, android-device, ios]
-    if: always() && (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && github.ref == 'refs/heads/redesign/ivory-contrast-20261023' && (needs.android.result == 'success' || (needs.android.result == 'skipped' && inputs.reuse_android_run != '')) && (needs['android-device'].result == 'success' || needs['android-device'].result == 'failure')
+    if: always() && (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && github.ref == 'refs/heads/redesign/ivory-settings-integration-20261024' && (needs.android.result == 'success' || (needs.android.result == 'skipped' && inputs.reuse_android_run != '')) && (needs['android-device'].result == 'success' || needs['android-device'].result == 'failure')
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
@@ -274,13 +274,13 @@ jobs:
                   shutil.copyfile(source, target)
       - name: Commit reviewed outputs only on the unchanged review branch
         run: |
-          test "$(git ls-remote origin refs/heads/redesign/ivory-contrast-20261023 | cut -f1)" = "$GITHUB_SHA"
+          test "$(git ls-remote origin refs/heads/redesign/ivory-settings-integration-20261024 | cut -f1)" = "$GITHUB_SHA"
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A -- lib/tasbih_ui.dart test/tasbih_premium_test.dart lib/reading_ui.dart test/reading_premium_test.dart lib/settings_ui.dart lib/feature_panels.dart lib/ui_strings.dart test/settings_premium_test.dart test/redesign_test.dart assets/brand/wird_wordmark.png android/app/src/main/res/mipmap-*/ic_launcher.png android/app/src/main/res/drawable-nodpi/wird*.png ios/Runner/Assets.xcassets/AppIcon.appiconset/*.png ios/Runner/Assets.xcassets/LaunchImage.imageset/*.png docs/review-images/
           if ! git diff --cached --quiet; then
             git commit -m 'Preserve actual native captures and generated branding'
-            git push origin HEAD:redesign/ivory-contrast-20261023
+            git push origin HEAD:redesign/ivory-settings-integration-20261024
           fi
 
 
