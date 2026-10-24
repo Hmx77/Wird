@@ -497,7 +497,7 @@ class _HomeHeader extends StatelessWidget {
   final VoidCallback onSearch, onSettings;
   @override
   Widget build(BuildContext context) => Stack(children: [
-    Positioned.fill(child: ClipRect(child: Opacity(opacity: store.palette.dark ? .48 : 1, child: Transform(
+    Positioned.fill(child: ClipRect(child: Opacity(opacity: store.palette.dark ? .48 : .72, child: Transform(
       alignment: Alignment.center, transform: Matrix4.diagonal3Values(-1, 1, 1),
       child: Image(image: appearanceArt(context, homeArt['morning']!), fit: BoxFit.cover, alignment: Alignment.centerLeft,
         excludeFromSemantics: true))))),
@@ -505,7 +505,7 @@ class _HomeHeader extends StatelessWidget {
       begin: Alignment.topCenter, end: Alignment.bottomCenter,
       colors: store.palette.dark
         ? [store.palette.homeBackground.withOpacity(.35), store.palette.homeBackground.withOpacity(.82), store.palette.homeBackground]
-        : [store.palette.homeBackground.withOpacity(.02), store.palette.homeBackground.withOpacity(.10), store.palette.homeBackground.withOpacity(.82)])))),
+        : [store.palette.homeBackground.withOpacity(.20), store.palette.homeBackground.withOpacity(.72), store.palette.homeBackground])))),
     Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 16), child: Column(children: [
       Stack(alignment: Alignment.topCenter, children: [
         SizedBox(height: 96, child: Semantics(label: tr(context, 'شعار ورد'), image: true,
@@ -553,17 +553,22 @@ class _HomeIllustratedSurface extends StatelessWidget {
       BoxShadow(color: appearanceTone(context, 0x22000000), offset: Offset(0, 6), blurRadius: 18)]),
     child: Material(color: appearanceTone(context, 0xFF07373D), clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius),
-        side: BorderSide(color: AppAppearance.of(context).dark ? Theme.of(context).colorScheme.primary.withOpacity(.65) : IvoryContrast.outline, width: 1)),
+        side: BorderSide(color: AppAppearance.of(context).dark ? Theme.of(context).colorScheme.primary.withOpacity(.65) : IvoryContrast.border, width: 1)),
       child: Stack(children: [
         Positioned.fill(child: Image(image: !AppAppearance.of(context).dark && art == homeArt['serenity'] ? ivorySanctuary : art, fit: BoxFit.cover, alignment: Alignment.topCenter, excludeFromSemantics: true,
           gaplessPlayback: true, filterQuality: FilterQuality.medium)),
         if (shade || !AppAppearance.of(context).dark) Positioned.fill(child: DecoratedBox(decoration: BoxDecoration(gradient: LinearGradient(
-          begin: Alignment.topCenter, end: Alignment.bottomCenter,
+          begin: !AppAppearance.of(context).dark && art == homeArt['serenity']
+              ? AlignmentDirectional.centerStart.resolve(Directionality.of(context)) : Alignment.topCenter,
+          end: !AppAppearance.of(context).dark && art == homeArt['serenity']
+              ? AlignmentDirectional.centerEnd.resolve(Directionality.of(context)) : Alignment.bottomCenter,
+          stops: AppAppearance.of(context).dark || art == homeArt['sleep'] ? null
+              : art == homeArt['serenity'] ? const [0, .68, 1] : const [0, .35, .52, 1],
           colors: AppAppearance.of(context).dark || art == homeArt['sleep']
             ? [Color(0x00002128), Color(0xDA002128)]
             : art == homeArt['serenity']
-              ? [Colors.transparent, Colors.transparent]
-              : [Color(0x00FFF8E8), Color(0xBFFFF8E8)])))),
+              ? [IvoryContrast.readingBacking, IvoryContrast.readingBacking, Color(0x22FFF8E8)]
+              : [Color(0x00FFF8E8), Color(0x26FFF8E8), IvoryContrast.readingBacking, IvoryContrast.cream])))),
         InkWell(key: actionKey, onTap: onTap, splashColor: AppAppearance.of(context).gold.withOpacity(.15),
           highlightColor: AppAppearance.of(context).gold.withOpacity(.07), child: child),
       ])),
