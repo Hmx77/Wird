@@ -98,14 +98,12 @@ class AppearanceWordmark extends StatelessWidget {
 }
 
 
-/// Keep the approved dark widget tree exact; light text gets a bounded, reliable
-/// translucent cream surface instead of fading the entire illustration.
+/// Preserve reading geometry; Ivory contrast is painted by the full card's
+/// integrated gradient, never by a separate rectangular text panel.
 class IvoryReadingBacking extends StatelessWidget {
   const IvoryReadingBacking({super.key, required this.child});
   final Widget child;
   @override
   Widget build(BuildContext context) => AppAppearance.of(context).dark ? child :
-    DecoratedBox(decoration: BoxDecoration(color: IvoryContrast.readingBacking,
-      borderRadius: BorderRadius.circular(12)),
-      child: Padding(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4), child: child));
+    Padding(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4), child: child);
 }
