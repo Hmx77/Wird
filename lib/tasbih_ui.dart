@@ -61,12 +61,18 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
             TextButton(
               key: Key('tasbih-reset-cancel'),
               onPressed: () => Navigator.pop(dialog, false),
-              child: UiText('إلغاء', style: TextStyle(color: AppAppearance.of(context).ink)),
+              child: UiText(
+                'إلغاء',
+                style: TextStyle(color: AppAppearance.of(context).ink),
+              ),
             ),
             TextButton(
               key: Key('tasbih-reset-confirm'),
               onPressed: () => Navigator.pop(dialog, true),
-              child: UiText('إعادة', style: TextStyle(color: AppAppearance.of(context).gold)),
+              child: UiText(
+                'إعادة',
+                style: TextStyle(color: AppAppearance.of(context).gold),
+              ),
             ),
           ],
         ),
@@ -82,16 +88,22 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
     animation: widget.store,
     builder: (context, _) {
       final store = widget.store;
-      final base = !store.palette.dark ? store.palette.homeBackground : Color.lerp(
-        appearanceTone(context, 0xFF031C1B),
-        store.palette.primary,
-        .045,
-      )!;
+      final base = !store.palette.dark
+          ? store.palette.homeBackground
+          : Color.lerp(
+              appearanceTone(context, 0xFF031C1B),
+              store.palette.primary,
+              .045,
+            )!;
       return AnnotatedRegion<SystemUiOverlayStyle>(
-        value: (store.palette.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark).copyWith(
-          statusBarColor: Colors.transparent,
-          systemNavigationBarColor: base,
-        ),
+        value:
+            (store.palette.dark
+                    ? SystemUiOverlayStyle.light
+                    : SystemUiOverlayStyle.dark)
+                .copyWith(
+                  statusBarColor: Colors.transparent,
+                  systemNavigationBarColor: base,
+                ),
         child: Scaffold(
           backgroundColor: base,
           body: Stack(
@@ -198,17 +210,32 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                                                 begin: Alignment.topLeft,
                                                 end: Alignment.bottomRight,
                                                 colors: [
-                                                  appearanceTone(context, 0xFFFFE7AC),
-                                                  appearanceTone(context, 0xFFA1824C),
-                                                  appearanceTone(context, 0xFFDEC38D),
-                                                  appearanceTone(context, 0xFFFFE5A1),
+                                                  appearanceTone(
+                                                    context,
+                                                    0xFFFFE7AC,
+                                                  ),
+                                                  appearanceTone(
+                                                    context,
+                                                    0xFFA1824C,
+                                                  ),
+                                                  appearanceTone(
+                                                    context,
+                                                    0xFFDEC38D,
+                                                  ),
+                                                  appearanceTone(
+                                                    context,
+                                                    0xFFFFE5A1,
+                                                  ),
                                                 ],
                                               ),
                                               boxShadow: [
                                                 BoxShadow(
-                                                  color: AppAppearance.of(context).gold.withValues(
-                                                    alpha: .12 + glow * .14,
-                                                  ),
+                                                  color:
+                                                      AppAppearance.of(
+                                                        context,
+                                                      ).gold.withValues(
+                                                        alpha: .12 + glow * .14,
+                                                      ),
                                                   blurRadius: 28 + glow * 10,
                                                   spreadRadius: 1,
                                                 ),
@@ -218,16 +245,11 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
                                                 border: Border.all(
-                                                  color: Color(
-                                                    0xFF122D27,
-                                                  ),
+                                                  color: Color(0xFF122D27),
                                                   width: 3,
                                                 ),
                                                 gradient: RadialGradient(
-                                                  center: Alignment(
-                                                    -.55,
-                                                    -.7,
-                                                  ),
+                                                  center: Alignment(-.55, -.7),
                                                   radius: 1.3,
                                                   colors: [
                                                     Color.lerp(
@@ -240,10 +262,9 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding:
-                                                    EdgeInsets.symmetric(
-                                                      horizontal: 22,
-                                                    ),
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 22,
+                                                ),
                                                 child: Column(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.center,
@@ -281,7 +302,9 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                                                               ),
                                                               style: TextStyle(
                                                                 color:
-                                                                    AppAppearance.of(context).ink,
+                                                                    AppAppearance.of(
+                                                                      context,
+                                                                    ).ink,
                                                                 fontSize:
                                                                     diameter *
                                                                     .40,
@@ -361,9 +384,9 @@ class _PersonalTasbihPageState extends State<PersonalTasbihPage>
                                         'هدف شخصي، وليس عددًا تعبديًا منصوصًا.',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          color: AppAppearance.of(context).ink.withValues(
-                                            alpha: .8,
-                                          ),
+                                          color: AppAppearance.of(
+                                            context,
+                                          ).ink.withValues(alpha: .8),
                                           fontSize: 13,
                                           height: 1.9,
                                         ),
@@ -421,12 +444,21 @@ class _TasbihPill extends StatelessWidget {
           ? LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [appearanceTone(context, 0xFF3F6651), appearanceTone(context, 0xFF123C31), appearanceTone(context, 0xFF082924)],
+              colors: [
+                appearanceTone(context, 0xFF3F6651),
+                appearanceTone(context, 0xFF123C31),
+                appearanceTone(context, 0xFF082924),
+              ],
               stops: [0, .35, 1],
             )
           : null,
       boxShadow: prominent
-          ? [BoxShadow(color: AppAppearance.of(context).gold.withValues(alpha: .10), blurRadius: 18)]
+          ? [
+              BoxShadow(
+                color: AppAppearance.of(context).gold.withValues(alpha: .10),
+                blurRadius: 18,
+              ),
+            ]
           : null,
     ),
     child: OutlinedButton(
@@ -438,7 +470,11 @@ class _TasbihPill extends StatelessWidget {
             ? Colors.transparent
             : appearanceTone(context, 0xFF092724),
         side: BorderSide(
-          color: AppAppearance.of(context).gold.withValues(alpha: prominent ? .9 : .55),
+          color: AppAppearance.of(context).dark
+              ? AppAppearance.of(
+                  context,
+                ).gold.withValues(alpha: prominent ? .9 : .55)
+              : IvoryContrast.outline,
           width: prominent ? 1.7 : 1,
         ),
         shape: StadiumBorder(),

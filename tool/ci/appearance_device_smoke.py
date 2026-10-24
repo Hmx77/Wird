@@ -88,7 +88,7 @@ def capture(name):
 
 
 def top():
-    for _ in range(4):
+    for _ in range(16):
         adb('shell','input','swipe',str(width//2),str(int(height*.30)),str(width//2),str(int(height*.83)),'150')
 
 def home():
@@ -118,6 +118,65 @@ for mode,label in [('ivory','فاتح — Ivory Serenity'),('midnight','داكن
     capture(f'android-appearance-{mode}-settings.png')
     home()
     capture(f'android-appearance-{mode}-home.png')
+    if mode == 'ivory':
+        # Check the changed visible surfaces actually navigate, not just render.
+        for section in ['أذكار المساء', 'أذكار النوم']:
+            tap(section, scroll=True)
+            expect('الفضل والدليل والمعنى')
+            adb('shell','input','keyevent','KEYCODE_BACK')
+            home()
+        tap('لحظات من السكينة', scroll=True)
+        expect('الفضل والدليل والمعنى')
+        adb('shell','input','keyevent','KEYCODE_BACK')
+        home()
+        tap('ابحث عن ذكر')
+        expect('الأذكار')
+        adb('shell','input','keyevent','KEYCODE_BACK')
+        home()
+        tap('المفضلة', scroll=True)
+        expect('المفضلة')
+        adb('shell','input','keyevent','KEYCODE_BACK')
+        home()
+        tap('جميع الأذكار', scroll=True)
+        expect('الأذكار')
+        home()
+        tap('النوافل', scroll=True)
+        expect('النوافل')
+        home()
+        checks.append('Ivory Home: Continue, Evening, Bedtime, Search, Favorites, All Athkar and Nawafil navigation')
+        # Exercise the new Home at 320dp, independently of the dark startup pass.
+        original_size = (width, height)
+        try:
+            adb('shell', 'wm', 'size', '640x1136')
+            adb('shell', 'wm', 'density', '320')
+            width, height = 640, 1136
+            time.sleep(2)
+            home()
+            capture('android-ivory-home-320dp-top.png')
+            tap('أذكار الصباح', scroll=True)
+            expect('الفضل والدليل والمعنى')
+            adb('shell','input','keyevent','KEYCODE_BACK')
+            home()
+            adb('shell','input','swipe','320','900','320','300','450')
+            capture('android-ivory-home-320dp-bottom.png')
+            tap('التسبيح', scroll=True)
+            expect('السبحة الشخصية')
+            adb('shell','input','keyevent','KEYCODE_BACK')
+            adb('shell','settings','put','system','font_scale','2.0')
+            time.sleep(2)
+            home()
+            capture('android-ivory-home-320dp-text200-top.png')
+            tap('أذكار المساء', scroll=True)
+            expect('الفضل والدليل والمعنى')
+            adb('shell','input','keyevent','KEYCODE_BACK')
+            checks.append('Ivory Home: 320dp, 200% text, Morning/Evening and Tasbih navigation')
+        finally:
+            adb('shell','settings','put','system','font_scale','1.0')
+            adb('shell','wm','size','reset')
+            adb('shell','wm','density','reset')
+            width, height = original_size
+            time.sleep(2)
+            home()
     tap('الأذكار',bottom=True)
     top()
     capture(f'android-appearance-{mode}-library.png')

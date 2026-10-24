@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -84,7 +85,9 @@ void main() {
     await t.runAsync(() async {
       final context = t.element(find.byKey(const Key('appearance-capture')));
       await Future.wait([wirdWordmark, ivorySanctuary, ...homeArt.values,
-        const AssetImage('assets/home/botanical-serenity.webp')]
+        const AssetImage('assets/home/botanical-serenity.webp'),
+        const AssetImage('assets/appearance/ivory-home-header-v2.webp'),
+        const AssetImage('assets/appearance/ivory-home-feature-v2.webp')]
         .map((image) => precacheImage(image, context)));
     });
     await t.pumpAndSettle();
@@ -97,6 +100,49 @@ void main() {
       final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
       final output = Directory('verification/screenshots')..createSync(recursive: true);
       File('${output.path}/$name.png').writeAsBytesSync(bytes!.buffer.asUint8List());
+      final text = <Map<String, Object?>>[];
+      for (final e in find.byType(Text).evaluate()) {
+        final render = e.findRenderObject();
+        if (render is! RenderParagraph || !render.attached) continue;
+        final origin = render.localToGlobal(Offset.zero);
+        final color = render.text.style?.color;
+        if (color == null) continue;
+        text.add({'text': render.text.toPlainText(), 'argb': color.toARGB32(),
+          'left': origin.dx, 'top': origin.dy,
+          'width': render.size.width, 'height': render.size.height});
+      }
+      if (name == 'appearance-1-ar-home' &&
+          Platform.environment['WIRD_BASELINE_RENDER'] != '1') {
+        final raw = (await image.toByteData(format: ui.ImageByteFormat.rawRgba))!;
+        final checked = <Map<String, Object?>>[];
+        const labels = ['وردك اليومي', 'ذِكْرٌ يُرَافِقُ يَوْمَكَ',
+          'لحظات من السكينة', 'اختر وردك وابدأ القراءة', 'متابعة القراءة',
+          'أذكار الصباح', 'أذكار المساء', 'أذكار النوم'];
+        for (final item in text.where((item) => labels.contains(item['text']))) {
+          final y = ((item['top'] as double) * 2).floor() + 1;
+          if (y < 0 || y >= image.height) continue;
+          final left = ((item['left'] as double) * 2).floor().clamp(0, image.width - 1).toInt();
+          final end = (((item['left'] as double) + (item['width'] as double)) * 2)
+              .floor().clamp(0, image.width).toInt();
+          final foreground = Color(item['argb'] as int).computeLuminance();
+          var minimum = 100.0;
+          for (var x = left; x < end; x++) {
+            final i = (y * image.width + x) * 4;
+            final background = Color.fromARGB(raw.getUint8(i + 3), raw.getUint8(i),
+              raw.getUint8(i + 1), raw.getUint8(i + 2)).computeLuminance();
+            final ratio = ((foreground > background ? foreground : background) + .05) /
+                ((foreground < background ? foreground : background) + .05);
+            if (ratio < minimum) minimum = ratio;
+          }
+          checked.add({'text': item['text'], 'adjacentBackgroundMinRatio': minimum});
+          expect(minimum, greaterThanOrEqualTo(4.5),
+            reason: '${item['text']}: actual rendered background row must support the text');
+        }
+        expect(checked.length, labels.length);
+        File('${output.path}/$name-contrast.json').writeAsStringSync(jsonEncode(checked));
+      }
+      File('${output.path}/$name-text.json').writeAsStringSync(jsonEncode(
+        {'pixelRatio': 2, 'text': text}));
       image.dispose();
     });
   }
@@ -154,4 +200,27 @@ void main() {
       });
     }
   }
+  for (final language in ['ar', 'en']) {
+    for (final scale in [1.0, 2.0]) {
+      testWidgets('Ivory Home 320dp $language text $scale', (t) async {
+        t.view.physicalSize = const Size(320, 700); t.view.devicePixelRatio = 1;
+        addTearDown(t.view.resetPhysicalSize); addTearDown(t.view.resetDevicePixelRatio);
+        SharedPreferences.setMockInitialValues({appearancePreference: appearanceIds[1],
+          'language': language, 'haptics': false});
+        final s = WirdState(); await s.initialize();
+        await mount(t, s, HomePage(store: s), scale: scale);
+        expect(t.takeException(), isNull);
+        await capture(t, 'ivory-home-320-$language-${scale.toInt()}-top');
+        for (final key in ['home-morning', 'home-evening', 'home-sleep', 'home-all',
+            'home-nawafil', 'home-tasbih', 'home-favorites']) {
+          await t.ensureVisible(find.byKey(Key(key))); await t.pumpAndSettle();
+          expect(t.takeException(), isNull, reason: key);
+        }
+        await capture(t, 'ivory-home-320-$language-${scale.toInt()}-bottom');
+        await t.pumpWidget(const SizedBox.shrink()); s.dispose();
+      });
+    }
+  }
+
 }
+

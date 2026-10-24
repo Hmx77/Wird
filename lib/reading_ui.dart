@@ -169,10 +169,15 @@ class DevotionCounter extends StatelessWidget {
         height: diameter,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: AppAppearance.of(context).gold.withOpacity(.4)),
+          border: Border.all(
+            color: AppAppearance.of(context).gold.withOpacity(.4),
+          ),
           gradient: RadialGradient(
             center: Alignment(-.4, -.5),
-            colors: [AppAppearance.of(context).gold.withOpacity(.2), palette.homeBackground],
+            colors: [
+              AppAppearance.of(context).gold.withOpacity(.2),
+              palette.homeBackground,
+            ],
             radius: 1.1,
           ),
         ),
@@ -189,7 +194,9 @@ class DevotionCounter extends StatelessWidget {
                   value: value,
                   strokeWidth: 2,
                   color: AppAppearance.of(context).gold,
-                  backgroundColor: AppAppearance.of(context).gold.withOpacity(.18),
+                  backgroundColor: AppAppearance.of(
+                    context,
+                  ).gold.withOpacity(.18),
                 ),
               ),
             ),
@@ -217,7 +224,10 @@ class DevotionCounter extends StatelessWidget {
                   ),
                   UiText(
                     'اضغط للعدّ',
-                    style: TextStyle(color: AppAppearance.of(context).ink, fontSize: 12),
+                    style: TextStyle(
+                      color: AppAppearance.of(context).ink,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),
@@ -336,7 +346,9 @@ class _LibraryPageState extends State<LibraryPage> {
                                   ),
                             hintText: tr(context, 'ابحث عن ذكر'),
                             hintStyle: TextStyle(
-                              color: AppAppearance.of(context).ink.withOpacity(.7),
+                              color: AppAppearance.of(
+                                context,
+                              ).ink.withOpacity(.7),
                             ),
                             filled: true,
                             fillColor: p.homeSurface.withOpacity(.8),
@@ -347,7 +359,9 @@ class _LibraryPageState extends State<LibraryPage> {
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(24),
                               borderSide: BorderSide(
-                                color: AppAppearance.of(context).gold.withOpacity(.55),
+                                color: AppAppearance.of(
+                                  context,
+                                ).gold.withOpacity(.55),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
@@ -394,7 +408,9 @@ class _LibraryPageState extends State<LibraryPage> {
                               selectedColor: AppAppearance.of(context).gold,
                               backgroundColor: p.homeBackground,
                               side: BorderSide(
-                                color: AppAppearance.of(context).gold.withOpacity(.65),
+                                color: AppAppearance.of(
+                                  context,
+                                ).gold.withOpacity(.65),
                               ),
                               showCheckmark: false,
                               onSelected: (v) =>
@@ -404,7 +420,9 @@ class _LibraryPageState extends State<LibraryPage> {
                               '${filtered.length} ذكر',
                               key: Key('library-count'),
                               style: TextStyle(
-                                color: AppAppearance.of(context).ink.withOpacity(.85),
+                                color: AppAppearance.of(
+                                  context,
+                                ).ink.withOpacity(.85),
                                 fontSize: 14,
                               ),
                             ),
@@ -429,7 +447,10 @@ class _LibraryPageState extends State<LibraryPage> {
                         SizedBox(height: 12),
                         UiText(
                           'لا توجد نتائج',
-                          style: TextStyle(color: AppAppearance.of(context).ink, fontSize: 18),
+                          style: TextStyle(
+                            color: AppAppearance.of(context).ink,
+                            fontSize: 18,
+                          ),
                         ),
                       ],
                     ),
@@ -467,9 +488,13 @@ class _LibraryPageState extends State<LibraryPage> {
                                     height: 44,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: AppAppearance.of(context).gold.withOpacity(.08),
+                                      color: AppAppearance.of(
+                                        context,
+                                      ).gold.withOpacity(.08),
                                       border: Border.all(
-                                        color: AppAppearance.of(context).gold.withOpacity(.45),
+                                        color: AppAppearance.of(
+                                          context,
+                                        ).gold.withOpacity(.45),
                                       ),
                                     ),
                                     child: Icon(
@@ -489,7 +514,9 @@ class _LibraryPageState extends State<LibraryPage> {
                                         UiText(
                                           e.title,
                                           style: TextStyle(
-                                            color: AppAppearance.of(context).ink,
+                                            color: AppAppearance.of(
+                                              context,
+                                            ).ink,
                                             fontSize: 18,
                                             fontWeight: FontWeight.w600,
                                             height: 1.7,
@@ -499,7 +526,9 @@ class _LibraryPageState extends State<LibraryPage> {
                                         UiText(
                                           '${sectionLabel(e.section)} • ${e.source}',
                                           style: TextStyle(
-                                            color: AppAppearance.of(context).ink.withOpacity(.8),
+                                            color: AppAppearance.of(
+                                              context,
+                                            ).ink.withOpacity(.8),
                                             fontSize: 12,
                                             height: 1.85,
                                           ),
@@ -669,7 +698,9 @@ class _ReaderPageState extends State<ReaderPage> {
                           UiText(
                             '${index + 1} / ${sectionEntries.length}',
                             textDirection: TextDirection.ltr,
-                            style: TextStyle(color: AppAppearance.of(context).ink),
+                            style: TextStyle(
+                              color: AppAppearance.of(context).ink,
+                            ),
                           ),
                           SizedBox(width: 14),
                           Expanded(
@@ -718,7 +749,9 @@ class _ReaderPageState extends State<ReaderPage> {
                                 e.source,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: AppAppearance.of(context).ink.withOpacity(.65),
+                                  color: AppAppearance.of(
+                                    context,
+                                  ).ink.withOpacity(.65),
                                   fontSize: 12,
                                 ),
                               ),
@@ -775,7 +808,9 @@ class _ReaderPageState extends State<ReaderPage> {
                                           UiText(
                                             'المعنى',
                                             style: TextStyle(
-                                              color: AppAppearance.of(context).gold,
+                                              color: AppAppearance.of(
+                                                context,
+                                              ).gold,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
@@ -783,7 +818,9 @@ class _ReaderPageState extends State<ReaderPage> {
                                           UiText(
                                             e.meaning,
                                             style: TextStyle(
-                                              color: AppAppearance.of(context).ink,
+                                              color: AppAppearance.of(
+                                                context,
+                                              ).ink,
                                               height: 1.7,
                                             ),
                                           ),
@@ -791,7 +828,9 @@ class _ReaderPageState extends State<ReaderPage> {
                                           UiText(
                                             'الفضل',
                                             style: TextStyle(
-                                              color: AppAppearance.of(context).gold,
+                                              color: AppAppearance.of(
+                                                context,
+                                              ).gold,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
@@ -799,7 +838,9 @@ class _ReaderPageState extends State<ReaderPage> {
                                           UiText(
                                             e.benefit,
                                             style: TextStyle(
-                                              color: AppAppearance.of(context).ink,
+                                              color: AppAppearance.of(
+                                                context,
+                                              ).ink,
                                               height: 1.7,
                                             ),
                                           ),
@@ -807,7 +848,9 @@ class _ReaderPageState extends State<ReaderPage> {
                                           UiText(
                                             'الدليل',
                                             style: TextStyle(
-                                              color: AppAppearance.of(context).gold,
+                                              color: AppAppearance.of(
+                                                context,
+                                              ).gold,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
@@ -815,14 +858,20 @@ class _ReaderPageState extends State<ReaderPage> {
                                           UiText(
                                             e.evidence,
                                             style: TextStyle(
-                                              color: AppAppearance.of(context).ink,
+                                              color: AppAppearance.of(
+                                                context,
+                                              ).ink,
                                               height: 1.7,
                                             ),
                                           ),
                                           SizedBox(height: 12),
                                           UiText(
                                             e.timing,
-                                            style: TextStyle(color: AppAppearance.of(context).ink),
+                                            style: TextStyle(
+                                              color: AppAppearance.of(
+                                                context,
+                                              ).ink,
+                                            ),
                                           ),
                                           TextButton.icon(
                                             onPressed: () async {
@@ -877,9 +926,7 @@ class _ReaderPageState extends State<ReaderPage> {
                                                   );
                                                 }
                                               },
-                                              icon: Icon(
-                                                Icons.open_in_new,
-                                              ),
+                                              icon: Icon(Icons.open_in_new),
                                               label: UiText(
                                                 'نص القرآن — Tanzil',
                                               ),
@@ -888,7 +935,9 @@ class _ReaderPageState extends State<ReaderPage> {
                                           UiText(
                                             e.isQuran ? 'آية قرآنية' : 'صحيح',
                                             style: TextStyle(
-                                              color: AppAppearance.of(context).gold,
+                                              color: AppAppearance.of(
+                                                context,
+                                              ).gold,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
@@ -996,7 +1045,9 @@ class _ReaderPageState extends State<ReaderPage> {
                               e.countDescription,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: AppAppearance.of(context).ink.withOpacity(.7),
+                                color: AppAppearance.of(
+                                  context,
+                                ).ink.withOpacity(.7),
                                 fontSize: 12,
                               ),
                             ),

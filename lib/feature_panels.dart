@@ -113,14 +113,15 @@ class _ReminderPanelState extends State<ReminderPanel> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SettingsHeading(
-            'تذكيراتك',
-            icon: Icons.notifications_none_rounded,
-          ),
+          SettingsHeading('تذكيراتك', icon: Icons.notifications_none_rounded),
           SizedBox(height: 9),
           UiText(
             'أوقات تختارها أنت. قد يؤخر النظام التنبيه لتوفير البطارية.',
-            style: TextStyle(color: AppAppearance.of(context).ink, fontSize: 12, height: 1.8),
+            style: TextStyle(
+              color: AppAppearance.of(context).ink,
+              fontSize: 12,
+              height: 1.8,
+            ),
           ),
           SizedBox(height: 12),
           ...DhikrSection.values.map((section) {
@@ -147,7 +148,9 @@ class _ReminderPanelState extends State<ReminderPanel> {
                   child: UiText(
                     sectionLabel(section),
                     style: TextStyle(
-                      color: AppAppearance.of(context).ink.withOpacity(enabled ? 1 : .72),
+                      color: AppAppearance.of(
+                        context,
+                      ).ink.withOpacity(enabled ? 1 : .72),
                       fontSize: 15,
                       height: 1.7,
                     ),
@@ -176,7 +179,9 @@ class _ReminderPanelState extends State<ReminderPanel> {
                   child: Text(
                     time.format(context),
                     style: TextStyle(
-                      color: AppAppearance.of(context).ink.withOpacity(enabled ? 1 : .7),
+                      color: AppAppearance.of(
+                        context,
+                      ).ink.withOpacity(enabled ? 1 : .7),
                       fontSize: 13,
                     ),
                   ),
@@ -198,7 +203,9 @@ class _ReminderPanelState extends State<ReminderPanel> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: AppAppearance.of(context).gold.withOpacity(enabled ? .3 : .12),
+                  color: AppAppearance.of(
+                    context,
+                  ).gold.withOpacity(enabled ? .3 : .12),
                 ),
               ),
               child: LayoutBuilder(

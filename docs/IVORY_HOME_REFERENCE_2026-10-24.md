@@ -1,0 +1,7 @@
+# Ivory Home reference implementation — pending rendered acceptance
+
+Scope: PR #6, Ivory Home only. The dark Home widget tree, state methods, original assets and religious data are unchanged. The light Home now has dedicated responsive illustration/typography/control layers. No screenshot is used as UI.
+
+New offline assets: `assets/appearance/ivory-home-header-v2.webp` and `ivory-home-feature-v2.webp`. Created with OpenAI image generation from the owner's supplied approved reference, then encoded as WebP. No third-party stock assets added. Header prompt: reproduce the reference header scenery only, right carved ivory arch, botanical edge framing, clear ivory center, no logo/text/controls. Featured prompt: reproduce the reference reading-card scenery only, left carved arch, botanical corners, clear luminous ivory center/right, no logo/text/controls. Original output PNGs are not runtime assets.
+
+Real stored progress/favorites and existing navigation callbacks are used. Dynamic text can expand cards; large text uses stacked categories and two shortcut columns. Small widths retain the reference's two category columns and four shortcuts. This change is not accepted until actual Android screenshots are inspected against the supplied reference. Existing CI includes content locks, analysis, regression tests, fourteen exact Midnight render comparisons, Android build/native interactions and iOS verification.

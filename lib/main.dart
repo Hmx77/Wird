@@ -333,7 +333,7 @@ ThemeData wirdTheme(WirdPalette p) {
       iconTheme: WidgetStatePropertyAll(IconThemeData(color: a.ink))),
     appBarTheme: AppBarTheme(backgroundColor: p.homeBackground,
       foregroundColor: a.ink, surfaceTintColor: Colors.transparent, elevation: 0,
-      systemOverlayStyle: p.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark),
+      systemOverlayStyle: p.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark.copyWith(statusBarColor: p.homeBackground)),
     dialogTheme: DialogThemeData(backgroundColor: p.homeSurface,
       titleTextStyle: TextStyle(color: a.ink, fontFamily: 'NotoSansArabic', fontSize: 22),
       contentTextStyle: TextStyle(color: a.ink, fontFamily: 'NotoSansArabic', height: 1.8)),
@@ -499,26 +499,29 @@ class _WirdShellState extends State<WirdShell> {
       DeferredSettingsPage(store: store, active: page == 3),
     ];
     final darkSurface = p.dark;
+    final homeSurface = !p.dark && page == 0 ? _IvoryHome.paper : p.homeBackground;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
+        statusBarColor: p.dark ? Colors.transparent : homeSurface,
         statusBarIconBrightness: darkSurface
             ? Brightness.light
             : Brightness.dark,
         statusBarBrightness: darkSurface ? Brightness.dark : Brightness.light,
-        systemNavigationBarColor: p.homeBackground,
+        systemNavigationBarColor: homeSurface,
         systemNavigationBarIconBrightness: p.dark ? Brightness.light : Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: p.homeBackground,
+        backgroundColor: homeSurface,
         body: SafeArea(
           child: IndexedStack(index: page, children: screens),
         ),
-        bottomNavigationBar: Container(
+        bottomNavigationBar: !p.dark && page == 0
+            ? _IvoryHomeNavigation(onNavigate: (index) => setState(() => page = index))
+            : Container(
           margin: EdgeInsets.fromLTRB(10, 4, 10, 5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(29),
-            border: Border.all(color: p.homeAccent.withOpacity(.3)),
+            border: Border.all(color: p.dark ? p.homeAccent.withOpacity(.3) : const Color(0xFFD0C49D)),
             gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
               colors: [p.homeSurface, p.homeBackground]),
           ),
@@ -526,7 +529,7 @@ class _WirdShellState extends State<WirdShell> {
           selectedIndex: page,
           onDestinationSelected: (index) => setState(() => page = index),
           backgroundColor: Colors.transparent,
-          indicatorColor: Color(0xFFE4C47E).withOpacity(.18),
+          indicatorColor: p.dark ? Color(0xFFE4C47E).withOpacity(.18) : IvoryContrast.selected,
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
@@ -756,4 +759,5 @@ class ProgressPage extends StatelessWidget {
     );
   }
 }
+
 

@@ -1,8 +1,0 @@
-{
-  "passed": true,
-  "offline": true,
-  "checks": [
-    "ivory: two choices, live switch, six screens, restart persistence; all other preferences unchanged",
-    "midnight: two choices, live switch, six screens, restart persistence; all other preferences unchanged"
-  ]
-}

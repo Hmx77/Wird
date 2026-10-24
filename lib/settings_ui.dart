@@ -105,10 +105,12 @@ class SettingsPage extends StatelessWidget {
                                                 color: themes[i].primary,
                                                 border: Border.all(
                                                   color: i == store.themeIndex
-                                                      ? AppAppearance.of(context).gold
-                                                      : AppAppearance.of(context).ink.withOpacity(
-                                                          .3,
-                                                        ),
+                                                      ? AppAppearance.of(
+                                                          context,
+                                                        ).gold
+                                                      : AppAppearance.of(
+                                                          context,
+                                                        ).ink.withOpacity(.3),
                                                   width: i == store.themeIndex
                                                       ? 2
                                                       : 1,
@@ -176,7 +178,9 @@ class SettingsPage extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(18),
                                     border: Border.all(
-                                      color: AppAppearance.of(context).gold.withOpacity(.32),
+                                      color: AppAppearance.of(
+                                        context,
+                                      ).gold.withOpacity(.32),
                                     ),
                                     color: p.homeBackground.withOpacity(.55),
                                   ),
@@ -223,7 +227,9 @@ class SettingsPage extends StatelessWidget {
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(22),
                                         border: Border.all(
-                                          color: AppAppearance.of(context).gold.withOpacity(.3),
+                                          color: AppAppearance.of(
+                                            context,
+                                          ).gold.withOpacity(.3),
                                         ),
                                         gradient: RadialGradient(
                                           colors: [
@@ -237,12 +243,12 @@ class SettingsPage extends StatelessWidget {
                                         label: tr(context, 'السبحة الشخصية'),
                                         child: Text(
                                           '${store.tasbih}',
-                                          key: Key(
-                                            'settings-tasbih-value',
-                                          ),
+                                          key: Key('settings-tasbih-value'),
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                            color: AppAppearance.of(context).ink,
+                                            color: AppAppearance.of(
+                                              context,
+                                            ).ink,
                                             fontSize: 46,
                                             height: 1.3,
                                             fontWeight: FontWeight.w500,
@@ -268,9 +274,7 @@ class SettingsPage extends StatelessWidget {
                                           label: UiText('تسبيح +'),
                                         ),
                                         OutlinedButton.icon(
-                                          key: Key(
-                                            'settings-tasbih-reset',
-                                          ),
+                                          key: Key('settings-tasbih-reset'),
                                           onPressed: () => store.setTasbih(0),
                                           icon: Icon(
                                             Icons.restart_alt,
@@ -368,9 +372,7 @@ class SettingsPage extends StatelessWidget {
                                 ExpansionTile(
                                   key: Key('privacy-details'),
                                   tilePadding: EdgeInsets.zero,
-                                  childrenPadding: EdgeInsets.only(
-                                    bottom: 14,
-                                  ),
+                                  childrenPadding: EdgeInsets.only(bottom: 14),
                                   title: UiText(
                                     'التفاصيل والمصادر',
                                     style: TextStyle(
@@ -398,7 +400,9 @@ class SettingsPage extends StatelessWidget {
                                     applicationName: 'ورد — Wird',
                                   ),
                                 ),
-                                Divider(color: appearanceTone(context, 0x335F9D92)),
+                                Divider(
+                                  color: appearanceTone(context, 0x335F9D92),
+                                ),
                                 _SettingsAction(
                                   key: Key('settings-erase'),
                                   icon: Icons.delete_outline_rounded,
@@ -446,19 +450,33 @@ class SettingsPage extends StatelessWidget {
                     groupValue: store.themeIndex,
                     activeColor: AppAppearance.of(context).gold,
                     secondary: Container(
-                      width: 56, height: 56,
+                      width: 56,
+                      height: 56,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(colors: [e.$2.homeSurface, e.$2.homeBackground]),
+                        gradient: LinearGradient(
+                          colors: [e.$2.homeSurface, e.$2.homeBackground],
+                        ),
                         borderRadius: BorderRadius.circular(15),
-                        border: Border.all(color: e.$1 == store.themeIndex
-                          ? AppAppearance.of(context).gold : e.$2.homeOutline),
+                        border: Border.all(
+                          color: e.$1 == store.themeIndex
+                              ? AppAppearance.of(context).gold
+                              : e.$2.homeOutline,
+                        ),
                       ),
-                      child: Icon(e.$2.dark ? Icons.dark_mode_outlined : Icons.light_mode_outlined,
-                        color: e.$2.dark ? homeGold : e.$2.ink, size: 28),
+                      child: Icon(
+                        e.$2.dark
+                            ? Icons.dark_mode_outlined
+                            : Icons.light_mode_outlined,
+                        color: e.$2.dark ? homeGold : e.$2.ink,
+                        size: 28,
+                      ),
                     ),
                     title: UiText(
                       e.$2.name,
-                      style: TextStyle(color: AppAppearance.of(context).ink, fontSize: 14),
+                      style: TextStyle(
+                        color: AppAppearance.of(context).ink,
+                        fontSize: 14,
+                      ),
                     ),
                     onChanged: (i) {
                       if (i != null) store.changeTheme(i);
@@ -531,22 +549,35 @@ class SettingsStyle extends StatelessWidget {
         secondary: palette.homeAccent,
       ),
       iconTheme: IconThemeData(color: AppAppearance.of(context).gold),
-      textTheme: Theme.of(
-        context,
-      ).textTheme.apply(bodyColor: AppAppearance.of(context).ink, displayColor: AppAppearance.of(context).ink),
+      textTheme: Theme.of(context).textTheme.apply(
+        bodyColor: AppAppearance.of(context).ink,
+        displayColor: AppAppearance.of(context).ink,
+      ),
       switchTheme: SwitchThemeData(
-        thumbColor: WidgetStatePropertyAll(homeCream),
+        thumbColor: palette.dark
+            ? WidgetStatePropertyAll(homeCream)
+            : WidgetStateProperty.resolveWith(
+                (s) => s.contains(WidgetState.selected)
+                    ? IvoryContrast.cream
+                    : IvoryContrast.ink,
+              ),
         trackColor: WidgetStateProperty.resolveWith(
           (s) => s.contains(WidgetState.selected)
-              ? (palette.dark ? homeGold : palette.primary)
-              : (palette.dark ? palette.homeBackground : const Color(0xFFCAD0BD)),
+              ? (palette.dark ? homeGold : IvoryContrast.accent)
+              : (palette.dark ? palette.homeBackground : IvoryContrast.sage),
         ),
-        trackOutlineColor: WidgetStatePropertyAll(AppAppearance.of(context).gold.withOpacity(.4)),
+        trackOutlineColor: WidgetStatePropertyAll(
+          palette.dark
+              ? AppAppearance.of(context).gold.withOpacity(.4)
+              : IvoryContrast.outline,
+        ),
       ),
       sliderTheme: SliderTheme.of(context).copyWith(
         activeTrackColor: AppAppearance.of(context).gold,
         thumbColor: AppAppearance.of(context).gold,
-        inactiveTrackColor: AppAppearance.of(context).ink.withOpacity(.25),
+        inactiveTrackColor: palette.dark
+            ? AppAppearance.of(context).ink.withOpacity(.25)
+            : IvoryContrast.outline,
         overlayColor: AppAppearance.of(context).gold.withOpacity(.12),
       ),
       filledButtonTheme: FilledButtonThemeData(
@@ -564,7 +595,11 @@ class SettingsStyle extends StatelessWidget {
         style: OutlinedButton.styleFrom(
           foregroundColor: AppAppearance.of(context).gold,
           padding: EdgeInsets.symmetric(horizontal: 12),
-          side: BorderSide(color: AppAppearance.of(context).gold.withOpacity(.65)),
+          side: BorderSide(
+            color: palette.dark
+                ? AppAppearance.of(context).gold.withOpacity(.65)
+                : IvoryContrast.outline,
+          ),
           minimumSize: Size(48, 48),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(17),
@@ -577,7 +612,9 @@ class SettingsStyle extends StatelessWidget {
           minimumSize: Size(48, 48),
         ),
       ),
-      dividerTheme: DividerThemeData(color: appearanceTone(context, 0x335F9D92)),
+      dividerTheme: DividerThemeData(
+        color: appearanceTone(context, 0x335F9D92),
+      ),
     ),
     child: child,
   );
@@ -598,7 +635,9 @@ class SettingsPanel extends StatelessWidget {
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(24),
       border: Border.all(
-        color: highlighted ? AppAppearance.of(context).gold.withOpacity(.6) : appearanceTone(context, 0x665F9D92),
+        color: highlighted
+            ? AppAppearance.of(context).gold.withOpacity(.6)
+            : appearanceTone(context, 0x665F9D92),
       ),
       gradient: LinearGradient(
         begin: Alignment.topRight,
@@ -655,15 +694,22 @@ class _SettingsMedallion extends StatelessWidget {
     height: 44,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(17),
-      border: Border.all(color: AppAppearance.of(context).gold.withOpacity(.35)),
+      border: Border.all(
+        color: AppAppearance.of(context).gold.withOpacity(.35),
+      ),
       gradient: LinearGradient(
-        colors: [appearanceTone(context, 0xFF294944), appearanceTone(context, 0xFF092D2C)],
+        colors: [
+          appearanceTone(context, 0xFF294944),
+          appearanceTone(context, 0xFF092D2C),
+        ],
       ),
     ),
     child: icon == Icons.grain_rounded
         ? Padding(
             padding: EdgeInsets.all(8),
-            child: CustomPaint(painter: _BeadsPainter(AppAppearance.of(context).gold)),
+            child: CustomPaint(
+              painter: _BeadsPainter(AppAppearance.of(context).gold),
+            ),
           )
         : Icon(icon, color: AppAppearance.of(context).gold, size: 23),
   );
@@ -837,7 +883,11 @@ class _SettingsHeader extends StatelessWidget {
               ),
             ),
             SizedBox(width: 12),
-            Icon(Icons.spa_outlined, color: AppAppearance.of(context).gold, size: 31),
+            Icon(
+              Icons.spa_outlined,
+              color: AppAppearance.of(context).gold,
+              size: 31,
+            ),
           ],
         ),
       ),
@@ -892,8 +942,6 @@ class _DeferredSettingsPageState extends State<DeferredSettingsPage> {
   @override
   Widget build(BuildContext context) {
     _opened = _opened || widget.active;
-    return _opened
-        ? SettingsPage(store: widget.store)
-        : SizedBox.shrink();
+    return _opened ? SettingsPage(store: widget.store) : SizedBox.shrink();
   }
 }

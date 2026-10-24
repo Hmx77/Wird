@@ -318,6 +318,7 @@ class HomePage extends StatelessWidget {
     animation: store,
     builder: (context, _) {
       final p = store.palette;
+      if (!p.dark) return _IvoryHome(home: this);
       final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
       final done = entries.where((e) => store.isDone(e)).length;
       return ColoredBox(
@@ -361,7 +362,7 @@ class HomePage extends StatelessWidget {
                         SizedBox(height: 4),
                         Align(alignment: AlignmentDirectional.centerStart,
                           child: FractionallySizedBox(widthFactor: wideText ? .95 : .7,
-                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            child: IvoryReadingBacking(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                               UiText('لحظات من السكينة', style: TextStyle(
                                 color: AppAppearance.of(context).ink, fontSize: 20, height: 1.4, fontWeight: FontWeight.w700)),
                               SizedBox(height: 4),
@@ -369,9 +370,9 @@ class HomePage extends StatelessWidget {
                                 color: AppAppearance.of(context).ink, fontSize: 11, height: 1.5)),
                               SizedBox(height: 8),
                               Container(padding: EdgeInsets.all(8),
-                                decoration: BoxDecoration(color: appearanceTone(context, 0xD0083035),
+                                decoration: BoxDecoration(color: AppAppearance.of(context).dark ? appearanceTone(context, 0xD0083035) : IvoryContrast.cream,
                                   borderRadius: BorderRadius.circular(24),
-                                  border: Border.all(color: appearanceTone(context, 0x5585BCB2))),
+                                  border: Border.all(color: AppAppearance.of(context).dark ? appearanceTone(context, 0x5585BCB2) : IvoryContrast.border)),
                                 child: Row(children: [
                                   Icon(Icons.menu_book_outlined, color: AppAppearance.of(context).gold, size: 21),
                                   SizedBox(width: 8),
@@ -381,7 +382,8 @@ class HomePage extends StatelessWidget {
                                     LinearProgressIndicator(key: Key('home-progress'),
                                       value: done / entries.length, minHeight: 4,
                                       borderRadius: BorderRadius.circular(5),
-                                      color: appearanceTone(context, 0xFF7DDBCA), backgroundColor: appearanceTone(context, 0xFF31565A),
+                                      color: AppAppearance.of(context).dark ? appearanceTone(context, 0xFF7DDBCA) : IvoryContrast.accent,
+                                      backgroundColor: AppAppearance.of(context).dark ? appearanceTone(context, 0xFF31565A) : IvoryContrast.progressTrack,
                                       semanticsLabel: tr(context, 'تقدم اليوم'), semanticsValue: '$done / ${entries.length}'),
                                     SizedBox(height: 3),
                                     UiText('$done / ${entries.length} مكتمل', textDirection: TextDirection.ltr, style: TextStyle(
@@ -390,7 +392,7 @@ class HomePage extends StatelessWidget {
                                   SizedBox(width: 8),
                                   _HomeArrow(filled: true, size: 30),
                                 ])),
-                            ]))),
+                            ])))),
                       ])),
                   ),
                   SizedBox(height: 10),
@@ -430,7 +432,11 @@ class HomePage extends StatelessWidget {
       DhikrSection.evening => Icons.nightlight_outlined,
       DhikrSection.sleep => Icons.bedtime_outlined,
     };
-    final badge = section == DhikrSection.morning ? appearanceTone(context, 0xAA507B70) : appearanceTone(context, 0xAA343D88);
+    final badge = AppAppearance.of(context).dark
+        ? (section == DhikrSection.morning ? appearanceTone(context, 0xAA507B70) : appearanceTone(context, 0xAA343D88))
+        : section == DhikrSection.morning ? const Color(0xFFD4E2CB) : IvoryContrast.cream;
+    final badgeInk = !store.palette.dark && section == DhikrSection.sleep
+        ? const Color(0xFF426E8A) : categoryInk;
     return _HomeIllustratedSurface(
       art: homeArt[section.name]!, radius: 21,
       actionKey: Key('home-${section.name}'), onTap: () => openReader(context, store, section),
@@ -440,7 +446,7 @@ class HomePage extends StatelessWidget {
           Container(padding: EdgeInsets.all(7),
             decoration: BoxDecoration(color: badge, borderRadius: BorderRadius.circular(13),
               border: Border.all(color: appearanceTone(context, 0x55E9D8AE))),
-            child: Icon(icon, color: categoryInk, size: 25)),
+            child: Icon(icon, color: badgeInk, size: 25)),
           SizedBox(width: 12),
           Expanded(child: RepaintBoundary(
             key: ValueKey('category-label-${section.name}-${store.themeIndex}-${store.languageCode}'),
@@ -463,9 +469,9 @@ class HomePage extends StatelessWidget {
           Container(padding: EdgeInsets.all(7),
             decoration: BoxDecoration(color: badge, borderRadius: BorderRadius.circular(13),
               border: Border.all(color: appearanceTone(context, 0x55E9D8AE))),
-            child: Icon(icon, color: categoryInk, size: 29)),
+            child: Icon(icon, color: badgeInk, size: 29)),
           SizedBox(height: 12),
-          Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          IvoryReadingBacking(child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               UiText(sectionLabel(section), style: TextStyle(color: categoryInk,
                 fontSize: 16, fontWeight: FontWeight.w700, height: 1.5)),
@@ -474,7 +480,7 @@ class HomePage extends StatelessWidget {
             ])),
             SizedBox(width: 5),
             _HomeArrow(ink: categoryInk, size: 24, complete: done == count),
-          ]),
+          ])),
           if (done > 0) ...[
             SizedBox(height: 8),
             LinearProgressIndicator(value: done / count, minHeight: 3,
@@ -492,13 +498,15 @@ class _HomeHeader extends StatelessWidget {
   final VoidCallback onSearch, onSettings;
   @override
   Widget build(BuildContext context) => Stack(children: [
-    Positioned.fill(child: ClipRect(child: Opacity(opacity: .48, child: Transform(
+    Positioned.fill(child: ClipRect(child: Opacity(opacity: store.palette.dark ? .48 : .72, child: Transform(
       alignment: Alignment.center, transform: Matrix4.diagonal3Values(-1, 1, 1),
       child: Image(image: appearanceArt(context, homeArt['morning']!), fit: BoxFit.cover, alignment: Alignment.centerLeft,
         excludeFromSemantics: true))))),
     Positioned.fill(child: DecoratedBox(decoration: BoxDecoration(gradient: LinearGradient(
       begin: Alignment.topCenter, end: Alignment.bottomCenter,
-      colors: [store.palette.homeBackground.withOpacity(.35), store.palette.homeBackground.withOpacity(.82), store.palette.homeBackground])))),
+      colors: store.palette.dark
+        ? [store.palette.homeBackground.withOpacity(.35), store.palette.homeBackground.withOpacity(.82), store.palette.homeBackground]
+        : [store.palette.homeBackground.withOpacity(.20), store.palette.homeBackground.withOpacity(.72), store.palette.homeBackground])))),
     Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 16), child: Column(children: [
       Stack(alignment: Alignment.topCenter, children: [
         SizedBox(height: 96, child: Semantics(label: tr(context, 'شعار ورد'), image: true,
@@ -507,13 +515,13 @@ class _HomeHeader extends StatelessWidget {
         Align(alignment: AlignmentDirectional.topEnd, child: Row(mainAxisSize: MainAxisSize.min, textDirection: TextDirection.ltr, children: [
           IconButton.outlined(key: Key('home-settings'), tooltip: tr(context, 'الإعدادات'),
             onPressed: onSettings, icon: Icon(Icons.settings_outlined, size: 21),
-            style: IconButton.styleFrom(foregroundColor: AppAppearance.of(context).ink, backgroundColor: appearanceTone(context, 0x30002C32),
-              side: BorderSide(color: appearanceTone(context, 0x556DB9AF)))),
+            style: IconButton.styleFrom(foregroundColor: AppAppearance.of(context).ink, backgroundColor: store.palette.dark ? appearanceTone(context, 0x30002C32) : IvoryContrast.cream.withValues(alpha: .96),
+              side: BorderSide(color: store.palette.dark ? appearanceTone(context, 0x556DB9AF) : IvoryContrast.outline))),
           SizedBox(width: 6),
           IconButton.outlined(key: Key('home-search'), tooltip: tr(context, 'ابحث عن ذكر'),
             onPressed: onSearch, icon: Icon(Icons.search_rounded, size: 21),
-            style: IconButton.styleFrom(foregroundColor: AppAppearance.of(context).ink, backgroundColor: appearanceTone(context, 0x30002C32),
-              side: BorderSide(color: appearanceTone(context, 0x556DB9AF)))),
+            style: IconButton.styleFrom(foregroundColor: AppAppearance.of(context).ink, backgroundColor: store.palette.dark ? appearanceTone(context, 0x30002C32) : IvoryContrast.cream.withValues(alpha: .96),
+              side: BorderSide(color: store.palette.dark ? appearanceTone(context, 0x556DB9AF) : IvoryContrast.outline))),
         ])),
       ]),
       UiText('وردك اليومي', textAlign: TextAlign.center, style: TextStyle(
@@ -546,15 +554,22 @@ class _HomeIllustratedSurface extends StatelessWidget {
       BoxShadow(color: appearanceTone(context, 0x22000000), offset: Offset(0, 6), blurRadius: 18)]),
     child: Material(color: appearanceTone(context, 0xFF07373D), clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius),
-        side: BorderSide(color: Theme.of(context).colorScheme.primary.withOpacity(.65), width: 1)),
+        side: BorderSide(color: AppAppearance.of(context).dark ? Theme.of(context).colorScheme.primary.withOpacity(.65) : IvoryContrast.border, width: 1)),
       child: Stack(children: [
         Positioned.fill(child: Image(image: !AppAppearance.of(context).dark && art == homeArt['serenity'] ? ivorySanctuary : art, fit: BoxFit.cover, alignment: Alignment.topCenter, excludeFromSemantics: true,
           gaplessPlayback: true, filterQuality: FilterQuality.medium)),
         if (shade || !AppAppearance.of(context).dark) Positioned.fill(child: DecoratedBox(decoration: BoxDecoration(gradient: LinearGradient(
-          begin: Alignment.topCenter, end: Alignment.bottomCenter,
+          begin: !AppAppearance.of(context).dark && art == homeArt['serenity']
+              ? AlignmentDirectional.centerStart.resolve(Directionality.of(context)) : Alignment.topCenter,
+          end: !AppAppearance.of(context).dark && art == homeArt['serenity']
+              ? AlignmentDirectional.centerEnd.resolve(Directionality.of(context)) : Alignment.bottomCenter,
+          stops: AppAppearance.of(context).dark || art == homeArt['sleep'] ? null
+              : art == homeArt['serenity'] ? const [0, .68, 1] : const [0, .35, .52, 1],
           colors: AppAppearance.of(context).dark || art == homeArt['sleep']
             ? [Color(0x00002128), Color(0xDA002128)]
-            : [Color(0x00F6F0DF), Color(0xF0F6F0DF)])))),
+            : art == homeArt['serenity']
+              ? [IvoryContrast.readingBacking, IvoryContrast.readingBacking, Color(0x22FFF8E8)]
+              : [Color(0x00FFF8E8), Color(0x26FFF8E8), IvoryContrast.readingBacking, IvoryContrast.cream])))),
         InkWell(key: actionKey, onTap: onTap, splashColor: AppAppearance.of(context).gold.withOpacity(.15),
           highlightColor: AppAppearance.of(context).gold.withOpacity(.07), child: child),
       ])),
@@ -567,7 +582,20 @@ class _HomeArrow extends StatelessWidget {
   final bool filled, complete;
   final double size;
   @override
-  Widget build(BuildContext context) => ExcludeSemantics(child: Container(
+  Widget build(BuildContext context) {
+    if (!AppAppearance.of(context).dark) {
+      final night = ink == homeCream && !filled;
+      return ExcludeSemantics(child: Container(width: size, height: size,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(shape: BoxShape.circle,
+          color: filled ? IvoryContrast.ink : night ? const Color(0xFF082A36) : IvoryContrast.cream,
+          border: Border.all(color: night ? homeGold : IvoryContrast.outline)),
+        child: Icon(complete ? Icons.check_rounded : Directionality.of(context) == TextDirection.rtl
+          ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
+          textDirection: TextDirection.ltr, size: size * .7,
+          color: filled || night ? IvoryContrast.cream : IvoryContrast.ink)));
+    }
+    return ExcludeSemantics(child: Container(
     width: size, height: size, alignment: Alignment.center,
     decoration: BoxDecoration(shape: BoxShape.circle,
       gradient: filled ? LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
@@ -576,6 +604,7 @@ class _HomeArrow extends StatelessWidget {
     child: Icon(complete ? Icons.check_rounded : Directionality.of(context) == TextDirection.rtl
       ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
       textDirection: TextDirection.ltr, size: size * .7, color: filled ? appearanceTone(context, 0xFF143D3D) : (ink ?? AppAppearance.of(context).ink))));
+  }
 }
 
 class _HomeShortcut extends StatelessWidget {
@@ -590,9 +619,12 @@ class _HomeShortcut extends StatelessWidget {
   Widget build(BuildContext context) => Material(
     color: Colors.transparent, clipBehavior: Clip.antiAlias,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(19),
-      side: BorderSide(color: accent.withOpacity(.35))),
+      side: BorderSide(color: AppAppearance.of(context).dark ? accent.withOpacity(.35) : IvoryContrast.border)),
     child: Ink(decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft,
-      end: Alignment.bottomRight, colors: [accent.withOpacity(.14), appearanceTone(context, 0xFF073035)])),
+      end: Alignment.bottomRight, colors: AppAppearance.of(context).dark
+        ? [accent.withOpacity(.14), appearanceTone(context, 0xFF073035)]
+        : label == 'جميع الأذكار' ? [IvoryContrast.sage, const Color(0xFFF0F3E5)]
+        : [IvoryContrast.cream, const Color(0xFFF6EDD9)])),
       child: InkWell(onTap: onTap, child: Padding(padding: EdgeInsets.symmetric(horizontal: 7, vertical: 13),
         child: Column(children: [
           IconTheme(data: IconThemeData(color: accent), child: SizedBox(height: 35,
@@ -628,4 +660,265 @@ class _BeadsPainter extends CustomPainter {
 
 class _HomeTasbihPage extends PersonalTasbihPage {
   const _HomeTasbihPage({required super.store});
+}
+
+// Ivory Home uses separately composed scenery. The approved dark widget tree
+// above remains unchanged, including its typography and illustration layers.
+const ivoryHomeHeader = AssetImage('assets/appearance/ivory-home-header-v2.webp');
+const ivoryHomeFeature = AssetImage('assets/appearance/ivory-home-feature-v2.webp');
+
+class _IvoryHome extends StatelessWidget {
+  const _IvoryHome({required this.home});
+  final HomePage home;
+  WirdState get store => home.store;
+  static const paper = Color(0xFFFAF6E9);
+  static const edge = Color(0xFFC1A775);
+
+  TextStyle text(double size, {bool bold = false, Color? color}) => TextStyle(
+    color: color ?? IvoryContrast.ink, fontSize: size, height: 1.5,
+    fontWeight: bold ? FontWeight.w700 : FontWeight.w400);
+
+  @override
+  Widget build(BuildContext context) => ColoredBox(color: paper,
+    child: Align(alignment: Alignment.topCenter, child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 760),
+      child: LayoutBuilder(builder: (context, box) {
+        final large = MediaQuery.textScalerOf(context).scale(14) > 20;
+        final inset = box.maxWidth < 360 ? 10.0 : 13.0;
+        final width = box.maxWidth - inset * 2;
+        final unit = (width / 400).clamp(.80, 1.4).toDouble();
+        return SingleChildScrollView(key: const PageStorageKey('premium-home-scroll'),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            _header(context, unit),
+            Padding(padding: EdgeInsets.fromLTRB(inset, 0, inset, 10),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                _featured(context, unit, large),
+                const SizedBox(height: 10),
+                if (large && width < 600) ...[
+                  _category(context, DhikrSection.morning, unit),
+                  const SizedBox(height: 10),
+                  _category(context, DhikrSection.evening, unit),
+                ] else Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Expanded(child: _category(context, DhikrSection.morning, unit)),
+                  const SizedBox(width: 10),
+                  Expanded(child: _category(context, DhikrSection.evening, unit)),
+                ]),
+                const SizedBox(height: 10),
+                _category(context, DhikrSection.sleep, unit),
+                const SizedBox(height: 10),
+                _shortcuts(context, width, unit, large),
+              ])),
+          ]));
+      }))));
+
+  Widget _header(BuildContext context, double unit) => Stack(children: [
+    Positioned.fill(child: ShaderMask(blendMode: BlendMode.dstIn,
+      shaderCallback: (bounds) => const LinearGradient(begin: Alignment.topCenter,
+        end: Alignment.bottomCenter, colors: [Colors.white, Colors.white, Colors.transparent],
+        stops: [0, .72, 1]).createShader(bounds),
+      child: const Image(image: ivoryHomeHeader, fit: BoxFit.cover,
+        alignment: Alignment.topCenter, excludeFromSemantics: true))),
+    Padding(padding: EdgeInsets.fromLTRB(13, 5, 13, 15 * unit), child: Column(children: [
+      Stack(alignment: Alignment.topCenter, children: [
+        SizedBox(height: 115 * unit, child: Center(child: Semantics(
+          label: tr(context, 'شعار ورد'), image: true,
+          child: ExcludeSemantics(child: Transform.scale(scale: 1.35, child: AppearanceWordmark(key: const Key('home-wordmark'),
+            width: 158 * unit, height: 112 * unit)))))),
+        Align(alignment: Alignment.topLeft, child: Row(mainAxisSize: MainAxisSize.min,
+          textDirection: TextDirection.ltr, children: [
+            _headerControl(context, 'home-settings', 'الإعدادات', Icons.settings_outlined,
+              () => home.destination(context, 3)),
+            const SizedBox(width: 5),
+            _headerControl(context, 'home-search', 'ابحث عن ذكر', Icons.search_rounded,
+              () => home.browse(context)),
+          ])),
+      ]),
+      UiText('وردك اليومي', textAlign: TextAlign.center, style: text(30 * unit, bold: true)),
+      const SizedBox(height: 3),
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const SizedBox(width: 29, child: Divider(color: edge, thickness: 1)),
+        const SizedBox(width: 9),
+        Flexible(child: UiText('ذِكْرٌ يُرَافِقُ يَوْمَكَ', textAlign: TextAlign.center,
+          style: text(14 * unit, color: IvoryContrast.gold))),
+        const SizedBox(width: 9),
+        const SizedBox(width: 29, child: Divider(color: edge, thickness: 1)),
+      ]),
+    ])),
+  ]);
+
+  Widget _headerControl(BuildContext context, String keyName, String label,
+      IconData icon, VoidCallback action) => IconButton.outlined(
+    key: Key(keyName), tooltip: tr(context, label), onPressed: action,
+    icon: Icon(icon, size: 23), style: IconButton.styleFrom(
+      foregroundColor: IvoryContrast.ink, backgroundColor: paper.withValues(alpha: .86),
+      minimumSize: const Size(44, 44), side: const BorderSide(color: Color(0xFFC9BEA0), width: .75)));
+
+  Widget _surface({required String keyName, required AssetImage image,
+      required Widget child, required VoidCallback onTap, Gradient? gradient,
+      double radius = 22, bool mirror = false}) => DecoratedBox(
+    decoration: BoxDecoration(borderRadius: BorderRadius.circular(radius), boxShadow: const [
+      BoxShadow(color: Color(0x0A70572D), offset: Offset(0, 3), blurRadius: 9)]),
+    child: Material(color: paper, clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius),
+        side: const BorderSide(color: edge, width: .75)),
+      child: Stack(children: [
+        Positioned.fill(child: Transform(
+          alignment: Alignment.center, transform: Matrix4.diagonal3Values(mirror ? -1 : 1, 1, 1),
+          child: Image(image: image, fit: BoxFit.cover, alignment: Alignment.topCenter,
+            filterQuality: FilterQuality.high, excludeFromSemantics: true))),
+        if (gradient != null) Positioned.fill(child: DecoratedBox(
+          decoration: BoxDecoration(gradient: gradient))),
+        InkWell(key: Key(keyName), onTap: onTap,
+          splashColor: IvoryContrast.accent.withValues(alpha: .12),
+          highlightColor: IvoryContrast.gold.withValues(alpha: .06), child: child),
+      ])));
+
+  Widget _featured(BuildContext context, double unit, bool large) {
+    final done = entries.where(store.isDone).length;
+    return _surface(keyName: 'home-resume', image: ivoryHomeFeature,
+      onTap: () => home.resume(context),
+      mirror: Directionality.of(context) == TextDirection.ltr,
+      // Feather only the outer botanical edge, never the left architectural scene.
+      gradient: LinearGradient(
+        begin: AlignmentDirectional.centerEnd.resolve(Directionality.of(context)),
+        end: AlignmentDirectional.centerStart.resolve(Directionality.of(context)),
+        stops: const [0, .75, 1],
+        colors: const [Color(0x00FAF6E9), Color(0x00FAF6E9), Color(0xE6FAF6E9)]),
+      // Text sits in the art's clear sky; only the real reading control has a fill.
+      child: ConstrainedBox(constraints: BoxConstraints(minHeight: 195 * unit),
+        child: Padding(padding: EdgeInsets.fromLTRB(10, 11 * unit, 14, 10 * unit),
+          child: Align(alignment: AlignmentDirectional.centerStart,
+            child: FractionallySizedBox(widthFactor: large ? .72 : .70,
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Align(alignment: AlignmentDirectional.centerStart,
+                  child: Icon(Icons.spa_outlined, size: 24 * unit, color: IvoryContrast.gold)),
+                SizedBox(height: 6 * unit),
+                UiText('لحظات من السكينة', style: text(20 * unit, bold: true)),
+                SizedBox(height: 5 * unit),
+                UiText('اختر وردك وابدأ القراءة', style: text(11.5 * unit)),
+                SizedBox(height: 13 * unit),
+                Container(width: double.infinity, padding: EdgeInsets.all(10 * unit),
+                  decoration: BoxDecoration(color: paper.withValues(alpha: .95),
+                    borderRadius: BorderRadius.circular(29),
+                    border: Border.all(color: const Color(0xFFC9BEA0), width: .75)),
+                  child: Row(children: [
+                    Icon(Icons.menu_book_outlined, color: IvoryContrast.gold, size: 24 * unit),
+                    const SizedBox(width: 8),
+                    Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      UiText('متابعة القراءة', style: text(11 * unit, bold: true)),
+                      const SizedBox(height: 6),
+                      LinearProgressIndicator(key: const Key('home-progress'), value: done / entries.length,
+                        minHeight: 5, borderRadius: BorderRadius.circular(8),
+                        color: IvoryContrast.accent, backgroundColor: const Color(0xFFE1DECE),
+                        semanticsLabel: tr(context, 'تقدم اليوم'), semanticsValue: '$done / ${entries.length}'),
+                      const SizedBox(height: 5),
+                      UiText('$done / ${entries.length} مكتمل', textDirection: TextDirection.ltr,
+                        style: text(10.5 * unit)),
+                    ])),
+                    const SizedBox(width: 9),
+                    _HomeArrow(filled: true, size: 36 * unit),
+                  ])),
+              ]))))));
+  }
+
+  Widget _category(BuildContext context, DhikrSection section, double unit) {
+    final large = MediaQuery.textScalerOf(context).scale(14) > 20;
+    final night = section == DhikrSection.sleep;
+    final morning = section == DhikrSection.morning;
+    final count = inSection(section).length;
+    final done = store.completed(section);
+    final ink = night ? homeCream : IvoryContrast.ink;
+    final icon = night ? Icons.bedtime_outlined : morning ? Icons.wb_sunny_outlined : Icons.nightlight_outlined;
+    final badge = Container(width: 48 * unit, height: 48 * unit,
+      decoration: BoxDecoration(color: morning ? const Color(0xFFD8E5CB) : paper,
+        borderRadius: BorderRadius.circular(13), border: Border.all(color: const Color(0xFFC8C5AD), width: .7)),
+      child: Icon(icon, size: 33 * unit, color: night ? const Color(0xFF426E8A) : IvoryContrast.ink));
+    final label = RepaintBoundary(
+      key: ValueKey('category-label-${section.name}-${store.themeIndex}-${store.languageCode}'),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+        UiText(sectionLabel(section), style: text((night ? 21 : 17) * unit, bold: true, color: ink)),
+        const SizedBox(height: 2), UiText('$count ذكر', style: text(12 * unit, color: ink)),
+      ]));
+    return _surface(keyName: 'home-${section.name}', image: homeArt[section.name]!,
+      onTap: () => openReader(context, store, section),
+      gradient: night ? const LinearGradient(colors: [Color(0x18002128), Color(0x30002128)])
+        : LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
+          stops: large ? const [0, .12, .25, .40, 1] : const [0, .30, .45, .65, 1],
+          colors: const [Color(0x00FAF6E9), Color(0x00FAF6E9), Color(0x40FAF6E9), Color(0xF5FAF6E9), paper]),
+      child: Padding(padding: EdgeInsets.all(11 * unit),
+        child: night ? ConstrainedBox(constraints: BoxConstraints(minHeight: 67 * unit),
+          child: Row(children: [badge, const SizedBox(width: 12), Expanded(child: label),
+            const SizedBox(width: 8), _HomeArrow(ink: ink, size: 32 * unit, complete: done == count)]))
+          : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              badge, SizedBox(height: 15 * unit),
+              Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                Expanded(child: label), const SizedBox(width: 2),
+                _HomeArrow(size: 31 * unit, complete: done == count),
+              ]),
+              if (done > 0) ...[const SizedBox(height: 5),
+                LinearProgressIndicator(value: done / count, minHeight: 3,
+                  color: IvoryContrast.accent, backgroundColor: IvoryContrast.progressTrack,
+                  semanticsLabel: tr(context, sectionLabel(section)), semanticsValue: '$done / $count')],
+            ])));
+  }
+
+  Widget _shortcuts(BuildContext context, double width, double unit, bool large) {
+    final cards = <Widget>[
+      _HomeShortcut(key: const Key('home-favorites'), label: 'المفضلة',
+        subtitle: '${store.favorites.length} ذكر', icon: Icons.favorite_border_rounded,
+        accent: IvoryContrast.gold, onTap: () => home.browse(context, favorites: true)),
+      _HomeShortcut(key: const Key('home-nawafil'), label: 'النوافل', subtitle: 'السنن والنوافل',
+        symbol: const SujoodIcon(size: 42), accent: IvoryContrast.gold,
+        onTap: () => home.destination(context, 2)),
+      _HomeShortcut(key: const Key('home-tasbih'), label: 'التسبيح', subtitle: 'عداد رقمي',
+        symbol: SizedBox.square(dimension: 34,
+          child: CustomPaint(painter: const _BeadsPainter(IvoryContrast.accent))),
+        accent: IvoryContrast.accent, onTap: () => Navigator.push(context,
+          MaterialPageRoute(builder: (_) => _HomeTasbihPage(store: store)))),
+      _HomeShortcut(key: const Key('home-all'), label: 'جميع الأذكار', subtitle: 'كل الأقسام',
+        icon: Icons.grid_view_rounded, accent: IvoryContrast.accent,
+        onTap: () => home.destination(context, 1)),
+    ];
+    final columns = large ? 2 : 4;
+    return Wrap(spacing: 7, runSpacing: 8, children: cards.map((card) => SizedBox(
+      width: (width - 7 * (columns - 1)) / columns, child: card)).toList());
+  }
+}
+
+/// The reference's full Home selection tile, restricted to the Ivory Home.
+class _IvoryHomeNavigation extends StatelessWidget {
+  const _IvoryHomeNavigation({required this.onNavigate});
+  final ValueChanged<int> onNavigate;
+  @override
+  Widget build(BuildContext context) => ColoredBox(color: _IvoryHome.paper,
+    child: SafeArea(top: false, minimum: const EdgeInsets.fromLTRB(11, 0, 11, 5),
+      child: Container(padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(color: const Color(0xFFFFFAEF),
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(color: const Color(0xFFD0C09A), width: .75)),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start,
+          children: List.generate(4, (index) {
+            const labels = ['الرئيسية', 'الأذكار', 'النوافل', 'الإعدادات'];
+            const keys = ['nav-home', 'nav-library', 'nav-nawafil', 'nav-settings'];
+            final selected = index == 0;
+            final color = selected ? IvoryContrast.gold : IvoryContrast.ink;
+            final icon = switch (index) {
+              0 => const Icon(Icons.home_rounded),
+              1 => const Icon(Icons.auto_stories_outlined),
+              2 => const SujoodIcon(size: 29),
+              _ => const Icon(Icons.settings_outlined),
+            };
+            return Expanded(child: Semantics(selected: selected, button: true,
+              child: Material(color: selected ? const Color(0xFFF5EACF) : Colors.transparent,
+                borderRadius: BorderRadius.circular(20),
+                child: InkWell(key: Key(keys[index]), borderRadius: BorderRadius.circular(20),
+                  onTap: () => onNavigate(index),
+                  child: Padding(padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                      IconTheme(data: IconThemeData(color: color, size: 28), child: icon),
+                      const SizedBox(height: 3),
+                      UiText(labels[index], textAlign: TextAlign.center,
+                        style: TextStyle(color: color, fontSize: 12, height: 1.4,
+                          fontWeight: selected ? FontWeight.w700 : FontWeight.w400)),
+                    ]))))));
+          })))));
 }
