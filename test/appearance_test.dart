@@ -208,7 +208,10 @@ void main() {
         }
         await t.ensureVisible(find.byKey(const Key('appearance-picker')));
         await t.tap(find.byKey(const Key('appearance-picker'))); await t.pumpAndSettle();
-        expect(find.byType(RadioListTile<int>), findsNWidgets(2));
+        expect(find.byKey(const Key('settings-theme-0')), findsOneWidget);
+        expect(find.byKey(const Key('settings-theme-1')), findsOneWidget);
+        expect(find.text('Midnight Teal'), findsOneWidget);
+        expect(find.text('Ivory Serenity'), findsOneWidget);
         await capture(t, 'appearance-$mode-$language-selector');
         await t.tap(find.byKey(Key('settings-theme-${1-mode}'))); await t.pumpAndSettle();
         expect(s.themeIndex, 1-mode); expect(s.tasbih, 6);
