@@ -85,7 +85,9 @@ void main() {
     await t.runAsync(() async {
       final context = t.element(find.byKey(const Key('appearance-capture')));
       await Future.wait([wirdWordmark, ivorySanctuary, ...homeArt.values,
-        const AssetImage('assets/home/botanical-serenity.webp')]
+        const AssetImage('assets/home/botanical-serenity.webp'),
+        const AssetImage('assets/appearance/ivory-home-header-v2.webp'),
+        const AssetImage('assets/appearance/ivory-home-feature-v2.webp')]
         .map((image) => precacheImage(image, context)));
     });
     await t.pumpAndSettle();
