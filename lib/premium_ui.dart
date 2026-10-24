@@ -763,7 +763,7 @@ class _IvoryHome extends StatelessWidget {
       child: Stack(children: [
         Positioned.fill(child: Transform(
           alignment: Alignment.center, transform: Matrix4.diagonal3Values(mirror ? -1 : 1, 1, 1),
-          child: Image(image: image, fit: BoxFit.cover,
+          child: Image(image: image, fit: BoxFit.cover, alignment: Alignment.topCenter,
             filterQuality: FilterQuality.high, excludeFromSemantics: true))),
         if (gradient != null) Positioned.fill(child: DecoratedBox(
           decoration: BoxDecoration(gradient: gradient))),
@@ -787,8 +787,8 @@ class _IvoryHome extends StatelessWidget {
       child: ConstrainedBox(constraints: BoxConstraints(minHeight: 195 * unit),
         child: Padding(padding: EdgeInsets.fromLTRB(10, 11 * unit, 14, 10 * unit),
           child: Align(alignment: AlignmentDirectional.centerStart,
-            child: FractionallySizedBox(widthFactor: large ? .96 : .70,
-              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            child: FractionallySizedBox(widthFactor: large ? .72 : .70,
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Align(alignment: AlignmentDirectional.centerStart,
                   child: Icon(Icons.spa_outlined, size: 24 * unit, color: IvoryContrast.gold)),
                 SizedBox(height: 6 * unit),
@@ -796,7 +796,7 @@ class _IvoryHome extends StatelessWidget {
                 SizedBox(height: 5 * unit),
                 UiText('اختر وردك وابدأ القراءة', style: text(11.5 * unit)),
                 SizedBox(height: 13 * unit),
-                Container(padding: EdgeInsets.all(10 * unit),
+                Container(width: double.infinity, padding: EdgeInsets.all(10 * unit),
                   decoration: BoxDecoration(color: paper.withValues(alpha: .95),
                     borderRadius: BorderRadius.circular(29),
                     border: Border.all(color: const Color(0xFFC9BEA0), width: .75)),
@@ -821,6 +821,7 @@ class _IvoryHome extends StatelessWidget {
   }
 
   Widget _category(BuildContext context, DhikrSection section, double unit) {
+    final large = MediaQuery.textScalerOf(context).scale(14) > 20;
     final night = section == DhikrSection.sleep;
     final morning = section == DhikrSection.morning;
     final count = inSection(section).length;
@@ -840,9 +841,9 @@ class _IvoryHome extends StatelessWidget {
     return _surface(keyName: 'home-${section.name}', image: homeArt[section.name]!,
       onTap: () => openReader(context, store, section),
       gradient: night ? const LinearGradient(colors: [Color(0x18002128), Color(0x30002128)])
-        : const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
-          stops: [0, .30, .45, .65, 1],
-          colors: [Color(0x00FAF6E9), Color(0x00FAF6E9), Color(0x40FAF6E9), Color(0xF5FAF6E9), paper]),
+        : LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
+          stops: large ? const [0, .12, .25, .40, 1] : const [0, .30, .45, .65, 1],
+          colors: const [Color(0x00FAF6E9), Color(0x00FAF6E9), Color(0x40FAF6E9), Color(0xF5FAF6E9), paper]),
       child: Padding(padding: EdgeInsets.all(11 * unit),
         child: night ? ConstrainedBox(constraints: BoxConstraints(minHeight: 67 * unit),
           child: Row(children: [badge, const SizedBox(width: 12), Expanded(child: label),

@@ -119,6 +119,31 @@ for mode,label in [('ivory','فاتح — Ivory Serenity'),('midnight','داكن
     home()
     capture(f'android-appearance-{mode}-home.png')
     if mode == 'ivory':
+        # Check the changed visible surfaces actually navigate, not just render.
+        for section in ['أذكار المساء', 'أذكار النوم']:
+            tap(section, scroll=True)
+            expect('الفضل والدليل والمعنى')
+            adb('shell','input','keyevent','KEYCODE_BACK')
+            home()
+        tap('لحظات من السكينة', scroll=True)
+        expect('الفضل والدليل والمعنى')
+        adb('shell','input','keyevent','KEYCODE_BACK')
+        home()
+        tap('ابحث عن ذكر')
+        expect('الأذكار')
+        adb('shell','input','keyevent','KEYCODE_BACK')
+        home()
+        tap('المفضلة', scroll=True)
+        expect('المفضلة')
+        adb('shell','input','keyevent','KEYCODE_BACK')
+        home()
+        tap('جميع الأذكار', scroll=True)
+        expect('الأذكار')
+        home()
+        tap('النوافل', scroll=True)
+        expect('النوافل')
+        home()
+        checks.append('Ivory Home: Continue, Evening, Bedtime, Search, Favorites, All Athkar and Nawafil navigation')
         # Exercise the new Home at 320dp, independently of the dark startup pass.
         original_size = (width, height)
         try:
