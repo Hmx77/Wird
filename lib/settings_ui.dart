@@ -392,18 +392,6 @@ class SettingsPage extends StatelessWidget {
                                   ],
                                 ),
                                 _SettingsAction(
-                                  key: Key('settings-licenses'),
-                                  icon: Icons.description_outlined,
-                                  title: 'تراخيص البرمجيات',
-                                  onTap: () => showLicensePage(
-                                    context: context,
-                                    applicationName: 'ورد — Wird',
-                                  ),
-                                ),
-                                Divider(
-                                  color: appearanceTone(context, 0x335F9D92),
-                                ),
-                                _SettingsAction(
                                   key: Key('settings-erase'),
                                   icon: Icons.delete_outline_rounded,
                                   title: 'مسح بياناتي المحلية',
