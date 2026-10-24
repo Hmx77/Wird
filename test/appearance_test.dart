@@ -71,6 +71,26 @@ void main() {
     }
   });
 
+  testWidgets('settings omit software licenses while preserving privacy and local erase', (t) async {
+    SharedPreferences.setMockInitialValues({appearancePreference: appearanceIds[1]});
+    final s = WirdState();
+    await s.initialize();
+    await t.pumpWidget(MaterialApp(
+      locale: const Locale('ar'),
+      supportedLocales: const [Locale('ar'), Locale('en')],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      theme: wirdTheme(s.palette),
+      home: Scaffold(body: SettingsPage(store: s)),
+    ));
+    await t.pumpAndSettle();
+    expect(find.byKey(const Key('settings-licenses')), findsNothing);
+    expect(find.text('تراخيص البرمجيات'), findsNothing);
+    expect(find.byKey(const Key('privacy-details')), findsOneWidget);
+    expect(find.byKey(const Key('settings-erase')), findsOneWidget);
+    await t.pumpWidget(const SizedBox.shrink());
+    s.dispose();
+  });
+
   Future<void> mount(WidgetTester t, WirdState s, Widget page, {double scale = 1}) async {
     await t.pumpWidget(AnimatedBuilder(animation: s, builder: (context, _) => MaterialApp(
       locale: Locale(s.languageCode), supportedLocales: const [Locale('ar'), Locale('en')],
