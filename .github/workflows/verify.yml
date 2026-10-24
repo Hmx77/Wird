@@ -40,7 +40,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-          fetch-depth: 32
+          fetch-depth: 0
       - name: Free unused hosted-runner toolchains for Android packaging
         run: |
           df -h /
@@ -97,7 +97,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-          fetch-depth: 32
+          fetch-depth: 0
       - name: Block cloud metadata before tool startup
         run: bash tool/ci/block_metadata.sh
       - name: Select installed Xcode 26.3 for current App Store SDK requirements
