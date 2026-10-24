@@ -499,22 +499,25 @@ class _WirdShellState extends State<WirdShell> {
       DeferredSettingsPage(store: store, active: page == 3),
     ];
     final darkSurface = p.dark;
+    final homeSurface = !p.dark && page == 0 ? _IvoryHome.paper : p.homeBackground;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: p.dark ? Colors.transparent : p.homeBackground,
+        statusBarColor: p.dark ? Colors.transparent : homeSurface,
         statusBarIconBrightness: darkSurface
             ? Brightness.light
             : Brightness.dark,
         statusBarBrightness: darkSurface ? Brightness.dark : Brightness.light,
-        systemNavigationBarColor: p.homeBackground,
+        systemNavigationBarColor: homeSurface,
         systemNavigationBarIconBrightness: p.dark ? Brightness.light : Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: p.homeBackground,
+        backgroundColor: homeSurface,
         body: SafeArea(
           child: IndexedStack(index: page, children: screens),
         ),
-        bottomNavigationBar: Container(
+        bottomNavigationBar: !p.dark && page == 0
+            ? _IvoryHomeNavigation(onNavigate: (index) => setState(() => page = index))
+            : Container(
           margin: EdgeInsets.fromLTRB(10, 4, 10, 5),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(29),

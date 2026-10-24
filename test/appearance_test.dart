@@ -200,5 +200,27 @@ void main() {
       });
     }
   }
+  for (final language in ['ar', 'en']) {
+    for (final scale in [1.0, 2.0]) {
+      testWidgets('Ivory Home 320dp $language text $scale', (t) async {
+        t.view.physicalSize = const Size(320, 700); t.view.devicePixelRatio = 1;
+        addTearDown(t.view.resetPhysicalSize); addTearDown(t.view.resetDevicePixelRatio);
+        SharedPreferences.setMockInitialValues({appearancePreference: appearanceIds[1],
+          'language': language, 'haptics': false});
+        final s = WirdState(); await s.initialize();
+        await mount(t, s, HomePage(store: s), scale: scale);
+        expect(t.takeException(), isNull);
+        await capture(t, 'ivory-home-320-$language-${scale.toInt()}-top');
+        for (final key in ['home-morning', 'home-evening', 'home-sleep', 'home-all',
+            'home-nawafil', 'home-tasbih', 'home-favorites']) {
+          await t.ensureVisible(find.byKey(Key(key))); await t.pumpAndSettle();
+          expect(t.takeException(), isNull, reason: key);
+        }
+        await capture(t, 'ivory-home-320-$language-${scale.toInt()}-bottom');
+        await t.pumpWidget(const SizedBox.shrink()); s.dispose();
+      });
+    }
+  }
+
 }
 

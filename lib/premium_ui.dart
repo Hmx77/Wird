@@ -680,7 +680,7 @@ class _IvoryHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ColoredBox(color: paper,
-    child: Center(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 760),
+    child: Align(alignment: Alignment.topCenter, child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 760),
       child: LayoutBuilder(builder: (context, box) {
         final large = MediaQuery.textScalerOf(context).scale(14) > 20;
         final inset = box.maxWidth < 360 ? 10.0 : 13.0;
@@ -721,8 +721,8 @@ class _IvoryHome extends StatelessWidget {
       Stack(alignment: Alignment.topCenter, children: [
         SizedBox(height: 115 * unit, child: Center(child: Semantics(
           label: tr(context, 'شعار ورد'), image: true,
-          child: ExcludeSemantics(child: AppearanceWordmark(key: const Key('home-wordmark'),
-            width: 158 * unit, height: 112 * unit))))),
+          child: ExcludeSemantics(child: Transform.scale(scale: 1.35, child: AppearanceWordmark(key: const Key('home-wordmark'),
+            width: 158 * unit, height: 112 * unit)))))),
         Align(alignment: Alignment.topLeft, child: Row(mainAxisSize: MainAxisSize.min,
           textDirection: TextDirection.ltr, children: [
             _headerControl(context, 'home-settings', 'الإعدادات', Icons.settings_outlined,
@@ -754,15 +754,17 @@ class _IvoryHome extends StatelessWidget {
 
   Widget _surface({required String keyName, required AssetImage image,
       required Widget child, required VoidCallback onTap, Gradient? gradient,
-      double radius = 22}) => DecoratedBox(
+      double radius = 22, bool mirror = false}) => DecoratedBox(
     decoration: BoxDecoration(borderRadius: BorderRadius.circular(radius), boxShadow: const [
       BoxShadow(color: Color(0x0A70572D), offset: Offset(0, 3), blurRadius: 9)]),
     child: Material(color: paper, clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius),
         side: const BorderSide(color: edge, width: .75)),
       child: Stack(children: [
-        Positioned.fill(child: Image(image: image, fit: BoxFit.cover,
-          filterQuality: FilterQuality.high, excludeFromSemantics: true)),
+        Positioned.fill(child: Transform(
+          alignment: Alignment.center, transform: Matrix4.diagonal3Values(mirror ? -1 : 1, 1, 1),
+          child: Image(image: image, fit: BoxFit.cover,
+            filterQuality: FilterQuality.high, excludeFromSemantics: true))),
         if (gradient != null) Positioned.fill(child: DecoratedBox(
           decoration: BoxDecoration(gradient: gradient))),
         InkWell(key: Key(keyName), onTap: onTap,
@@ -774,6 +776,13 @@ class _IvoryHome extends StatelessWidget {
     final done = entries.where(store.isDone).length;
     return _surface(keyName: 'home-resume', image: ivoryHomeFeature,
       onTap: () => home.resume(context),
+      mirror: Directionality.of(context) == TextDirection.ltr,
+      // Feather only the outer botanical edge, never the left architectural scene.
+      gradient: LinearGradient(
+        begin: AlignmentDirectional.centerEnd.resolve(Directionality.of(context)),
+        end: AlignmentDirectional.centerStart.resolve(Directionality.of(context)),
+        stops: const [0, .75, 1],
+        colors: const [Color(0x00FAF6E9), Color(0x00FAF6E9), Color(0xE6FAF6E9)]),
       // Text sits in the art's clear sky; only the real reading control has a fill.
       child: ConstrainedBox(constraints: BoxConstraints(minHeight: 195 * unit),
         child: Padding(padding: EdgeInsets.fromLTRB(10, 11 * unit, 14, 10 * unit),
@@ -832,8 +841,8 @@ class _IvoryHome extends StatelessWidget {
       onTap: () => openReader(context, store, section),
       gradient: night ? const LinearGradient(colors: [Color(0x18002128), Color(0x30002128)])
         : const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
-          stops: [0, .35, .55, .77, 1],
-          colors: [Color(0x00FAF6E9), Color(0x00FAF6E9), Color(0x40FAF6E9), Color(0xE8FAF6E9), paper]),
+          stops: [0, .30, .45, .65, 1],
+          colors: [Color(0x00FAF6E9), Color(0x00FAF6E9), Color(0x40FAF6E9), Color(0xF5FAF6E9), paper]),
       child: Padding(padding: EdgeInsets.all(11 * unit),
         child: night ? ConstrainedBox(constraints: BoxConstraints(minHeight: 67 * unit),
           child: Row(children: [badge, const SizedBox(width: 12), Expanded(child: label),
@@ -872,4 +881,43 @@ class _IvoryHome extends StatelessWidget {
     return Wrap(spacing: 7, runSpacing: 8, children: cards.map((card) => SizedBox(
       width: (width - 7 * (columns - 1)) / columns, child: card)).toList());
   }
+}
+
+/// The reference's full Home selection tile, restricted to the Ivory Home.
+class _IvoryHomeNavigation extends StatelessWidget {
+  const _IvoryHomeNavigation({required this.onNavigate});
+  final ValueChanged<int> onNavigate;
+  @override
+  Widget build(BuildContext context) => ColoredBox(color: _IvoryHome.paper,
+    child: SafeArea(top: false, minimum: const EdgeInsets.fromLTRB(11, 0, 11, 5),
+      child: Container(padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(color: const Color(0xFFFFFAEF),
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(color: const Color(0xFFD0C09A), width: .75)),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start,
+          children: List.generate(4, (index) {
+            const labels = ['الرئيسية', 'الأذكار', 'النوافل', 'الإعدادات'];
+            const keys = ['nav-home', 'nav-library', 'nav-nawafil', 'nav-settings'];
+            final selected = index == 0;
+            final color = selected ? IvoryContrast.gold : IvoryContrast.ink;
+            final icon = switch (index) {
+              0 => const Icon(Icons.home_rounded),
+              1 => const Icon(Icons.auto_stories_outlined),
+              2 => const SujoodIcon(size: 29),
+              _ => const Icon(Icons.settings_outlined),
+            };
+            return Expanded(child: Semantics(selected: selected, button: true,
+              child: Material(color: selected ? const Color(0xFFF5EACF) : Colors.transparent,
+                borderRadius: BorderRadius.circular(20),
+                child: InkWell(key: Key(keys[index]), borderRadius: BorderRadius.circular(20),
+                  onTap: () => onNavigate(index),
+                  child: Padding(padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                      IconTheme(data: IconThemeData(color: color, size: 28), child: icon),
+                      const SizedBox(height: 3),
+                      UiText(labels[index], textAlign: TextAlign.center,
+                        style: TextStyle(color: color, fontSize: 12, height: 1.4,
+                          fontWeight: selected ? FontWeight.w700 : FontWeight.w400)),
+                    ]))))));
+          })))));
 }
