@@ -115,9 +115,39 @@ for mode,label in [('ivory','Ivory Serenity'),('midnight','Midnight Teal')]:
     for expected in ['Midnight Teal','Ivory Serenity']: assert expected in all_text
     for retired in ['Olive & Cream','Ocean Blue','Mocha & Sand','Soft Lavender','Emerald & Gold','Midnight Blue','Charcoal & Sage','Dusty Rose & Stone','Stone & Teal','Sage & Ivory']:
         assert retired not in all_text, retired
-    capture(f'android-appearance-{mode}-selector.png')
     tap(label)
     capture(f'android-appearance-{mode}-settings.png')
+    tap('المظهر',scroll=True,clickable=True)
+    capture(f'android-appearance-{mode}-selector.png')
+    adb('shell','input','keyevent','KEYCODE_BACK')
+    tap('التفاصيل والمصادر',scroll=True)
+    expect('لا حسابات ولا إعلانات')
+    capture(f'android-appearance-{mode}-settings-bottom.png')
+    assert not any('تراخيص البرمجيات' in (n.get('text','') + n.get('content-desc','')) for n in snapshot())
+    # Samsung-sized viewport, both themes, scrollable sheet and real choice.
+    saved_size = (width, height)
+    try:
+        adb('shell','wm','size','640x1136')
+        adb('shell','wm','density','320')
+        width, height = 640, 1136
+        time.sleep(2)
+        top()
+        capture(f'android-{mode}-settings-320dp.png')
+        tap('المظهر',scroll=True,clickable=True)
+        capture(f'android-{mode}-selector-320dp.png')
+        tap(label,scroll=True,allow_bottom=True)
+        adb('shell','settings','put','system','font_scale','2.0')
+        time.sleep(2)
+        top()
+        tap('المظهر',scroll=True,clickable=True)
+        capture(f'android-{mode}-selector-320dp-text200.png')
+        tap(label,scroll=True,allow_bottom=True)
+    finally:
+        adb('shell','settings','put','system','font_scale','1.0')
+        adb('shell','wm','size','reset')
+        adb('shell','wm','density','reset')
+        width, height = saved_size
+        time.sleep(2)
     home()
     capture(f'android-appearance-{mode}-home.png')
     if mode == 'ivory':
