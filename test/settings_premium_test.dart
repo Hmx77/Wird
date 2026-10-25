@@ -81,6 +81,19 @@ void main() {
             await t.pumpAndSettle();
             expect(t.takeException(), isNull);
           }
+          await tap(t, 'appearance-picker');
+          final dark = find.byKey(const Key('settings-theme-0'));
+          final light = find.byKey(const Key('settings-theme-1'));
+          expect(dark, findsOneWidget);
+          expect(light, findsOneWidget);
+          expect(t.getSize(dark).height, t.getSize(light).height);
+          for (final entry in {dark: 'Midnight Teal', light: 'Ivory Serenity'}.entries) {
+            final name = find.descendant(of: entry.key, matching: find.text(entry.value));
+            expect(t.widget<Text>(name).textDirection, TextDirection.ltr);
+          }
+          await tap(t, 'settings-theme-${1 - theme}');
+          expect(s.themeIndex, 1 - theme);
+          expect(t.takeException(), isNull);
           await finish(t, s);
         },
       );

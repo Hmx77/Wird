@@ -3,6 +3,14 @@ part of 'main.dart';
 const settingsPrivacyCopy =
     'لا حسابات ولا إعلانات ولا تحليلات ولا قاعدة بيانات خارجية. تحفظ المتابعة على جهازك. أضف ودجت ورد من الشاشة الرئيسية. الصوت لا يتاح إلا بعد اعتماد التسجيل وترخيصه. أوقات التذكير اختيار شخصي وليست تحديدًا شرعيًا.';
 
+/// Settings typography follows the same roles in Arabic and English.
+abstract final class SettingsTypography {
+  static const heading = TextStyle(fontSize: 24, fontWeight: FontWeight.w600, height: 1.5);
+  static const title = TextStyle(fontSize: 18, fontWeight: FontWeight.w600, height: 1.6);
+  static const supporting = TextStyle(fontSize: 14, height: 1.6);
+  static const value = TextStyle(fontSize: 15, fontWeight: FontWeight.w500, height: 1.6);
+}
+
 /// Uses the existing preference setters; no data migration or new storage keys.
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key, required this.store});
@@ -74,7 +82,7 @@ class SettingsPage extends StatelessWidget {
                                 'النص الديني بالعربية؛ الترجمة الإنجليزية قيد المراجعة.',
                                 style: TextStyle(
                                   color: AppAppearance.of(context).ink,
-                                  fontSize: 12,
+                                  fontSize: 14,
                                 ),
                               ),
                             ),
@@ -88,7 +96,11 @@ class SettingsPage extends StatelessWidget {
                               child: _SettingsControl(
                                 icon: Icons.palette_outlined,
                                 title: 'المظهر',
-                                subtitle: themes[store.themeIndex].name,
+                                subtitleWidget: Text(
+                                  store.themeIndex == 0 ? 'Midnight Teal' : 'Ivory Serenity',
+                                  textDirection: TextDirection.ltr,
+                                  style: SettingsTypography.supporting.copyWith(color: AppAppearance.of(context).muted),
+                                ),
                                 control: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -212,7 +224,7 @@ class SettingsPage extends StatelessWidget {
                                   'هدف شخصي، وليس عددًا تعبديًا منصوصًا.',
                                   style: TextStyle(
                                     color: AppAppearance.of(context).ink,
-                                    fontSize: 12,
+                                    fontSize: 14,
                                     height: 1.8,
                                   ),
                                 ),
@@ -366,7 +378,7 @@ class SettingsPage extends StatelessWidget {
                                   style: TextStyle(
                                     color: AppAppearance.of(context).ink,
                                     height: 1.8,
-                                    fontSize: 13,
+                                    fontSize: 14,
                                   ),
                                 ),
                                 ExpansionTile(
@@ -377,7 +389,9 @@ class SettingsPage extends StatelessWidget {
                                     'التفاصيل والمصادر',
                                     style: TextStyle(
                                       color: AppAppearance.of(context).gold,
-                                      fontSize: 14,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.6,
                                     ),
                                   ),
                                   children: [
@@ -386,7 +400,7 @@ class SettingsPage extends StatelessWidget {
                                       style: TextStyle(
                                         color: AppAppearance.of(context).ink,
                                         height: 1.9,
-                                        fontSize: 13,
+                                        fontSize: 14,
                                       ),
                                     ),
                                   ],
@@ -429,7 +443,8 @@ class SettingsPage extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(20, 0, 20, 24),
             child: Column(
               children: [
-                SettingsHeading('المظهر', icon: Icons.palette_outlined),
+                Align(alignment: AlignmentDirectional.centerStart,
+                  child: UiText('المظهر', style: SettingsTypography.heading.copyWith(color: AppAppearance.of(context).ink))),
                 SizedBox(height: 12),
                 Align(alignment: AlignmentDirectional.centerStart,
                   child: Text(Directionality.of(c) == TextDirection.rtl
@@ -635,7 +650,8 @@ class SettingsHeading extends StatelessWidget {
           title,
           style: TextStyle(
             color: AppAppearance.of(context).ink,
-            fontSize: 20,
+            fontSize: 18,
+            height: 1.6,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -680,10 +696,12 @@ class _SettingsControl extends StatelessWidget {
     required this.title,
     required this.control,
     this.subtitle,
+    this.subtitleWidget,
   });
   final IconData icon;
   final String title;
   final String? subtitle;
+  final Widget? subtitleWidget;
   final Widget control;
   @override
   Widget build(BuildContext context) => LayoutBuilder(
@@ -705,6 +723,8 @@ class _SettingsControl extends StatelessWidget {
                     height: 1.6,
                   ),
                 ),
+                if (subtitleWidget != null)
+                  Align(alignment: AlignmentDirectional.centerStart, child: subtitleWidget!),
                 if (subtitle != null)
                   UiText(
                     subtitle!,
@@ -719,11 +739,12 @@ class _SettingsControl extends StatelessWidget {
           ),
         ],
       );
-      if (c.maxWidth < 300 && MediaQuery.textScalerOf(context).scale(1) > 1.3)
+      if (c.maxWidth < 320 || MediaQuery.textScalerOf(context).scale(1) > 1.3)
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             label,
+            const SizedBox(height: 8),
             Align(alignment: AlignmentDirectional.centerEnd, child: control),
           ],
         );
@@ -763,8 +784,9 @@ class _SettingsAction extends StatelessWidget {
               title,
               style: TextStyle(
                 color: AppAppearance.of(context).ink,
-                fontSize: 15,
-                height: 1.8,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                height: 1.6,
               ),
             ),
           ),
@@ -825,9 +847,9 @@ class _SettingsHeader extends StatelessWidget {
                     'الإعدادات',
                     style: TextStyle(
                       color: AppAppearance.of(context).gold,
-                      fontSize: 34,
+                      fontSize: 24,
                       height: 1.5,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   SizedBox(height: 4),
@@ -911,6 +933,25 @@ class _AppearanceChoice extends StatelessWidget {
   final int index;
   final bool selected;
   final VoidCallback onTap;
+  double _choiceHeight(BuildContext context) {
+    final rtl = Directionality.of(context) == TextDirection.rtl;
+    // Sheet padding + card padding + preview + gaps + selection indicator.
+    final width = (MediaQuery.sizeOf(context).width - 184).clamp(48.0, double.infinity);
+    double height(String label, TextStyle style, TextDirection direction) {
+      final painter = TextPainter(text: TextSpan(text: label, style: style.copyWith(fontFamily: 'NotoSansArabic')),
+        textDirection: direction, textScaler: MediaQuery.textScalerOf(context))..layout(maxWidth: width);
+      final result = painter.height;
+      painter.dispose();
+      return result;
+    }
+    final direction = rtl ? TextDirection.rtl : TextDirection.ltr;
+    final titles = rtl ? ['الوضع الداكن', 'الوضع الفاتح'] : ['Dark appearance', 'Light appearance'];
+    final titleHeight = titles.map((t) => height(t, SettingsTypography.title, direction)).reduce((a, b) => a > b ? a : b);
+    final subtitleHeight = ['Midnight Teal', 'Ivory Serenity'].map((t) => height(t,
+      SettingsTypography.supporting, TextDirection.ltr)).reduce((a, b) => a > b ? a : b);
+    final contentHeight = 32 + titleHeight + 3 + subtitleHeight;
+    return contentHeight > 100 ? contentHeight : 100;
+  }
   @override
   Widget build(BuildContext context) {
     final a = AppAppearance.of(context);
@@ -924,7 +965,7 @@ class _AppearanceChoice extends StatelessWidget {
             width: selected ? 1.5 : .8)),
         clipBehavior: Clip.antiAlias,
         child: InkWell(key: Key('settings-theme-$index'), onTap: onTap,
-          child: ConstrainedBox(constraints: const BoxConstraints(minHeight: 100),
+          child: ConstrainedBox(constraints: BoxConstraints(minHeight: _choiceHeight(context)),
             child: Padding(padding: const EdgeInsets.all(16),
               child: Row(children: [
                 Container(width: 52, height: 52,
