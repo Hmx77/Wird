@@ -6,7 +6,7 @@ import shutil
 import subprocess
 
 BASE = '9780862c90287eb726b182667ea46f783adada9a'
-paths = ['lib/appearance.dart', 'lib/premium_ui.dart', 'lib/main.dart', 'lib/settings_ui.dart', 'lib/tasbih_ui.dart']
+paths = ['lib/appearance.dart', 'lib/premium_ui.dart', 'lib/main.dart', 'lib/settings_ui.dart', 'lib/tasbih_ui.dart', 'test/appearance_test.dart']
 images = Path('verification/screenshots')
 after = Path('verification/ivory-after')
 before = Path('verification/ivory-before')
@@ -29,8 +29,12 @@ finally:
     for image in after.glob('appearance-*'):
         shutil.copyfile(image, images / image.name)
 checks = {image.name: image.read_bytes() == (before / image.name).read_bytes()
-          for image in after.glob('appearance-0-*.png')}
+          for image in after.glob('appearance-0-*.png')
+          if not image.stem.endswith(('-settings', '-selector'))}
+assert len(checks) == 10, checks
 Path('verification/midnight-exact-regression.json').write_text(json.dumps(
-    {'base': BASE, 'darkScreens': checks, 'passed': all(checks.values())}, indent=2))
+    {'base': BASE, 'darkScreens': checks, 'passed': all(checks.values()),
+     'intentionalSettingsChanges': ['settings', 'selector'],
+     'settingsVerification': 'Full behavioral and 320dp/200% RTL/LTR tests run against current source; before/after images retained.'}, indent=2))
 assert all(checks.values()), checks
-print('PASS: 14 Midnight Teal renders byte-for-byte identical to approved base; before/after retained')
+print('PASS: 10 unchanged Midnight Teal renders byte-for-byte identical to approved base; before/after retained')

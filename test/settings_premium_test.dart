@@ -91,7 +91,8 @@ void main() {
     (t) async {
       final s = await mount(t);
       await tap(t, 'appearance-picker');
-      expect(find.byType(RadioListTile<int>), findsNWidgets(2));
+      expect(find.byKey(const Key('settings-theme-0')), findsOneWidget);
+      expect(find.byKey(const Key('settings-theme-1')), findsOneWidget);
       await tap(t, 'settings-theme-1');
       expect(s.themeIndex, 1);
       await tap(t, 'language-picker');
@@ -196,8 +197,16 @@ void main() {
       expect(s.tasbih, 0);
       await tap(t, 'privacy-details');
       expect(find.text(settingsPrivacyCopy), findsOneWidget);
-      await tap(t, 'settings-licenses');
-      expect(find.byType(LicensePage), findsOneWidget);
+      expect(find.byKey(const Key('settings-licenses')), findsNothing);
+      expect(find.text('تراخيص البرمجيات'), findsNothing);
+      await tap(t, 'settings-erase');
+      expect(find.byKey(const Key('confirm-local-erase')), findsOneWidget);
+      await t.tap(find.text('إلغاء'));
+      await t.pumpAndSettle();
+      expect(s.favorites, contains('test'));
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getInt('reminder.morning.hour'), 9);
+      expect(prefs.getInt('reminder.morning.minute'), 35);
       await finish(t, s);
     },
   );

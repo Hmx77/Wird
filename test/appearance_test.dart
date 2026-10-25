@@ -210,8 +210,8 @@ void main() {
         await t.tap(find.byKey(const Key('appearance-picker'))); await t.pumpAndSettle();
         expect(find.byKey(const Key('settings-theme-0')), findsOneWidget);
         expect(find.byKey(const Key('settings-theme-1')), findsOneWidget);
-        expect(find.text('Midnight Teal'), findsOneWidget);
-        expect(find.text('Ivory Serenity'), findsOneWidget);
+        expect(find.descendant(of: find.byKey(const Key('settings-theme-0')), matching: find.text('Midnight Teal')), findsOneWidget);
+        expect(find.descendant(of: find.byKey(const Key('settings-theme-1')), matching: find.text('Ivory Serenity')), findsOneWidget);
         await capture(t, 'appearance-$mode-$language-selector');
         await t.tap(find.byKey(Key('settings-theme-${1-mode}'))); await t.pumpAndSettle();
         expect(s.themeIndex, 1-mode); expect(s.tasbih, 6);

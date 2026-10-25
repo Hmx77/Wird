@@ -2,7 +2,6 @@ name: Wird verification
 on:
   push:
     branches: [main, "redesign/**"]
-    paths-ignore: ["tool/ci/appearance_device_smoke.py", ".github/workflows/ivory-native-recheck.yml"]
   pull_request:
   workflow_dispatch:
     inputs:
@@ -33,7 +32,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   android:
-    if: (github.event_name != 'pull_request' || github.head_ref != 'redesign/ivory-settings-integration-20261024') && (github.event_name != 'workflow_dispatch' || inputs.build_android)
+    if: github.event_name != 'workflow_dispatch' || inputs.build_android
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     steps:
