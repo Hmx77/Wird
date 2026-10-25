@@ -1,11 +1,11 @@
 {
   "longestFlatSecondsAfter2s": 0.0,
-  "cinematicCandidateFramesAfter2s": 51,
+  "cinematicCandidateFramesAfter2s": 89,
   "unexpectedFramesAfterScene": [],
   "frames": [
     {
       "seconds": 0.0,
-      "deviation": 26.71,
+      "deviation": 26.73,
       "warmFraction": 0.0318,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -15,7 +15,7 @@
     },
     {
       "seconds": 0.1,
-      "deviation": 26.71,
+      "deviation": 26.73,
       "warmFraction": 0.0318,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -25,7 +25,7 @@
     },
     {
       "seconds": 0.2,
-      "deviation": 26.71,
+      "deviation": 26.73,
       "warmFraction": 0.0318,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -35,7 +35,7 @@
     },
     {
       "seconds": 0.3,
-      "deviation": 26.71,
+      "deviation": 26.73,
       "warmFraction": 0.0318,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -45,7 +45,7 @@
     },
     {
       "seconds": 0.4,
-      "deviation": 26.71,
+      "deviation": 26.73,
       "warmFraction": 0.0318,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -55,7 +55,7 @@
     },
     {
       "seconds": 0.5,
-      "deviation": 26.71,
+      "deviation": 26.73,
       "warmFraction": 0.0318,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -65,7 +65,7 @@
     },
     {
       "seconds": 0.6,
-      "deviation": 26.71,
+      "deviation": 26.73,
       "warmFraction": 0.0318,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -75,7 +75,7 @@
     },
     {
       "seconds": 0.7,
-      "deviation": 26.71,
+      "deviation": 26.73,
       "warmFraction": 0.0318,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -85,27 +85,17 @@
     },
     {
       "seconds": 0.8,
-      "deviation": 26.71,
-      "warmFraction": 0.0318,
+      "deviation": 26.75,
+      "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
       "sceneCandidate": false,
-      "homeCorrelation": -0.021,
+      "homeCorrelation": -0.02,
       "homeCandidate": false
     },
     {
       "seconds": 0.9,
       "deviation": 26.74,
-      "warmFraction": 0.0312,
-      "sceneCorrelation": 0.016,
-      "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": -0.021,
-      "homeCandidate": false
-    },
-    {
-      "seconds": 1.0,
-      "deviation": 26.73,
       "warmFraction": 0.0318,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -114,8 +104,8 @@
       "homeCandidate": false
     },
     {
-      "seconds": 1.1,
-      "deviation": 26.96,
+      "seconds": 1.0,
+      "deviation": 26.97,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -124,8 +114,18 @@
       "homeCandidate": false
     },
     {
+      "seconds": 1.1,
+      "deviation": 27.44,
+      "warmFraction": 0.0312,
+      "sceneCorrelation": 0.016,
+      "flat": false,
+      "sceneCandidate": false,
+      "homeCorrelation": -0.016,
+      "homeCandidate": false
+    },
+    {
       "seconds": 1.2,
-      "deviation": 27.43,
+      "deviation": 27.44,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -135,7 +135,7 @@
     },
     {
       "seconds": 1.3,
-      "deviation": 27.43,
+      "deviation": 27.44,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -145,37 +145,37 @@
     },
     {
       "seconds": 1.4,
-      "deviation": 27.43,
+      "deviation": 26.76,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
       "sceneCandidate": false,
-      "homeCorrelation": -0.016,
+      "homeCorrelation": -0.021,
       "homeCandidate": false
     },
     {
       "seconds": 1.5,
-      "deviation": 27.43,
+      "deviation": 26.81,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
       "sceneCandidate": false,
-      "homeCorrelation": -0.016,
+      "homeCorrelation": -0.021,
       "homeCandidate": false
     },
     {
       "seconds": 1.6,
-      "deviation": 27.43,
+      "deviation": 26.99,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
       "sceneCandidate": false,
-      "homeCorrelation": -0.016,
+      "homeCorrelation": -0.02,
       "homeCandidate": false
     },
     {
       "seconds": 1.7,
-      "deviation": 27.43,
+      "deviation": 27.44,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -185,7 +185,7 @@
     },
     {
       "seconds": 1.8,
-      "deviation": 27.43,
+      "deviation": 27.44,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -195,7 +195,7 @@
     },
     {
       "seconds": 1.9,
-      "deviation": 27.43,
+      "deviation": 27.44,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -205,7 +205,7 @@
     },
     {
       "seconds": 2.0,
-      "deviation": 27.43,
+      "deviation": 27.44,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -215,7 +215,7 @@
     },
     {
       "seconds": 2.1,
-      "deviation": 27.43,
+      "deviation": 27.44,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -225,7 +225,7 @@
     },
     {
       "seconds": 2.2,
-      "deviation": 27.43,
+      "deviation": 27.44,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -235,7 +235,7 @@
     },
     {
       "seconds": 2.3,
-      "deviation": 27.43,
+      "deviation": 27.44,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -245,7 +245,7 @@
     },
     {
       "seconds": 2.4,
-      "deviation": 27.43,
+      "deviation": 27.44,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -255,7 +255,7 @@
     },
     {
       "seconds": 2.5,
-      "deviation": 27.43,
+      "deviation": 27.44,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -265,7 +265,7 @@
     },
     {
       "seconds": 2.6,
-      "deviation": 27.43,
+      "deviation": 27.44,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -275,7 +275,7 @@
     },
     {
       "seconds": 2.7,
-      "deviation": 27.43,
+      "deviation": 27.44,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -285,7 +285,7 @@
     },
     {
       "seconds": 2.8,
-      "deviation": 27.43,
+      "deviation": 27.44,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -295,7 +295,7 @@
     },
     {
       "seconds": 2.9,
-      "deviation": 27.43,
+      "deviation": 27.44,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -305,7 +305,7 @@
     },
     {
       "seconds": 3.0,
-      "deviation": 27.43,
+      "deviation": 27.44,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -315,7 +315,7 @@
     },
     {
       "seconds": 3.1,
-      "deviation": 27.43,
+      "deviation": 27.44,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -325,27 +325,7 @@
     },
     {
       "seconds": 3.2,
-      "deviation": 27.56,
-      "warmFraction": 0.0312,
-      "sceneCorrelation": 0.016,
-      "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": -0.017,
-      "homeCandidate": false
-    },
-    {
-      "seconds": 3.3,
-      "deviation": 27.56,
-      "warmFraction": 0.0312,
-      "sceneCorrelation": 0.016,
-      "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": -0.017,
-      "homeCandidate": false
-    },
-    {
-      "seconds": 3.4,
-      "deviation": 27.45,
+      "deviation": 27.44,
       "warmFraction": 0.0312,
       "sceneCorrelation": 0.016,
       "flat": false,
@@ -354,38 +334,58 @@
       "homeCandidate": false
     },
     {
-      "seconds": 3.5,
-      "deviation": 32.02,
-      "warmFraction": 0.1922,
-      "sceneCorrelation": 0.978,
+      "seconds": 3.3,
+      "deviation": 28.12,
+      "warmFraction": 0.0312,
+      "sceneCorrelation": 0.011,
       "flat": false,
-      "sceneCandidate": true,
-      "homeCorrelation": -0.029,
+      "sceneCandidate": false,
+      "homeCorrelation": -0.01,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 3.4,
+      "deviation": 28.12,
+      "warmFraction": 0.0312,
+      "sceneCorrelation": 0.011,
+      "flat": false,
+      "sceneCandidate": false,
+      "homeCorrelation": -0.01,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 3.5,
+      "deviation": 28.12,
+      "warmFraction": 0.0312,
+      "sceneCorrelation": 0.011,
+      "flat": false,
+      "sceneCandidate": false,
+      "homeCorrelation": -0.01,
       "homeCandidate": false
     },
     {
       "seconds": 3.6,
-      "deviation": 32.02,
-      "warmFraction": 0.1922,
-      "sceneCorrelation": 0.978,
+      "deviation": 28.12,
+      "warmFraction": 0.0312,
+      "sceneCorrelation": 0.011,
       "flat": false,
-      "sceneCandidate": true,
-      "homeCorrelation": -0.029,
+      "sceneCandidate": false,
+      "homeCorrelation": -0.01,
       "homeCandidate": false
     },
     {
       "seconds": 3.7,
-      "deviation": 32.02,
-      "warmFraction": 0.1922,
-      "sceneCorrelation": 0.978,
+      "deviation": 28.12,
+      "warmFraction": 0.0312,
+      "sceneCorrelation": 0.011,
       "flat": false,
-      "sceneCandidate": true,
-      "homeCorrelation": -0.029,
+      "sceneCandidate": false,
+      "homeCorrelation": -0.01,
       "homeCandidate": false
     },
     {
       "seconds": 3.8,
-      "deviation": 32.02,
+      "deviation": 32.01,
       "warmFraction": 0.1922,
       "sceneCorrelation": 0.978,
       "flat": false,
@@ -395,7 +395,7 @@
     },
     {
       "seconds": 3.9,
-      "deviation": 32.02,
+      "deviation": 32.01,
       "warmFraction": 0.1922,
       "sceneCorrelation": 0.978,
       "flat": false,
@@ -405,7 +405,7 @@
     },
     {
       "seconds": 4.0,
-      "deviation": 32.02,
+      "deviation": 32.01,
       "warmFraction": 0.1922,
       "sceneCorrelation": 0.978,
       "flat": false,
@@ -415,7 +415,7 @@
     },
     {
       "seconds": 4.1,
-      "deviation": 32.02,
+      "deviation": 32.01,
       "warmFraction": 0.1922,
       "sceneCorrelation": 0.978,
       "flat": false,
@@ -425,7 +425,7 @@
     },
     {
       "seconds": 4.2,
-      "deviation": 32.02,
+      "deviation": 32.01,
       "warmFraction": 0.1922,
       "sceneCorrelation": 0.978,
       "flat": false,
@@ -435,7 +435,7 @@
     },
     {
       "seconds": 4.3,
-      "deviation": 32.02,
+      "deviation": 32.01,
       "warmFraction": 0.1922,
       "sceneCorrelation": 0.978,
       "flat": false,
@@ -715,16 +715,296 @@
     },
     {
       "seconds": 7.1,
-      "deviation": 31.7,
-      "warmFraction": 0.1948,
-      "sceneCorrelation": 0.999,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
       "flat": false,
       "sceneCandidate": true,
-      "homeCorrelation": -0.028,
+      "homeCorrelation": -0.029,
       "homeCandidate": false
     },
     {
       "seconds": 7.2,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 7.3,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 7.4,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 7.5,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 7.6,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 7.7,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 7.8,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 7.9,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 8.0,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 8.1,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 8.2,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 8.3,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 8.4,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 8.5,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 8.6,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 8.7,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 8.8,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 8.9,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 9.0,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 9.1,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 9.2,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 9.3,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 9.4,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 9.5,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 9.6,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 9.7,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 9.8,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 9.9,
+      "deviation": 32.02,
+      "warmFraction": 0.1922,
+      "sceneCorrelation": 0.978,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.029,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 10.0,
       "deviation": 31.7,
       "warmFraction": 0.1948,
       "sceneCorrelation": 0.999,
@@ -734,437 +1014,277 @@
       "homeCandidate": false
     },
     {
-      "seconds": 7.3,
-      "deviation": 32.06,
-      "warmFraction": 0.1938,
-      "sceneCorrelation": 0.976,
-      "flat": false,
-      "sceneCandidate": true,
-      "homeCorrelation": -0.028,
-      "homeCandidate": false
-    },
-    {
-      "seconds": 7.4,
-      "deviation": 32.06,
-      "warmFraction": 0.1938,
-      "sceneCorrelation": 0.976,
-      "flat": false,
-      "sceneCandidate": true,
-      "homeCorrelation": -0.028,
-      "homeCandidate": false
-    },
-    {
-      "seconds": 7.5,
-      "deviation": 32.06,
-      "warmFraction": 0.1938,
-      "sceneCorrelation": 0.976,
-      "flat": false,
-      "sceneCandidate": true,
-      "homeCorrelation": -0.028,
-      "homeCandidate": false
-    },
-    {
-      "seconds": 7.6,
-      "deviation": 32.06,
-      "warmFraction": 0.1938,
-      "sceneCorrelation": 0.976,
-      "flat": false,
-      "sceneCandidate": true,
-      "homeCorrelation": -0.028,
-      "homeCandidate": false
-    },
-    {
-      "seconds": 7.7,
-      "deviation": 32.06,
-      "warmFraction": 0.1938,
-      "sceneCorrelation": 0.976,
-      "flat": false,
-      "sceneCandidate": true,
-      "homeCorrelation": -0.028,
-      "homeCandidate": false
-    },
-    {
-      "seconds": 7.8,
-      "deviation": 32.06,
-      "warmFraction": 0.1932,
-      "sceneCorrelation": 0.976,
-      "flat": false,
-      "sceneCandidate": true,
-      "homeCorrelation": -0.028,
-      "homeCandidate": false
-    },
-    {
-      "seconds": 7.9,
-      "deviation": 32.06,
-      "warmFraction": 0.1932,
-      "sceneCorrelation": 0.976,
-      "flat": false,
-      "sceneCandidate": true,
-      "homeCorrelation": -0.028,
-      "homeCandidate": false
-    },
-    {
-      "seconds": 8.0,
-      "deviation": 32.06,
-      "warmFraction": 0.1932,
-      "sceneCorrelation": 0.976,
-      "flat": false,
-      "sceneCandidate": true,
-      "homeCorrelation": -0.028,
-      "homeCandidate": false
-    },
-    {
-      "seconds": 8.1,
-      "deviation": 32.06,
-      "warmFraction": 0.1932,
-      "sceneCorrelation": 0.976,
-      "flat": false,
-      "sceneCandidate": true,
-      "homeCorrelation": -0.028,
-      "homeCandidate": false
-    },
-    {
-      "seconds": 8.2,
-      "deviation": 32.06,
-      "warmFraction": 0.1932,
-      "sceneCorrelation": 0.976,
-      "flat": false,
-      "sceneCandidate": true,
-      "homeCorrelation": -0.028,
-      "homeCandidate": false
-    },
-    {
-      "seconds": 8.3,
-      "deviation": 32.06,
-      "warmFraction": 0.1932,
-      "sceneCorrelation": 0.976,
-      "flat": false,
-      "sceneCandidate": true,
-      "homeCorrelation": -0.028,
-      "homeCandidate": false
-    },
-    {
-      "seconds": 8.4,
-      "deviation": 32.06,
-      "warmFraction": 0.1932,
-      "sceneCorrelation": 0.976,
-      "flat": false,
-      "sceneCandidate": true,
-      "homeCorrelation": -0.028,
-      "homeCandidate": false
-    },
-    {
-      "seconds": 8.5,
-      "deviation": 32.06,
-      "warmFraction": 0.1932,
-      "sceneCorrelation": 0.976,
-      "flat": false,
-      "sceneCandidate": true,
-      "homeCorrelation": -0.028,
-      "homeCandidate": false
-    },
-    {
-      "seconds": 8.6,
-      "deviation": 31.62,
-      "warmFraction": 0.1005,
-      "sceneCorrelation": -0.027,
-      "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
-    },
-    {
-      "seconds": 8.7,
-      "deviation": 31.59,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
-      "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
-    },
-    {
-      "seconds": 8.8,
-      "deviation": 31.59,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
-      "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
-    },
-    {
-      "seconds": 8.9,
-      "deviation": 31.59,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
-      "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
-    },
-    {
-      "seconds": 9.0,
-      "deviation": 31.59,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
-      "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
-    },
-    {
-      "seconds": 9.1,
-      "deviation": 31.59,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
-      "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
-    },
-    {
-      "seconds": 9.2,
-      "deviation": 31.59,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
-      "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
-    },
-    {
-      "seconds": 9.3,
-      "deviation": 31.59,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
-      "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
-    },
-    {
-      "seconds": 9.4,
-      "deviation": 31.59,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
-      "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
-    },
-    {
-      "seconds": 9.5,
-      "deviation": 31.59,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
-      "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
-    },
-    {
-      "seconds": 9.6,
-      "deviation": 31.59,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
-      "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
-    },
-    {
-      "seconds": 9.7,
-      "deviation": 31.59,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
-      "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
-    },
-    {
-      "seconds": 9.8,
-      "deviation": 31.59,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
-      "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
-    },
-    {
-      "seconds": 9.9,
-      "deviation": 31.59,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
-      "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
-    },
-    {
-      "seconds": 10.0,
-      "deviation": 31.59,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
-      "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
-    },
-    {
       "seconds": 10.1,
-      "deviation": 31.59,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
+      "deviation": 31.7,
+      "warmFraction": 0.1948,
+      "sceneCorrelation": 0.999,
       "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
     },
     {
       "seconds": 10.2,
-      "deviation": 31.6,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
+      "deviation": 31.7,
+      "warmFraction": 0.1948,
+      "sceneCorrelation": 0.999,
       "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
     },
     {
       "seconds": 10.3,
-      "deviation": 31.6,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
+      "deviation": 32.06,
+      "warmFraction": 0.1932,
+      "sceneCorrelation": 0.976,
       "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
     },
     {
       "seconds": 10.4,
-      "deviation": 31.6,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
+      "deviation": 32.06,
+      "warmFraction": 0.1932,
+      "sceneCorrelation": 0.976,
       "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
     },
     {
       "seconds": 10.5,
-      "deviation": 31.6,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
+      "deviation": 32.06,
+      "warmFraction": 0.1932,
+      "sceneCorrelation": 0.976,
       "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
     },
     {
       "seconds": 10.6,
-      "deviation": 31.6,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
+      "deviation": 32.06,
+      "warmFraction": 0.1932,
+      "sceneCorrelation": 0.976,
       "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
     },
     {
       "seconds": 10.7,
-      "deviation": 31.6,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
+      "deviation": 32.06,
+      "warmFraction": 0.1932,
+      "sceneCorrelation": 0.976,
       "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
     },
     {
       "seconds": 10.8,
-      "deviation": 31.6,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
+      "deviation": 32.06,
+      "warmFraction": 0.1932,
+      "sceneCorrelation": 0.976,
       "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
     },
     {
       "seconds": 10.9,
-      "deviation": 31.6,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
+      "deviation": 32.06,
+      "warmFraction": 0.1932,
+      "sceneCorrelation": 0.976,
       "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
     },
     {
       "seconds": 11.0,
-      "deviation": 31.6,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
+      "deviation": 32.06,
+      "warmFraction": 0.1932,
+      "sceneCorrelation": 0.976,
       "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
     },
     {
       "seconds": 11.1,
-      "deviation": 31.6,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
+      "deviation": 32.06,
+      "warmFraction": 0.1932,
+      "sceneCorrelation": 0.976,
       "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
     },
     {
       "seconds": 11.2,
-      "deviation": 31.6,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
+      "deviation": 32.06,
+      "warmFraction": 0.1932,
+      "sceneCorrelation": 0.976,
       "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
     },
     {
       "seconds": 11.3,
-      "deviation": 31.6,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
+      "deviation": 32.06,
+      "warmFraction": 0.1932,
+      "sceneCorrelation": 0.976,
       "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
     },
     {
       "seconds": 11.4,
-      "deviation": 31.6,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
+      "deviation": 32.06,
+      "warmFraction": 0.1932,
+      "sceneCorrelation": 0.976,
       "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
     },
     {
       "seconds": 11.5,
-      "deviation": 31.6,
-      "warmFraction": 0.101,
-      "sceneCorrelation": -0.027,
+      "deviation": 32.06,
+      "warmFraction": 0.1932,
+      "sceneCorrelation": 0.976,
       "flat": false,
-      "sceneCandidate": false,
-      "homeCorrelation": 1.0,
-      "homeCandidate": true
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
     },
     {
       "seconds": 11.6,
+      "deviation": 32.06,
+      "warmFraction": 0.1932,
+      "sceneCorrelation": 0.976,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 11.7,
+      "deviation": 32.06,
+      "warmFraction": 0.1932,
+      "sceneCorrelation": 0.976,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 11.8,
+      "deviation": 32.06,
+      "warmFraction": 0.1932,
+      "sceneCorrelation": 0.976,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 11.9,
+      "deviation": 32.06,
+      "warmFraction": 0.1932,
+      "sceneCorrelation": 0.976,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 12.0,
+      "deviation": 32.06,
+      "warmFraction": 0.1932,
+      "sceneCorrelation": 0.976,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 12.1,
+      "deviation": 32.06,
+      "warmFraction": 0.1932,
+      "sceneCorrelation": 0.976,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 12.2,
+      "deviation": 32.06,
+      "warmFraction": 0.1938,
+      "sceneCorrelation": 0.976,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 12.3,
+      "deviation": 32.06,
+      "warmFraction": 0.1938,
+      "sceneCorrelation": 0.976,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 12.4,
+      "deviation": 32.06,
+      "warmFraction": 0.1938,
+      "sceneCorrelation": 0.976,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 12.5,
+      "deviation": 32.05,
+      "warmFraction": 0.1927,
+      "sceneCorrelation": 0.976,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 12.6,
+      "deviation": 32.05,
+      "warmFraction": 0.1927,
+      "sceneCorrelation": 0.976,
+      "flat": false,
+      "sceneCandidate": true,
+      "homeCorrelation": -0.028,
+      "homeCandidate": false
+    },
+    {
+      "seconds": 12.7,
+      "deviation": 31.6,
+      "warmFraction": 0.1021,
+      "sceneCorrelation": -0.027,
+      "flat": false,
+      "sceneCandidate": false,
+      "homeCorrelation": 1.0,
+      "homeCandidate": true
+    },
+    {
+      "seconds": 12.8,
       "deviation": 31.6,
       "warmFraction": 0.101,
       "sceneCorrelation": -0.027,
@@ -1174,7 +1294,17 @@
       "homeCandidate": true
     },
     {
-      "seconds": 11.7,
+      "seconds": 12.9,
+      "deviation": 31.6,
+      "warmFraction": 0.101,
+      "sceneCorrelation": -0.027,
+      "flat": false,
+      "sceneCandidate": false,
+      "homeCorrelation": 1.0,
+      "homeCandidate": true
+    },
+    {
+      "seconds": 13.0,
       "deviation": 31.6,
       "warmFraction": 0.101,
       "sceneCorrelation": -0.027,

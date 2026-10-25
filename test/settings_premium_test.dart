@@ -87,8 +87,14 @@ void main() {
           expect(dark, findsOneWidget);
           expect(light, findsOneWidget);
           expect(t.getSize(dark).height, t.getSize(light).height);
-          for (final entry in {dark: 'Midnight Teal', light: 'Ivory Serenity'}.entries) {
-            final name = find.descendant(of: entry.key, matching: find.text(entry.value));
+          for (final entry in {
+            dark: 'Midnight Teal',
+            light: 'Ivory Serenity',
+          }.entries) {
+            final name = find.descendant(
+              of: entry.key,
+              matching: find.text(entry.value),
+            );
             expect(t.widget<Text>(name).textDirection, TextDirection.ltr);
           }
           await tap(t, 'settings-theme-${1 - theme}');
