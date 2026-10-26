@@ -181,9 +181,9 @@ class WirdState extends ChangeNotifier {
       count(entry, date) >= target(entry, date);
   // Preserve historical completion against the catalog available before upgrade.
   List<DhikrEntry> progressEntries(DhikrSection section, [String? date]) =>
-      inSection(section).where((e) => date == null ||
+      inSection(section).where((e) => !e.reviewOnly && (date == null ||
           contentExpandedOn.isEmpty || date.compareTo(contentExpandedOn) >= 0 ||
-          !expandedSleepEntryIds.contains(e.id)).toList();
+          !expandedSleepEntryIds.contains(e.id))).toList();
   int sectionTotal(DhikrSection section, [String? date]) =>
       progressEntries(section, date).length;
   int completed(DhikrSection section, [String? date]) =>
