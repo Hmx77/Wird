@@ -115,8 +115,20 @@ def top():
         adb('shell','input','swipe',str(width//2),str(int(height*.30)),str(width//2),str(int(height*.83)),'150')
 
 def home():
-    tap('الرئيسية',bottom=True)
-    top()
+    # A popped Reader and a system font-scale change can still be animating
+    # while the underlying Library's accessibility nodes are already exposed.
+    # Wait for that transition, then use freshly observed clickable tab bounds.
+    for attempt in range(3):
+        time.sleep(1)
+        tap('الرئيسية', bottom=True, clickable=True)
+        time.sleep(1)
+        top()
+        nodes = snapshot()
+        text = ' '.join(n.get('text', '') + ' ' + n.get('content-desc', '') for n in nodes)
+        if normal('وردك اليومي') in normal(text):
+            return
+        (out / f'home-transition-attempt-{attempt + 1}.xml').write_text(
+            adb('shell', 'cat', '/sdcard/wird-home-review.xml'))
     expect('وردك اليومي')
 
 def worship_preferences():
