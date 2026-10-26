@@ -267,7 +267,7 @@ class _LibraryPageState extends State<LibraryPage> {
     builder: (context, _) {
       final store = widget.store;
       final p = store.palette;
-      final filtered = entries
+      final filtered = displayedEntries
           .where(
             (e) =>
                 (!favoriteOnly || store.favorites.contains(e.id)) &&
@@ -523,6 +523,9 @@ class _LibraryPageState extends State<LibraryPage> {
                                           ),
                                         ),
                                         SizedBox(height: 5),
+                                        if (e.reviewOnly) Padding(padding: const EdgeInsets.only(bottom: 7),
+                                          child: UiText('تنبيه: رواية غير ثابتة على شرط الصحيح — ${e.authenticity}',
+                                            style: TextStyle(color: AppAppearance.of(context).gold, fontWeight: FontWeight.bold, fontSize: 12))),
                                         UiText(
                                           '${sectionLabel(e.section)} • ${e.source}',
                                           style: TextStyle(
@@ -621,7 +624,7 @@ class _ReaderPageState extends State<ReaderPage> {
     final controls = <Widget>[
       IconButton(
         tooltip: tr(context, 'مشاركة بطاقة'),
-        onPressed: () async {
+        onPressed: e.reviewOnly ? null : () async {
           try {
             await shareDhikrCard(
               context,
@@ -744,7 +747,11 @@ class _ReaderPageState extends State<ReaderPage> {
                                 ),
                               ),
                               SizedBox(height: 21),
-                              AudioPanel(key: ValueKey(e.id), entry: e),
+                              if (e.reviewOnly) Padding(padding: const EdgeInsets.symmetric(vertical: 12),
+                                child: UiText('⚠ مادة للمراجعة، وليست ذكرًا ثابتًا بالسند الصحيح. ${e.authenticity}. لا تعتمد الأعداد والفضائل الواردة على أنها سنة ثابتة.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontWeight: FontWeight.w700, color: AppAppearance.of(context).gold, height: 1.8))),
+                              if (!e.reviewOnly) AudioPanel(key: ValueKey(e.id), entry: e),
                               UiText(
                                 e.source,
                                 textAlign: TextAlign.center,
@@ -933,7 +940,7 @@ class _ReaderPageState extends State<ReaderPage> {
                                             ),
                                           SizedBox(height: 12),
                                           UiText(
-                                            e.isQuran ? 'آية قرآنية' : 'صحيح',
+                                            e.isQuran ? 'آية قرآنية' : e.authenticity,
                                             style: TextStyle(
                                               color: AppAppearance.of(
                                                 context,
@@ -977,7 +984,7 @@ class _ReaderPageState extends State<ReaderPage> {
                           ),
                         ],
                         SizedBox(height: 12),
-                        if (e.countAlternatives.isNotEmpty)
+                        if (!e.reviewOnly && e.countAlternatives.isNotEmpty)
                           Center(
                             child: Semantics(
                               label: tr(context, 'عدد التكرار'),
@@ -1006,7 +1013,7 @@ class _ReaderPageState extends State<ReaderPage> {
                               ),
                             ),
                           ),
-                        Center(
+                        if (!e.reviewOnly) Center(
                           child: InkWell(
                             key: Key('reader-counter'),
                             customBorder: CircleBorder(),
@@ -1030,7 +1037,7 @@ class _ReaderPageState extends State<ReaderPage> {
                             ),
                           ),
                         ),
-                        TextButton.icon(
+                        if (!e.reviewOnly) TextButton.icon(
                           key: Key('reader-undo'),
                           onPressed: progress > 0
                               ? () => widget.store.setCount(e, progress - 1)
