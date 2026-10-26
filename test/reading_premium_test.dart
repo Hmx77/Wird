@@ -284,7 +284,7 @@ void main() {
   for (final theme in [0, 1]) {
     testWidgets('Reference warnings and controls at 320dp and 200% theme $theme', (t) async {
       final semantics = t.ensureSemantics();
-      addTearDown(semantics.dispose);
+      try {
       t.view.physicalSize = const Size(320, 700);
       t.view.devicePixelRatio = 1;
       addTearDown(t.view.resetPhysicalSize);
@@ -306,6 +306,9 @@ void main() {
         expect(t.takeException(), isNull, reason: e.id);
       }
       await close(t, s);
+      } finally {
+        semantics.dispose();
+      }
     });
   }
   testWidgets(
