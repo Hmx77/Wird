@@ -666,6 +666,8 @@ class _HomeTasbihPage extends PersonalTasbihPage {
 // above remains unchanged, including its typography and illustration layers.
 const ivoryHomeHeader = AssetImage('assets/appearance/ivory-home-header-v2.webp');
 const ivoryHomeFeature = AssetImage('assets/appearance/ivory-home-feature-v2.webp');
+const ivoryMorning = AssetImage('assets/appearance/ivory-morning-v3.webp');
+const ivoryEvening = AssetImage('assets/appearance/ivory-evening-v3.webp');
 
 class _IvoryHome extends StatelessWidget {
   const _IvoryHome({required this.home});
@@ -754,14 +756,14 @@ class _IvoryHome extends StatelessWidget {
 
   Widget _surface({required String keyName, required AssetImage image,
       required Widget child, required VoidCallback onTap, Gradient? gradient,
-      double radius = 22, bool mirror = false}) => DecoratedBox(
+      double radius = 22, bool mirror = false, Widget? scenery}) => DecoratedBox(
     decoration: BoxDecoration(borderRadius: BorderRadius.circular(radius), boxShadow: const [
       BoxShadow(color: Color(0x0A70572D), offset: Offset(0, 3), blurRadius: 9)]),
     child: Material(color: paper, clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius),
         side: const BorderSide(color: edge, width: .75)),
       child: Stack(children: [
-        Positioned.fill(child: Transform(
+        Positioned.fill(child: scenery ?? Transform(
           alignment: Alignment.center, transform: Matrix4.diagonal3Values(mirror ? -1 : 1, 1, 1),
           child: Image(image: image, fit: BoxFit.cover, alignment: Alignment.topCenter,
             filterQuality: FilterQuality.high, excludeFromSemantics: true))),
@@ -821,7 +823,6 @@ class _IvoryHome extends StatelessWidget {
   }
 
   Widget _category(BuildContext context, DhikrSection section, double unit) {
-    final large = MediaQuery.textScalerOf(context).scale(14) > 20;
     final night = section == DhikrSection.sleep;
     final morning = section == DhikrSection.morning;
     final count = inSection(section).length;
@@ -840,10 +841,9 @@ class _IvoryHome extends StatelessWidget {
       ]));
     return _surface(keyName: 'home-${section.name}', image: homeArt[section.name]!,
       onTap: () => openReader(context, store, section),
-      gradient: night ? const LinearGradient(colors: [Color(0x18002128), Color(0x30002128)])
-        : LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
-          stops: large ? const [0, .12, .30, .50, .75, 1] : const [0, .24, .42, .60, .82, 1],
-          colors: const [Color(0x00FAF6E9), Color(0x00FAF6E9), Color(0x35FAF6E9), Color(0xD9FAF6E9), Color(0xF2FAF6E9), paper]),
+      scenery: night ? null : _IvoryDayScenery(
+        image: morning ? ivoryMorning : ivoryEvening, unit: unit, hasProgress: done > 0),
+      gradient: night ? const LinearGradient(colors: [Color(0x18002128), Color(0x30002128)]) : null,
       child: Padding(padding: EdgeInsets.all(11 * unit),
         child: night ? ConstrainedBox(constraints: BoxConstraints(minHeight: 67 * unit),
           child: Row(children: [badge, const SizedBox(width: 12), Expanded(child: label),
@@ -881,6 +881,33 @@ class _IvoryHome extends StatelessWidget {
     final columns = large ? 2 : 4;
     return Wrap(spacing: 7, runSpacing: 8, children: cards.map((card) => SizedBox(
       width: (width - 7 * (columns - 1)) / columns, child: card)).toList());
+  }
+}
+
+/// A crisp illustration and a caption-sized feather, independent of card height.
+/// Text, badges, progress and hit targets keep their existing layout above it.
+class _IvoryDayScenery extends StatelessWidget {
+  const _IvoryDayScenery({required this.image, required this.unit, required this.hasProgress});
+  final AssetImage image;
+  final double unit;
+  final bool hasProgress;
+
+  @override
+  Widget build(BuildContext context) {
+    final scaler = MediaQuery.textScalerOf(context);
+    final captionDepth = scaler.scale(18.5 * unit) * 1.5 +
+      scaler.scale(13 * unit) * 1.5 + 2 + 11 * unit + (hasProgress ? 8 : 0);
+    return Stack(fit: StackFit.expand, children: [
+      Image(image: image, fit: BoxFit.cover, alignment: Alignment.topCenter,
+        filterQuality: FilterQuality.high, excludeFromSemantics: true),
+      Positioned(left: 0, right: 0, bottom: 0,
+        height: captionDepth + 28 * unit,
+        child: const DecoratedBox(decoration: BoxDecoration(
+          gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
+            stops: [0, .18, .32, .75, 1],
+            colors: [Color(0x00FAF6E9), Color(0x59FAF6E9), Color(0xD1FAF6E9),
+              Color(0xF5FAF6E9), _IvoryHome.paper])))),
+    ]);
   }
 }
 
@@ -963,3 +990,4 @@ class _IvoryShortcut extends StatelessWidget {
               style: TextStyle(color: IvoryContrast.muted, fontSize: 11.5 * unit, height: 1.6)),
           ])))));
 }
+

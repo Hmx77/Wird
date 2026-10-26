@@ -1,0 +1,31 @@
+{
+  "generator": "Built-in image_gen; original project-specific refinements from existing Wird artwork and owner-supplied mockup",
+  "scope": "Only Ivory Serenity Home Morning/Evening scenery. No fonts, labels, icons or UI baked into images.",
+  "sourceCommit": "d1b5663ccda092a06f5c87ffc24f9d9311f8c1b0",
+  "prompts": {
+    "morning": "Use case: style-transfer. Production artwork asset ONLY for an existing Flutter Ivory Serenity category card. Image 1 is the approved overall app mockup and STYLE/composition reference; image 2 is the existing category landscape to REFINE. Create only a landscape illustration, aspect ratio 3:2 (1536x1024 preferred), edge to edge, NO phone, NO UI, NO letters, NO text, NO icons, NO border, NO rounded corners. Match the refined Islamic landscape in the reference's middle card, but keep crisp clean architectural silhouettes, sharp mountain ridgelines and individual palm leaves visible at thumbnail size. The scene must be simple and serene, never blurry, foggy, muddy, overexposed or washed out. Compose the sun at x20% y23%, distant mosque at x18% y42%, scenic horizon across y30-42%, mountains rising at right, botanical framing at far left. Upper 60% is the clear richly detailed scene; lower 40% is gently lighter sunlit water/stone in warm cream tones with restrained detail, not a white rectangle and not a fog overlay. Flutter will add its own local text fade so do NOT bake a white gradient over the main scenery. Keep quiet sky at upper right where a real icon badge sits. This is original artwork for the user's app, not a replacement of the whole interface. Refine MORNING scene: fresh sunrise, pale blue-sage sky, luminous champagne sunlight, crisp sage and olive foliage, pale sandstone mosque, distinct warm mountain layers, clear green-blue lake. Fresh daylight exposure and tasteful stronger midtone contrast, no dark teal vignette, no black shadows. Match the right-hand Morning card from image 1.",
+    "evening": "Use case: style-transfer. Production artwork asset ONLY for an existing Flutter Ivory Serenity category card. Image 1 is the approved overall app mockup and STYLE/composition reference; image 2 is the existing category landscape to REFINE. Create only a landscape illustration, aspect ratio 3:2 (1536x1024 preferred), edge to edge, NO phone, NO UI, NO letters, NO text, NO icons, NO border, NO rounded corners. Match the refined Islamic landscape in the reference's middle card, but keep crisp clean architectural silhouettes, sharp mountain ridgelines and individual palm leaves visible at thumbnail size. The scene must be simple and serene, never blurry, foggy, muddy, overexposed or washed out. Compose the sun at x20% y23%, distant mosque at x18% y42%, scenic horizon across y30-42%, mountains rising at right, botanical framing at far left. Upper 60% is the clear richly detailed scene; lower 40% is gently lighter sunlit water/stone in warm cream tones with restrained detail, not a white rectangle and not a fog overlay. Flutter will add its own local text fade so do NOT bake a white gradient over the main scenery. Keep quiet sky at upper right where a real icon badge sits. This is original artwork for the user's app, not a replacement of the whole interface. Refine EVENING scene: serene sunset, warm peach/apricot sky with small crisp amber clouds, restrained mauve and lavender mountain layers, sandstone mosque silhouette, olive palm framing, pale golden lake reflections. Tastefully rich colors and strong midtone separation, no muddy black foreground, no harsh orange saturation. Match the left-hand Evening card from image 1. Make it clearly distinct from the sage/gold Morning scene."
+  },
+  "assets": [
+    {
+      "path": "assets/appearance/ivory-evening-v3.webp",
+      "dimensions": [
+        1200,
+        800
+      ],
+      "bytes": 111966,
+      "sha256": "51ac29ce37ce434bd17f74eda76d7288ab6957ff18e0f6cc96daa4f77ab34ce4",
+      "encoding": "WebP quality 91; original artwork scaled to 1200x800 for offline packaging"
+    },
+    {
+      "path": "assets/appearance/ivory-morning-v3.webp",
+      "dimensions": [
+        1200,
+        800
+      ],
+      "bytes": 150938,
+      "sha256": "a4b3987f828c9c4ee022737da96e53f180662057ae78802a8b8c135ab704d9d5",
+      "encoding": "WebP quality 91; original artwork scaled to 1200x800 for offline packaging"
+    }
+  ]
+}

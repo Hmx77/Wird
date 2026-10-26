@@ -107,7 +107,9 @@ void main() {
       await Future.wait([wirdWordmark, ivorySanctuary, ...homeArt.values,
         const AssetImage('assets/home/botanical-serenity.webp'),
         const AssetImage('assets/appearance/ivory-home-header-v2.webp'),
-        const AssetImage('assets/appearance/ivory-home-feature-v2.webp')]
+        const AssetImage('assets/appearance/ivory-home-feature-v2.webp'),
+        const AssetImage('assets/appearance/ivory-morning-v3.webp'),
+        const AssetImage('assets/appearance/ivory-evening-v3.webp')]
         .map((image) => precacheImage(image, context)));
     });
     await t.pumpAndSettle();
@@ -120,6 +122,17 @@ void main() {
       final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
       final output = Directory('verification/screenshots')..createSync(recursive: true);
       File('${output.path}/$name.png').writeAsBytesSync(bytes!.buffer.asUint8List());
+      final cardBounds = <String, List<double>>{};
+      if (name.contains('home')) {
+        for (final section in ['morning', 'evening']) {
+          final card = find.byKey(Key('home-$section'));
+          if (card.evaluate().length != 1) continue;
+          final rect = t.getRect(card);
+          cardBounds[section] = [rect.left, rect.top, rect.right, rect.bottom];
+        }
+        final raw = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
+        File('${output.path}/$name.rgba').writeAsBytesSync(raw!.buffer.asUint8List());
+      }
       final text = <Map<String, Object?>>[];
       for (final e in find.byType(Text).evaluate()) {
         final render = e.findRenderObject();
@@ -162,7 +175,8 @@ void main() {
         File('${output.path}/$name-contrast.json').writeAsStringSync(jsonEncode(checked));
       }
       File('${output.path}/$name-text.json').writeAsStringSync(jsonEncode(
-        {'pixelRatio': 2, 'text': text}));
+        {'pixelRatio': 2, 'width': image.width, 'height': image.height,
+         'cards': cardBounds, 'text': text}));
       image.dispose();
     });
   }
@@ -276,4 +290,5 @@ void main() {
   });
 
 }
+
 
