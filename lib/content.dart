@@ -1203,8 +1203,13 @@ final displayedEntries = List<DhikrEntry>.unmodifiable([
   ...referenceReviewEntries,
 ]);
 
-List<DhikrEntry> inSection(DhikrSection section) =>
-    displayedEntries.where((entry) => entry.section == section).toList();
+List<DhikrEntry> inSection(DhikrSection section) {
+  final visible = displayedEntries.where((entry) => entry.section == section).toList();
+  if (section != DhikrSection.sleep) {
+    visible.sort((a, b) => a.referenceScreens.first.compareTo(b.referenceScreens.first));
+  }
+  return visible;
+}
 
 // Fail closed: unreviewed items cannot reach reading, search or sharing.
 final entries = List<DhikrEntry>.unmodifiable(
