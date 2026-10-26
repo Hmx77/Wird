@@ -255,6 +255,12 @@ for mode,label in [('ivory','Ivory Serenity'),('midnight','Midnight Teal')]:
         if any(normal('مسح البحث') in normal(n.get('content-desc', '') + n.get('text', '')) for n in snapshot()):
             tap('مسح البحث')
         tap('ابحث عن ذكر')
+        for attempt in range(6):
+            if any(n.get('class') == 'android.widget.EditText' and n.get('focused') == 'true' for n in snapshot()):
+                break
+            time.sleep(.3)
+        else:
+            raise AssertionError('Expanded collection search did not receive focus')
         adb('shell','input','text','Bedtime')
         adb('shell','input','keyevent','KEYCODE_BACK')
         expect('18 ذكر')
@@ -264,6 +270,7 @@ for mode,label in [('ivory','Ivory Serenity'),('midnight','Midnight Teal')]:
         capture(f'android-content-{mode}-{short}.png')
         tap('الفضل والدليل والمعنى', scroll=True)
         expect('المعنى')
+        tap('المعنى', scroll=True, prefix=True)
         capture(f'android-content-{mode}-{short}-evidence.png')
         # Generate the real share image, then cancel the OS sheet without sending.
         top()
