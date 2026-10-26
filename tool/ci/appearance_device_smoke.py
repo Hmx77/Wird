@@ -1,5 +1,6 @@
 """Actual emulator navigation checks using observed accessibility node bounds."""
 import json
+from native_targets import content_bottom as visible_bottom, usable_target
 import math
 from pathlib import Path
 import re
@@ -26,15 +27,7 @@ size = re.findall(r'(\d+)x(\d+)', adb('shell', 'wm', 'size'))[-1]
 width, height = map(int, size)
 
 def content_bottom(nodes):
-    # Home is in the bottom bar on every shell page. Its observed top edge
-    # bounds the scroll area even when accessibility text makes the bar taller.
-    edges = []
-    for n in nodes:
-        if any(normal(n.get(k, '')).strip() == normal('الرئيسية') for k in ['text', 'content-desc']):
-            bounds = list(map(int, re.findall(r'-?\d+', n.get('bounds', ''))))
-            if len(bounds) == 4 and bounds[1] > height * .5:
-                edges.append(bounds[1])
-    return min(edges) - 12 if edges else height * .89
+    return visible_bottom(nodes, height)
 
 def scroll_content(nodes):
     bottom = content_bottom(nodes)
@@ -63,13 +56,14 @@ def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_b
             x1, y1, x2, y2 = bounds
             if x2 <= x1 or y2 <= y1 or y1 < 0 or y2 > height:
                 continue
-            if scroll and y2 > limit:
+            if scroll and not usable_target((x1,y1,x2,y2), limit):
                 continue
             candidates.append((n, bounds))
         if candidates:
             candidates.sort(key=lambda pair: pair[1][1] if bottom else -(pair[1][2]-pair[1][0])*(pair[1][3]-pair[1][1]), reverse=True)
             _, (x1,y1,x2,y2) = candidates[0]
             adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
+            time.sleep(.4)
             return
         if scroll:
             scroll_content(nodes)

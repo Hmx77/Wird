@@ -4,6 +4,7 @@ mkdir -p verification
 git rev-parse HEAD > verification/source-commit.txt
 python3 tool/ci/check_approved_opening.py
 python3 tool/ci/check_appearance_preservation.py
+python3 -m unittest discover -s tool/ci -p 'test_native_targets.py' -v
 flutter --version
 flutter doctor -v
 flutter pub get
