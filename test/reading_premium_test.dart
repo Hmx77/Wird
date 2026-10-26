@@ -283,6 +283,8 @@ void main() {
   );
   for (final theme in [0, 1]) {
     testWidgets('Reference warnings and controls at 320dp and 200% theme $theme', (t) async {
+      final semantics = t.ensureSemantics();
+      addTearDown(semantics.dispose);
       t.view.physicalSize = const Size(320, 700);
       t.view.devicePixelRatio = 1;
       addTearDown(t.view.resetPhysicalSize);
@@ -296,6 +298,9 @@ void main() {
         expect(warning, findsOneWidget);
         await reveal(t, warning);
         expect(t.widget<Text>(warning).data, contains(e.authenticity));
+        final accessible = t.getSemantics(find.byKey(const Key('reader-reference-warning')));
+        expect(accessible.label, contains('تنبيه مهم:'));
+        expect(accessible.label, contains(e.authenticity));
         expect(find.byKey(const Key('reader-counter')), findsNothing);
         await reveal(t, find.byKey(const Key('reader-next')));
         expect(t.takeException(), isNull, reason: e.id);

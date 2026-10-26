@@ -98,6 +98,7 @@ def expect(label, scroll=False):
         if scroll:
             scroll_content(nodes)
         time.sleep(1)
+    capture('android-appearance-expect-failure.png')
     raise AssertionError(f'Destination missing: {label}')
 
 def capture(name):
@@ -298,13 +299,13 @@ for mode,label in [('ivory','Ivory Serenity'),('midnight','Midnight Teal')]:
         adb('shell','input','keyevent','KEYCODE_BACK')
         expect('2 ذكر')
         tap(title, scroll=True, node_class='android.view.View')
+        capture(f'android-reference-{mode}-{short}.png')
         expect(f'{ordinal} / 25')
         expect('تنبيه مهم:')
         expect(grade)
         nodes = snapshot()
         share = [n for n in nodes if normal('مشاركة بطاقة') in normal(n.get('content-desc','') + n.get('text',''))]
         assert share and all(n.get('enabled') == 'false' for n in share), 'Reference share action must be disabled'
-        capture(f'android-reference-{mode}-{short}.png')
         # Read the entire scroll surface, including the controls at its foot.
         for attempt in range(30):
             nodes = snapshot()

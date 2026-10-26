@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 mkdir -p verification/device
-git rev-parse HEAD > verification/device/source-commit.txt
-sha256sum build/app/outputs/flutter-apk/app-debug.apk > verification/device/apk-sha256.txt
+git rev-parse HEAD | tee verification/device/source-commit.txt
+sha256sum build/app/outputs/flutter-apk/app-debug.apk | tee verification/device/apk-sha256.txt
 wird_sdk_user_root="${RUNNER_TEMP:?}/wird-emulator"
 export ANDROID_SDK_HOME="$wird_sdk_user_root"
 export ANDROID_USER_HOME="$wird_sdk_user_root/.android"
@@ -143,8 +143,13 @@ PYPNG
   return 1
 }
 if ! command -v ffmpeg >/dev/null; then
-  sudo apt-get update -qq
-  sudo apt-get install -y --no-install-recommends ffmpeg
+  # Pinned binary-only CI dependency; no application dependency or system upgrade.
+  python3 -m pip install --disable-pip-version-check --only-binary=:all: --no-deps \
+    --target "$RUNNER_TEMP/wird-ffmpeg" imageio-ffmpeg==0.6.0
+  wird_ffmpeg_binary="$(PYTHONPATH="$RUNNER_TEMP/wird-ffmpeg" python3 -c 'import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())')"
+  mkdir -p "$RUNNER_TEMP/wird-native-tools"
+  ln -s "$wird_ffmpeg_binary" "$RUNNER_TEMP/wird-native-tools/ffmpeg"
+  export PATH="$RUNNER_TEMP/wird-native-tools:$PATH"
 fi
 command -v ffmpeg >/dev/null
 # Observe launcher coordinates after tool installation, never before a long install.

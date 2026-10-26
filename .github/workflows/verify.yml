@@ -71,8 +71,8 @@ jobs:
         run: |
           test -s build/app/outputs/flutter-apk/app-debug.apk
           unzip -t build/app/outputs/flutter-apk/app-debug.apk
-          git rev-parse HEAD > verification/source-commit.txt
-          sha256sum build/app/outputs/flutter-apk/app-debug.apk > verification/apk-sha256.txt
+          git rev-parse HEAD | tee verification/source-commit.txt
+          sha256sum build/app/outputs/flutter-apk/app-debug.apk | tee verification/apk-sha256.txt
       - name: Upload installable debug APK
         uses: actions/upload-artifact@v4
         with:
@@ -185,6 +185,9 @@ jobs:
           path: build/app/outputs/flutter-apk/app-debug.apk
           retention-days: 14
           if-no-files-found: error
+      - name: Emit actual native screenshot previews for visual review
+        if: always()
+        run: python3 tool/ci/print_native_previews.py
       - name: Preserve actual native screenshots and logs
         if: always()
         uses: actions/upload-artifact@v4

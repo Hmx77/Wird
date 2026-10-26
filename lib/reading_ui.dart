@@ -618,6 +618,7 @@ class _ReaderPageState extends State<ReaderPage> {
     final e = sectionEntries[index.clamp(0, sectionEntries.length - 1)];
     final progress = widget.store.count(e);
     final target = widget.store.target(e);
+    final referenceWarning = 'تنبيه مهم: مادة مرجعية. ${e.authenticity}. لا يُعتمد منها عدد أو فضل مخصوص على شرط الصحيح. ${e.timing}';
     final largeHeader =
         MediaQuery.textScalerOf(context).scale(1) > 1.3 ||
         MediaQuery.sizeOf(context).width < 360;
@@ -736,9 +737,15 @@ class _ReaderPageState extends State<ReaderPage> {
                               ),
                               if (e.reviewOnly) Padding(
                                 padding: const EdgeInsets.only(top: 12),
-                                child: UiText('تنبيه مهم: مادة مرجعية. ${e.authenticity}. لا يُعتمد منها عدد أو فضل مخصوص على شرط الصحيح. ${e.timing}',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(color: AppAppearance.of(context).ink, fontWeight: FontWeight.bold, height: 1.9))),
+                                child: Semantics(
+                                  key: const Key('reader-reference-warning'),
+                                  container: true,
+                                  excludeSemantics: true,
+                                  label: referenceWarning,
+                                  textDirection: TextDirection.rtl,
+                                  child: UiText(referenceWarning,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(color: AppAppearance.of(context).ink, fontWeight: FontWeight.bold, height: 1.9)))),
                               SizedBox(height: 24),
                               SelectableText(
                                 e.arabic,
