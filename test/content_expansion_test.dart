@@ -30,8 +30,10 @@ void main() {
       expect(e.quranSourceUrl, row['quranSourceUrl']);
     }
     expect(entries.where((e) => !old.any((r) => r['id'] == e.id)).map((e) => e.id).toSet(), expandedSleepEntryIds);
-    expect(inSection(DhikrSection.morning), hasLength(18));
-    expect(inSection(DhikrSection.evening), hasLength(15));
+    expect(inSection(DhikrSection.morning).where((e) => !e.reviewOnly), hasLength(18));
+    expect(inSection(DhikrSection.morning), hasLength(25));
+    expect(inSection(DhikrSection.evening).where((e) => !e.reviewOnly), hasLength(15));
+    expect(inSection(DhikrSection.evening), hasLength(23));
     expect(inSection(DhikrSection.sleep), hasLength(18));
   });
   test('alternative evidence and tracking counts cannot inherit excluded claims', () {
