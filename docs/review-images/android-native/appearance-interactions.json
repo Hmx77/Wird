@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "offline": true,
+  "checks": [
+    "Ivory Home: Continue, Evening, Bedtime, Search, Favorites, All Athkar and Nawafil navigation",
+    "Ivory Home: 320dp, 200% text, Morning/Evening and Tasbih navigation",
+    "ivory: two choices, live switch, six screens, restart persistence; all other preferences unchanged",
+    "midnight: two choices, live switch, six screens, restart persistence; all other preferences unchanged"
+  ]
+}
