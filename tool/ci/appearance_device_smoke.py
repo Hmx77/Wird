@@ -120,6 +120,19 @@ def home():
     # Wait for that transition, then use freshly observed clickable tab bounds.
     for attempt in range(3):
         time.sleep(1)
+        nodes = snapshot()
+        home_visible = any(normal('الرئيسية') in normal(n.get('text', '') + ' ' + n.get('content-desc', ''))
+                           and n.get('clickable') == 'true' for n in nodes)
+        if not home_visible:
+            # A quick system Back after dismissing a native share sheet may
+            # be consumed by its closing animation. Use the visible Reader
+            # back button instead of assuming the shell is already exposed.
+            reader_back = any(normal(n.get('content-desc', '')).strip() == normal('رجوع')
+                              and n.get('clickable') == 'true' for n in nodes)
+            if reader_back:
+                tap('رجوع', exact=True, clickable=True)
+                time.sleep(1)
+                continue
         tap('الرئيسية', bottom=True, clickable=True)
         time.sleep(1)
         top()
@@ -139,6 +152,7 @@ def worship_preferences():
 
 checks=[]
 for mode,label in [('ivory','Ivory Serenity'),('midnight','Midnight Teal')]:
+    print('START: native appearance and reference checks', mode, flush=True)
     original_preferences = worship_preferences()
     tap('الإعدادات',bottom=True)
     top()
@@ -337,10 +351,12 @@ for mode,label in [('ivory','Ivory Serenity'),('midnight','Midnight Teal')]:
         capture(f'android-reference-{mode}-{short}-text200.png')
         scroll_content(snapshot())
         capture(f'android-reference-{mode}-{short}-text200-continuation.png')
+        print('PASS: native reference', mode, short, 'normal and 200% text; sharing and devotional controls disabled', flush=True)
         adb('shell','settings','put','system','font_scale','1.0')
         time.sleep(1)
         adb('shell','input','keyevent','KEYCODE_BACK')
         home()
+    print('PASS: native reference warnings, disabled controls and 200% text', mode, flush=True)
     checks.append(mode+': Hasan, Daif and Quran/sevenfold distinction; 200% warnings; disabled share; no counter/undo')
 
     tap('النوافل',bottom=True)
