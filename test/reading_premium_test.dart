@@ -141,13 +141,13 @@ void main() {
       await t.pumpAndSettle();
       await t.pumpWidget(app(s, LibraryPage(store: s)));
       await t.pumpAndSettle();
-      expect(find.text('51 ذكر'), findsOneWidget);
+      expect(find.text('66 ذكر'), findsOneWidget);
       await t.enterText(find.byKey(const Key('library-search')), 'اللَّه');
       await t.pumpAndSettle();
       expect(find.byType(DevotionCard), findsWidgets);
       await t.enterText(find.byKey(const Key('library-search')), 'Evening');
       await t.pumpAndSettle();
-      expect(find.text('15 ذكر'), findsOneWidget);
+      expect(find.text('23 ذكر'), findsOneWidget);
       await t.enterText(find.byKey(const Key('library-search')), 'zzzz');
       await t.pumpAndSettle();
       expect(find.text('لا توجد نتائج'), findsOneWidget);
@@ -281,10 +281,10 @@ void main() {
     },
   );
   testWidgets(
-    'All 51 reader entries expose the exact complete source text and large Mulk scrolls',
+    'All 66 reader entries expose the exact complete source text and large Mulk scrolls',
     (t) async {
       final s = await state();
-      for (final e in entries) {
+      for (final e in displayedEntries) {
         await t.pumpWidget(
           app(
             s,

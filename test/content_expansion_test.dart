@@ -36,6 +36,45 @@ void main() {
     expect(inSection(DhikrSection.evening), hasLength(23));
     expect(inSection(DhikrSection.sleep), hasLength(18));
   });
+  test('all 51 development-admitted payloads match the immutable audit', () {
+    final audit = jsonDecode(File('docs/content-audit.json').readAsStringSync()) as Map<String, dynamic>;
+    final rows = audit['entries'] as List;
+    expect(rows, hasLength(51));
+    expect(entries.map((e) => e.id), rows.map((e) => e['id']));
+    for (final row in rows) {
+      final e = entries.singleWhere((e) => e.id == row['id']);
+      final actual = <String, dynamic>{
+        'id': e.id, 'section': e.section.name, 'title': e.title,
+        'arabic': e.arabic, 'count': e.count, 'source': e.source,
+        'sourceUrl': e.sourceUrl, 'evidence': e.evidence,
+        'meaning': e.meaning, 'benefit': e.benefit, 'isQuran': e.isQuran,
+        'countDescription': e.countDescription, 'timing': e.timing,
+        'reviewed': e.reviewed, 'referenceScreens': e.referenceScreens,
+        'countAlternatives': e.countAlternatives, 'quranSourceUrl': e.quranSourceUrl,
+      };
+      for (final field in actual.keys) {
+        expect(actual[field], row[field], reason: '${e.id}: $field');
+      }
+      expect(e.reviewOnly, isFalse);
+    }
+  });
+  test('reference-only counters cannot mutate storage or worship completion', () async {
+    SharedPreferences.setMockInitialValues({'haptics': false});
+    final s = WirdState();
+    await s.initialize(); await s.pendingWrites;
+    for (final e in referenceReviewEntries) {
+      s.setCount(e, 1); s.chooseCount(e, 1);
+      expect(s.isDone(e), isFalse);
+      expect(s.count(e), 0);
+    }
+    await s.pendingWrites;
+    expect(s.counts, isEmpty);
+    expect(s.countTargets, isEmpty);
+    expect(s.countChoices, isEmpty);
+    expect(DhikrSection.values.map(s.sectionTotal), [18, 15, 18]);
+    expect(DhikrSection.values.map(s.completed), [0, 0, 0]);
+    s.dispose();
+  });
   test('all 66 reference screens display transparently without treating weak reports as verified worship', () {
     expect(displayedEntries.length, 66);
     final pending = displayedEntries.where((entry) => entry.reviewOnly).toList();

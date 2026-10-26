@@ -29,7 +29,7 @@ permissions:
   contents: read
 concurrency:
   group: wird-verify-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && !inputs.build_android && !inputs.build_ios && inputs.reuse_android_run != '' && 'native' || github.event_name == 'workflow_dispatch' && !inputs.build_android && 'ios' || 'all' }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
   android:
     if: github.event_name != 'workflow_dispatch' || inputs.build_android
@@ -67,6 +67,12 @@ jobs:
             JAVA_HOME="$JAVA_HOME" CI=true LANG=C.UTF-8 \
             FLUTTER_SUPPRESS_ANALYTICS=true \
             bash tool/ci/verify.sh debug 2>&1 | tee verification/android.log
+      - name: Validate fresh APK and record exact source revision
+        run: |
+          test -s build/app/outputs/flutter-apk/app-debug.apk
+          unzip -t build/app/outputs/flutter-apk/app-debug.apk
+          git rev-parse HEAD > verification/source-commit.txt
+          sha256sum build/app/outputs/flutter-apk/app-debug.apk > verification/apk-sha256.txt
       - name: Upload installable debug APK
         uses: actions/upload-artifact@v4
         with:
@@ -89,7 +95,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
   ios:
-    if: (github.event_name == 'push' && (github.ref == 'refs/heads/redesign/ivory-settings-integration-20261024' || github.ref == 'refs/heads/review/athkar-authentication-20261026')) || (github.event_name == 'workflow_dispatch' && inputs.build_ios)
+    if: (github.event_name == 'push' && (github.ref == 'refs/heads/redesign/ivory-settings-integration-20261024' || github.ref == 'refs/heads/review/athkar-authentication-20261026' || github.ref == 'refs/heads/redesign/graded-reference-entries-20261026')) || (github.event_name == 'workflow_dispatch' && inputs.build_ios)
     runs-on: macos-15
     timeout-minutes: 35
     steps:
@@ -144,12 +150,12 @@ jobs:
           retention-days: 14
   android-device:
     needs: android
-    if: always() && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && (github.ref == 'refs/heads/redesign/ivory-settings-integration-20261024' || github.ref == 'refs/heads/review/athkar-authentication-20261026'))) && (startsWith(github.ref, 'refs/heads/redesign/') || github.ref == 'refs/heads/review/athkar-authentication-20261026') && (needs.android.result == 'success' || (!inputs.build_android && inputs.reuse_android_run != ''))
+    if: always() && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && (github.ref == 'refs/heads/redesign/ivory-settings-integration-20261024' || github.ref == 'refs/heads/review/athkar-authentication-20261026' || github.ref == 'refs/heads/redesign/graded-reference-entries-20261026'))) && (startsWith(github.ref, 'refs/heads/redesign/') || github.ref == 'refs/heads/review/athkar-authentication-20261026') && (needs.android.result == 'success' || (!inputs.build_android && inputs.reuse_android_run != ''))
     permissions:
       contents: read
       actions: read
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
         with:

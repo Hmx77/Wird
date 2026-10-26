@@ -16,6 +16,7 @@ done
 dart format --output=none --set-exit-if-changed lib test tool
 dart tool/content_check.dart
 mkdir -p verification/content
+cp docs/REFERENCE_ONLY_ATHKAR_2026-10-26.md docs/appearance-preservation.json verification/content/
 cp docs/CONTENT_VERIFICATION_2026-10-14.md docs/reference-comparison.csv docs/reference-screen-map.json docs/content-audit.json docs/quran-source.json verification/content/
 cp docs/CONTENT_VERIFICATION_2026-10-26.md verification/content/
 cp -R docs/content-review-20261026 verification/content/

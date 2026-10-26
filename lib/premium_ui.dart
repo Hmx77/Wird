@@ -309,7 +309,7 @@ class HomePage extends StatelessWidget {
       }
     }
     final list = inSection(section);
-    final index = list.indexWhere((e) => !store.isDone(e));
+    final index = list.indexWhere((e) => !e.reviewOnly && !store.isDone(e));
     openReader(context, store, section, initial: index < 0 ? 0 : index);
   }
 
@@ -460,7 +460,7 @@ class HomePage extends StatelessWidget {
               SizedBox(height: 6),
               LinearProgressIndicator(value: done / store.sectionTotal(section), minHeight: 3,
                 color: AppAppearance.of(context).gold, backgroundColor: Colors.white12,
-                semanticsLabel: tr(context, sectionLabel(section)), semanticsValue: '$done / $count'),
+                semanticsLabel: tr(context, sectionLabel(section)), semanticsValue: '$done / ${store.sectionTotal(section)}'),
             ],
           ]))),
           SizedBox(width: 8),
@@ -483,9 +483,9 @@ class HomePage extends StatelessWidget {
           ])),
           if (done > 0) ...[
             SizedBox(height: 8),
-            LinearProgressIndicator(value: done / count, minHeight: 3,
+            LinearProgressIndicator(value: done / store.sectionTotal(section), minHeight: 3,
               color: AppAppearance.of(context).gold, backgroundColor: Colors.white12,
-              semanticsLabel: tr(context, sectionLabel(section)), semanticsValue: '$done / $count'),
+              semanticsLabel: tr(context, sectionLabel(section)), semanticsValue: '$done / ${store.sectionTotal(section)}'),
           ],
         ])),
     );
@@ -855,9 +855,9 @@ class _IvoryHome extends StatelessWidget {
                 _HomeArrow(size: 34 * unit, complete: done == count),
               ]),
               if (done > 0) ...[const SizedBox(height: 5),
-                LinearProgressIndicator(value: done / count, minHeight: 3,
+                LinearProgressIndicator(value: done / store.sectionTotal(section), minHeight: 3,
                   color: IvoryContrast.accent, backgroundColor: IvoryContrast.progressTrack,
-                  semanticsLabel: tr(context, sectionLabel(section)), semanticsValue: '$done / $count')],
+                  semanticsLabel: tr(context, sectionLabel(section)), semanticsValue: '$done / ${store.sectionTotal(section)}')],
             ])));
   }
 

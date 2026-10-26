@@ -403,7 +403,7 @@
     },
     {
       "path": "lib/content.dart",
-      "sha": "0b044db57a883e38532cc73bf600366a0ee14c10"
+      "sha": "202b720313bea52d6553435bd17e24cf85d68241"
     },
     {
       "path": "lib/quran_text.dart",
@@ -423,12 +423,22 @@
     },
     {
       "path": "lib/share_card.dart",
-      "sha": "e2b922487af6b1e52afa5cf69533377cebdf5eea"
+      "sha": "7a3ca0df48b4cc4160c55c9b7fad557b64dbbcdc"
     },
     {
       "path": "pubspec.lock",
       "sha": "270f1b989f7f9c81df95fe0d7f5b5abd340d0294"
+    },
+    {
+      "path": "lib/reference_review.dart",
+      "sha": "b3209cc98c7011097ee5bc34581bd65af0c305a0"
     }
   ],
-  "authorizedContentReview": "docs/CONTENT_VERIFICATION_2026-10-26.md"
+  "authorizedContentReview": "docs/CONTENT_VERIFICATION_2026-10-26.md",
+  "acceptedCatalog": {
+    "base": "6db12405311f885396cb0506e553c0868dbc17f8",
+    "entries": 51,
+    "literalSHA256": "72d3c9ab339fff1be764289e54e1cfff011b0e6fc0374828e28673ccd0311951",
+    "audit": "docs/content-audit.json"
+  }
 }

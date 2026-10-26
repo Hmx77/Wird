@@ -244,7 +244,7 @@ for mode,label in [('ivory','Ivory Serenity'),('midnight','Midnight Teal')]:
     adb('shell','input','keyevent','KEYCODE_BACK')
     home()
     tap('أذكار المساء', scroll=True)
-    expect('1 / 15')
+    expect('1 / 23')
     capture(f'android-content-{mode}-evening-reader.png')
     adb('shell','input','keyevent','KEYCODE_BACK')
     home()

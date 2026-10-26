@@ -178,7 +178,7 @@ class WirdState extends ChangeNotifier {
         target(entry, date),
       );
   bool isDone(DhikrEntry entry, [String? date]) =>
-      count(entry, date) >= target(entry, date);
+      !entry.reviewOnly && count(entry, date) >= target(entry, date);
   // Preserve historical completion against the catalog available before upgrade.
   List<DhikrEntry> progressEntries(DhikrSection section, [String? date]) =>
       inSection(section).where((e) => !e.reviewOnly && (date == null ||
@@ -669,7 +669,7 @@ class ProgressPage extends StatelessWidget {
         ),
         ProgressCalendar(store: store),
         ...DhikrSection.values.map((section) {
-          final total = inSection(section).length;
+          final total = store.sectionTotal(section);
           final complete = store.completed(section);
           return Padding(
             padding: const EdgeInsets.fromLTRB(19, 0, 19, 11),
