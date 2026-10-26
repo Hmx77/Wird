@@ -842,7 +842,7 @@ class _IvoryHome extends StatelessWidget {
     return _surface(keyName: 'home-${section.name}', image: homeArt[section.name]!,
       onTap: () => openReader(context, store, section),
       scenery: night ? null : _IvoryDayScenery(
-        image: morning ? ivoryMorning : ivoryEvening, unit: unit, hasProgress: done > 0),
+        image: morning ? ivoryMorning : ivoryEvening, unit: unit),
       gradient: night ? const LinearGradient(colors: [Color(0x18002128), Color(0x30002128)]) : null,
       child: Padding(padding: EdgeInsets.all(11 * unit),
         child: night ? ConstrainedBox(constraints: BoxConstraints(minHeight: 67 * unit),
@@ -887,28 +887,30 @@ class _IvoryHome extends StatelessWidget {
 /// A crisp illustration and a caption-sized feather, independent of card height.
 /// Text, badges, progress and hit targets keep their existing layout above it.
 class _IvoryDayScenery extends StatelessWidget {
-  const _IvoryDayScenery({required this.image, required this.unit, required this.hasProgress});
+  const _IvoryDayScenery({required this.image, required this.unit});
   final AssetImage image;
   final double unit;
-  final bool hasProgress;
 
   @override
-  Widget build(BuildContext context) {
-    final scaler = MediaQuery.textScalerOf(context);
-    final captionDepth = scaler.scale(18.5 * unit) * 1.5 +
-      scaler.scale(13 * unit) * 1.5 + 2 + 11 * unit + (hasProgress ? 8 : 0);
+  Widget build(BuildContext context) => LayoutBuilder(builder: (context, box) {
+    // The existing column places its caption after inset + badge + gap.
+    // Measure the remaining space so wrapped or enlarged labels keep the same
+    // feather at their top instead of letting scenery show through the text.
+    final captionDepth = box.maxHeight - (11 + 48 + 21) * unit;
+    final feather = 28 * unit;
+    final washHeight = captionDepth + feather;
+    final captionStop = feather / washHeight;
     return Stack(fit: StackFit.expand, children: [
       Image(image: image, fit: BoxFit.cover, alignment: Alignment.topCenter,
         filterQuality: FilterQuality.high, excludeFromSemantics: true),
-      Positioned(left: 0, right: 0, bottom: 0,
-        height: captionDepth + 28 * unit,
-        child: const DecoratedBox(decoration: BoxDecoration(
+      Positioned(left: 0, right: 0, bottom: 0, height: washHeight,
+        child: DecoratedBox(decoration: BoxDecoration(
           gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
-            stops: [0, .18, .32, .75, 1],
-            colors: [Color(0x00FAF6E9), Color(0x59FAF6E9), Color(0xD1FAF6E9),
+            stops: [0, captionStop * .56, captionStop, (captionStop + 1) / 2, 1],
+            colors: const [Color(0x00FAF6E9), Color(0x59FAF6E9), Color(0xD1FAF6E9),
               Color(0xF5FAF6E9), _IvoryHome.paper])))),
     ]);
-  }
+  });
 }
 
 /// The reference's full Home selection tile, restricted to the Ivory Home.
@@ -990,4 +992,3 @@ class _IvoryShortcut extends StatelessWidget {
               style: TextStyle(color: IvoryContrast.muted, fontSize: 11.5 * unit, height: 1.6)),
           ])))));
 }
-
