@@ -11,7 +11,7 @@ Future<void> shareDhikrCard(
   Color ink, {
   int? repetitionTarget,
 }) async {
-  if (!entry.reviewed) throw StateError('Unreviewed content cannot be shared');
+  if (!entry.reviewed || entry.reviewOnly) throw StateError('Only verified devotional entries may be shared');
   final selected = repetitionTarget ?? entry.count;
   if (!entry.allowedCounts.contains(selected))
     throw ArgumentError('Invalid repetition target');
