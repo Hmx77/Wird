@@ -77,7 +77,7 @@ def capture(name):
 
 # Actual offline UI. Religious content is never extracted from the mockups.
 tap('الأذكار',bottom=True)
-expect('51 ذكر')
+expect('66 ذكر')
 capture('android-library-premium.png')
 tap('ابحث عن ذكر')
 for attempt in range(6):
@@ -85,11 +85,11 @@ for attempt in range(6):
     time.sleep(.3)
 else:raise AssertionError('Search input did not receive focus')
 adb('shell','input','text','Evening')
-expect('15 ذكر')
+expect('23 ذكر')
 adb('shell','input','keyevent','KEYCODE_BACK')
 capture('android-library-search.png')
 tap('مسح البحث')
-expect('51 ذكر')
+expect('66 ذكر')
 tap('حفظ في المفضلة آية الكرسي',scroll=True)
 tap('المفضلة', exact=True)
 expect('1 ذكر')
@@ -159,6 +159,6 @@ else:raise AssertionError('Long Quran counter did not become reachable')
 adb('shell','settings','put','system','font_scale','1.0')
 adb('shell','input','keyevent','KEYCODE_BACK')
 tap('الرئيسية',bottom=True)
-(out/'reader-interactions.json').write_text(json.dumps({'passed':True,'offline':True,'library_count':51,'search_evening':15,'search_bedtime':18,'bookmark_filter':1,'reader_count_sequence':['1/3','0/3','1/3','restart','2/3'],'navigation':['next','previous'],'evidence':'expanded','long_passage':'Mulk at system font scale 1.5'},ensure_ascii=False,indent=2)+'\n')
+(out/'reader-interactions.json').write_text(json.dumps({'passed':True,'offline':True,'library_count':66,'search_evening':23,'search_bedtime':18,'bookmark_filter':1,'reader_count_sequence':['1/3','0/3','1/3','restart','2/3'],'navigation':['next','previous'],'evidence':'expanded','long_passage':'Mulk at system font scale 1.5'},ensure_ascii=False,indent=2)+'\n')
 print('PASS: premium Library search/bookmarks, Reader count/Undo/restart/navigation/evidence and large Mulk',flush=True)
 
