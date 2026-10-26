@@ -780,7 +780,7 @@ class _SettingsControl extends StatelessWidget {
           ),
         ],
       );
-      if (c.maxWidth < 320 || MediaQuery.textScalerOf(context).scale(1) > 1.3)
+      if (c.maxWidth < 240 || MediaQuery.textScalerOf(context).scale(1) > 1.3)
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

@@ -142,6 +142,11 @@ for mode,label in [('ivory','Ivory Serenity'),('midnight','Midnight Teal')]:
     adb('shell','input','keyevent','KEYCODE_BACK')
     tap('التفاصيل والمصادر',scroll=True)
     expect('لا حسابات ولا إعلانات')
+    capture(f'android-appearance-{mode}-settings-privacy.png')
+    tap('مسح بياناتي المحلية',scroll=True)
+    expect('مسح المتابعة والمفضلة؟')
+    capture(f'android-appearance-{mode}-delete-confirmation.png')
+    tap('إلغاء')
     capture(f'android-appearance-{mode}-settings-bottom.png')
     assert not any('تراخيص البرمجيات' in (n.get('text','') + n.get('content-desc','')) for n in snapshot())
     # Samsung-sized viewport, both themes, scrollable sheet and real choice.
