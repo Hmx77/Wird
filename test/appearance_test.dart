@@ -245,5 +245,35 @@ void main() {
     }
   }
 
+  testWidgets('Ivory shell keeps all navigation destinations readable at 320dp and 200% text', (t) async {
+    t.view.physicalSize = const Size(320, 568);
+    t.view.devicePixelRatio = 1;
+    addTearDown(t.view.resetPhysicalSize);
+    addTearDown(t.view.resetDevicePixelRatio);
+    SharedPreferences.setMockInitialValues({appearancePreference: appearanceIds[1], 'haptics': false});
+    final s = WirdState();
+    await s.initialize();
+    await mount(t, s, WirdShell(store: s), scale: 2);
+    final home = find.byKey(const Key('nav-home'));
+    final library = find.byKey(const Key('nav-library'));
+    final nawafil = find.byKey(const Key('nav-nawafil'));
+    final settings = find.byKey(const Key('nav-settings'));
+    for (final item in [home, library, nawafil, settings]) {
+      expect(item.hitTestable(), findsOneWidget);
+      expect(t.getSize(item).width, greaterThan(130));
+    }
+    expect(t.getTopLeft(home).dy, t.getTopLeft(library).dy);
+    expect(t.getTopLeft(nawafil).dy, t.getTopLeft(settings).dy);
+    expect(t.getTopLeft(nawafil).dy, greaterThan(t.getTopLeft(home).dy));
+    expect(t.takeException(), isNull);
+    await capture(t, 'ivory-shell-320-ar-text200');
+    await t.tap(library);
+    await t.pumpAndSettle();
+    expect(find.byType(LibraryPage), findsOneWidget);
+    expect(t.takeException(), isNull);
+    await t.pumpWidget(const SizedBox.shrink());
+    s.dispose();
+  });
+
 }
 

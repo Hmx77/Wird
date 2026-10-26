@@ -25,10 +25,28 @@ def snapshot():
 size = re.findall(r'(\d+)x(\d+)', adb('shell', 'wm', 'size'))[-1]
 width, height = map(int, size)
 
+def content_bottom(nodes):
+    # Home is in the bottom bar on every shell page. Its observed top edge
+    # bounds the scroll area even when accessibility text makes the bar taller.
+    edges = []
+    for n in nodes:
+        if any(normal(n.get(k, '')).strip() == normal('الرئيسية') for k in ['text', 'content-desc']):
+            bounds = list(map(int, re.findall(r'-?\d+', n.get('bounds', ''))))
+            if len(bounds) == 4 and bounds[1] > height * .5:
+                edges.append(bounds[1])
+    return min(edges) - 12 if edges else height * .89
+
+def scroll_content(nodes):
+    bottom = content_bottom(nodes)
+    adb('shell','input','swipe',str(width//2),str(int(bottom * .9)),
+        str(width//2),str(int(height * .28)),'450')
+
 def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_bottom=False, prefix=False, clickable=False):
     for attempt in range(50 if scroll else 3):
         candidates = []
-        for n in snapshot():
+        nodes = snapshot()
+        limit = height * .98 if allow_bottom else content_bottom(nodes)
+        for n in nodes:
             value = n.get('text', '') + ' ' + n.get('content-desc', '') + ' ' + n.get('hint', '')
             if node_class and n.get('class') != node_class:
                 continue
@@ -39,13 +57,13 @@ def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_b
                 continue
             if (exact and not any(normal(label) == normal(v) for v in values)) or (not exact and normal(label) not in normal(value)):
                 continue
-            bounds = list(map(int, re.findall(r'\d+', n.get('bounds', ''))))
+            bounds = list(map(int, re.findall(r'-?\d+', n.get('bounds', ''))))
             if len(bounds) != 4:
                 continue
             x1, y1, x2, y2 = bounds
             if x2 <= x1 or y2 <= y1 or y1 < 0 or y2 > height:
                 continue
-            if scroll and y2 > height * (.98 if allow_bottom else .89):
+            if scroll and y2 > limit:
                 continue
             candidates.append((n, bounds))
         if candidates:
@@ -54,9 +72,11 @@ def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_b
             adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
             return
         if scroll:
-            adb('shell','input','swipe',str(width//2),str(int(height*.77)),str(width//2),str(int(height*.32)),'450')
+            scroll_content(nodes)
         else:
             time.sleep(1)
+    capture('android-appearance-target-failure.png')
+    (out/'appearance-target-failure.xml').write_text(adb('shell','cat','/sdcard/wird-home-review.xml'))
     raise AssertionError(f'No visible target: {label}')
 
 def expect(label, scroll=False):
@@ -76,7 +96,7 @@ def expect(label, scroll=False):
         if matched:
             return
         if scroll:
-            adb('shell','input','swipe',str(width//2),str(int(height*.77)),str(width//2),str(int(height*.32)),'450')
+            scroll_content(nodes)
         time.sleep(1)
     raise AssertionError(f'Destination missing: {label}')
 

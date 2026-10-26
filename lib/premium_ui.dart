@@ -895,32 +895,38 @@ class _IvoryHomeNavigation extends StatelessWidget {
         decoration: BoxDecoration(color: const Color(0xFFFFFAEF),
           borderRadius: BorderRadius.circular(25),
           border: Border.all(color: const Color(0xFFD0C09A), width: .75)),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.start,
-          children: List.generate(4, (index) {
+        child: LayoutBuilder(builder: (context, constraints) {
+          final large = MediaQuery.textScalerOf(context).scale(12) > 17;
+          final items = List.generate(4, (index) {
             const labels = ['الرئيسية', 'الأذكار', 'النوافل', 'الإعدادات'];
             const keys = ['nav-home', 'nav-library', 'nav-nawafil', 'nav-settings'];
             final selected = index == 0;
             final color = selected ? IvoryContrast.gold : IvoryContrast.ink;
-            final icon = switch (index) {
-              0 => const Icon(Icons.home_rounded),
-              1 => const Icon(Icons.auto_stories_outlined),
-              2 => const SujoodIcon(size: 29),
-              _ => const Icon(Icons.settings_outlined),
-            };
-            return Expanded(child: Semantics(selected: selected, button: true,
+            final icon = IconTheme(data: IconThemeData(color: color, size: 28),
+              child: switch (index) {
+                0 => const Icon(Icons.home_rounded),
+                1 => const Icon(Icons.auto_stories_outlined),
+                2 => const SujoodIcon(size: 29),
+                _ => const Icon(Icons.settings_outlined),
+              });
+            final label = UiText(labels[index], textAlign: TextAlign.center,
+              style: TextStyle(color: color, fontSize: 12, height: 1.4,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w400));
+            return Semantics(selected: selected, button: true,
               child: Material(color: selected ? const Color(0xFFF5EACF) : Colors.transparent,
                 borderRadius: BorderRadius.circular(20),
                 child: InkWell(key: Key(keys[index]), borderRadius: BorderRadius.circular(20),
                   onTap: () => onNavigate(index),
-                  child: Padding(padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      IconTheme(data: IconThemeData(color: color, size: 28), child: icon),
-                      const SizedBox(height: 3),
-                      UiText(labels[index], textAlign: TextAlign.center,
-                        style: TextStyle(color: color, fontSize: 12, height: 1.4,
-                          fontWeight: selected ? FontWeight.w700 : FontWeight.w400)),
-                    ]))))));
-          })))));
+                  child: Padding(padding: EdgeInsets.symmetric(vertical: large ? 10 : 8, horizontal: 2),
+                    child: large
+                      ? Row(children: [icon, const SizedBox(width: 5), Expanded(child: label)])
+                      : Column(mainAxisSize: MainAxisSize.min, children: [icon, const SizedBox(height: 3), label])))));
+          });
+          if (large) return Wrap(runSpacing: 3, children: items.map((item) =>
+            SizedBox(width: constraints.maxWidth / 2, child: item)).toList());
+          return Row(crossAxisAlignment: CrossAxisAlignment.start,
+            children: items.map((item) => Expanded(child: item)).toList());
+        }))));
 }
 
 /// Ivory shortcuts have their own responsive composition; dark cards are untouched.
