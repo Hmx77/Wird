@@ -1,7 +1,7 @@
 name: Wird verification
 on:
   push:
-    branches: [main, "redesign/**"]
+    branches: [main, "redesign/**", "review/athkar-authentication-20261026"]
   pull_request:
   workflow_dispatch:
     inputs:
@@ -89,7 +89,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
   ios:
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/redesign/ivory-settings-integration-20261024') || (github.event_name == 'workflow_dispatch' && inputs.build_ios)
+    if: (github.event_name == 'push' && (github.ref == 'refs/heads/redesign/ivory-settings-integration-20261024' || github.ref == 'refs/heads/review/athkar-authentication-20261026')) || (github.event_name == 'workflow_dispatch' && inputs.build_ios)
     runs-on: macos-15
     timeout-minutes: 35
     steps:
@@ -144,7 +144,7 @@ jobs:
           retention-days: 14
   android-device:
     needs: android
-    if: always() && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/redesign/ivory-settings-integration-20261024')) && startsWith(github.ref, 'refs/heads/redesign/') && (needs.android.result == 'success' || (!inputs.build_android && inputs.reuse_android_run != ''))
+    if: always() && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && (github.ref == 'refs/heads/redesign/ivory-settings-integration-20261024' || github.ref == 'refs/heads/review/athkar-authentication-20261026'))) && (startsWith(github.ref, 'refs/heads/redesign/') || github.ref == 'refs/heads/review/athkar-authentication-20261026') && (needs.android.result == 'success' || (!inputs.build_android && inputs.reuse_android_run != ''))
     permissions:
       contents: read
       actions: read

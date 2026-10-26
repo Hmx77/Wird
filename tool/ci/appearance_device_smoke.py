@@ -243,6 +243,46 @@ for mode,label in [('ivory','Ivory Serenity'),('midnight','Midnight Teal')]:
     capture(f'android-appearance-{mode}-reader.png')
     adb('shell','input','keyevent','KEYCODE_BACK')
     home()
+    tap('أذكار المساء', scroll=True)
+    expect('1 / 15')
+    capture(f'android-content-{mode}-evening-reader.png')
+    adb('shell','input','keyevent','KEYCODE_BACK')
+    home()
+    # Actual offline expanded collection and both newly admitted entries.
+    for entry_title, ordinal, short in [('فاطر السماوات والأرض عند المضجع', 17, 'creator'), ('الذكر عند الاستيقاظ من الليل', 18, 'night-waking')]:
+        tap('الأذكار', bottom=True)
+        top()
+        if any(normal('مسح البحث') in normal(n.get('content-desc', '') + n.get('text', '')) for n in snapshot()):
+            tap('مسح البحث')
+        tap('ابحث عن ذكر')
+        for attempt in range(6):
+            if any(n.get('class') == 'android.widget.EditText' and n.get('focused') == 'true' for n in snapshot()):
+                break
+            time.sleep(.3)
+        else:
+            raise AssertionError('Expanded collection search did not receive focus')
+        adb('shell','input','text','Bedtime')
+        adb('shell','input','keyevent','KEYCODE_BACK')
+        expect('18 ذكر')
+        capture(f'android-content-{mode}-sleep-library.png')
+        tap(entry_title, scroll=True, node_class='android.view.View')
+        expect(f'{ordinal} / 18')
+        capture(f'android-content-{mode}-{short}.png')
+        tap('الفضل والدليل والمعنى', scroll=True)
+        expect('المعنى')
+        tap('المعنى', scroll=True, prefix=True)
+        capture(f'android-content-{mode}-{short}-evidence.png')
+        # Generate the real share image, then cancel the OS sheet without sending.
+        top()
+        tap('مشاركة بطاقة')
+        time.sleep(2)
+        activity = adb('shell','dumpsys','activity','activities')
+        assert 'ChooserActivity' in activity or 'IntentResolver' in activity, 'Native share sheet not opened'
+        capture(f'android-content-{mode}-{short}-share.png')
+        adb('shell','input','keyevent','KEYCODE_BACK')
+        adb('shell','input','keyevent','KEYCODE_BACK')
+        home()
+    checks.append(mode+': expanded 18-entry sleep library, both alternative readers/evidence and real share sheets')
     tap('النوافل',bottom=True)
     top()
     capture(f'android-appearance-{mode}-nawafil.png')

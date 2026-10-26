@@ -93,9 +93,11 @@ void main() {
       'sleep_tahmid',
       'sleep_takbir',
       'sleep_bad_dream',
+      'sleep_creator',
+      'sleep_night_waking',
     ]);
-    expect(entries, hasLength(49));
-    expect(entries.map((e) => e.arabic).toSet(), hasLength(36));
+    expect(entries, hasLength(51));
+    expect(entries.map((e) => e.arabic).toSet(), hasLength(37));
     for (final section in DhikrSection.values) {
       expect(
         inSection(section).map((e) => normalizeArabic(e.arabic)).toSet(),

@@ -1,0 +1,273 @@
+[
+  {
+    "section": "morning",
+    "screen": 8,
+    "title": "أشهدك وأشهد حملة عرشك",
+    "narrator": "Anas ibn Malik",
+    "reference": "Abu Dawud 5069",
+    "grading": "Daif: al-Albani; Ibn Baz, Tuhfat al-Akhyar pp.13–14, calls its chain Hasan. Neither establishes an uncontested Sahih basis for this admission.",
+    "timingCountsBenefits": "Morning/evening; fourfold emancipation claim withheld.",
+    "sourceUrls": [
+      "https://sunnah.com/abudawud:5069",
+      "https://saaid.org/Doat/almohanna/m2.pdf"
+    ],
+    "decision": "excluded_pending_qualified_review",
+    "alternativeId": "",
+    "alternativeDecision": "Existing sayyid al-istighfar is distinct and already included; do not duplicate."
+  },
+  {
+    "section": "morning",
+    "screen": 9,
+    "title": "ما أصبح / أمسى بي من نعمة",
+    "narrator": "Abdullah ibn Ghannam al-Bayadi",
+    "reference": "Abu Dawud 5073",
+    "grading": "Daif: al-Albani; Hasan chain: Ibn Baz, Tuhfat al-Akhyar pp.13–14. Exact variants, including أو بأحد من خلقك, must not be silently blended.",
+    "timingCountsBenefits": "Morning/evening gratitude; fulfilling the day/night gratitude claim withheld.",
+    "sourceUrls": [
+      "https://sunnah.com/abudawud:5073",
+      "https://saaid.org/Doat/almohanna/m2.pdf"
+    ],
+    "decision": "excluded_pending_qualified_review",
+    "alternativeId": "",
+    "alternativeDecision": "Existing authentic gratitude/other timed supplications are not new entries."
+  },
+  {
+    "section": "morning",
+    "screen": 10,
+    "title": "العافية في البدن والسمع والبصر",
+    "narrator": "Abu Bakrah, through his son Abd al-Rahman",
+    "reference": "Abu Dawud 5090",
+    "grading": "Hasan in chain: al-Albani. Arnaut also records Hasan with corroboration; not relabeled Sahih.",
+    "timingCountsBenefits": "Three morning/evening; bodily/hearing/sight wellbeing and the associated refuge text. Supplication is not a medical guarantee.",
+    "sourceUrls": [
+      "https://sunnah.com/abudawud:5090",
+      "https://test.dorar.net/h/X085ab3d?osoul=1"
+    ],
+    "decision": "excluded_pending_qualified_review",
+    "alternativeId": "",
+    "alternativeDecision": "Abu Dawud 5074 wellbeing is already included; no duplicate."
+  },
+  {
+    "section": "morning",
+    "screen": 12,
+    "title": "حسبي الله لا إله إلا هو",
+    "narrator": "Abu al-Darda; attribution/chain requires separate review",
+    "reference": "Abu Dawud 5081; Quran 9:129",
+    "grading": "Al-Albani labels this report Mawdu. Other discussions of a companion chain do not resolve Prophetic attribution or the sevenfold benefit. This judgment is NOT against Quran 9:129.",
+    "timingCountsBenefits": "Seven morning/evening and sufficiency promise not admitted. No Quran text is assigned an unsupported reward.",
+    "sourceUrls": [
+      "https://sunnah.com/abudawud:5081"
+    ],
+    "decision": "excluded_pending_qualified_review",
+    "alternativeId": "",
+    "alternativeDecision": "No distinct authenticated timed substitute established in this audit."
+  },
+  {
+    "section": "morning",
+    "screen": 16,
+    "title": "رضيت بالله ربًا",
+    "narrator": "Abu Salam; variants differ in the intermediary",
+    "reference": "Ibn Majah 3870; Abu Dawud 5072",
+    "grading": "Hasan: Darussalam on Ibn Majah; Daif: al-Albani on Abu Dawud. Sahih general reports cannot establish this timed threefold wording/benefit.",
+    "timingCountsBenefits": "Morning/evening threefold practice withheld; general satisfaction with Allah/Islam/Muhammad is a different context.",
+    "sourceUrls": [
+      "https://sunnah.com/ibnmajah:3870",
+      "https://sunnah.com/abudawud:5072",
+      "https://sunnah.com/abudawud:1529",
+      "https://sunnah.com/muslim:34"
+    ],
+    "decision": "excluded_pending_qualified_review",
+    "alternativeId": "",
+    "alternativeDecision": "General Sahih wording not imported as a new prescribed morning/evening routine."
+  },
+  {
+    "section": "morning",
+    "screen": 17,
+    "title": "يا حي يا قيوم برحمتك أستغيث",
+    "narrator": "Anas ibn Malik, instruction to Fatimah",
+    "reference": "Sahih al-Jami 5820, via al-Nasai al-Kubra and others",
+    "grading": "Al-Albani: Hasan. A book called Sahih al-Jami does not make every individual classification Sahih.",
+    "timingCountsBenefits": "Morning/evening appeal for rectification; no authenticated numerical reward admitted.",
+    "sourceUrls": [
+      "https://dorar.net/h/YsQbIip8"
+    ],
+    "decision": "excluded_pending_qualified_review",
+    "alternativeId": "",
+    "alternativeDecision": "No distinct Sahih timed alternative established here; existing supplications not duplicated."
+  },
+  {
+    "section": "morning",
+    "screen": 18,
+    "title": "أصبح / أمسى الملك لله رب العالمين",
+    "narrator": "Abu Malik al-Ashari",
+    "reference": "Abu Dawud 5084",
+    "grading": "Daif: al-Albani. The رب العالمين / فتحه ونصره ونوره wording is not Muslim 2723.",
+    "timingCountsBenefits": "Morning/evening; no count/virtue imported from another report.",
+    "sourceUrls": [
+      "https://sunnah.com/abudawud:5084",
+      "https://dorar.net/h/1yd1o9ZV?osoul=1"
+    ],
+    "decision": "excluded_pending_qualified_review",
+    "alternativeId": "",
+    "alternativeDecision": "Muslim 2723 kingdom supplications already included; do not blend or duplicate."
+  },
+  {
+    "section": "evening",
+    "screen": 8,
+    "title": "أشهدك وأشهد حملة عرشك",
+    "narrator": "Anas ibn Malik",
+    "reference": "Abu Dawud 5069",
+    "grading": "Daif: al-Albani; Ibn Baz, Tuhfat al-Akhyar pp.13–14, calls its chain Hasan. Neither establishes an uncontested Sahih basis for this admission.",
+    "timingCountsBenefits": "Morning/evening; fourfold emancipation claim withheld.",
+    "sourceUrls": [
+      "https://sunnah.com/abudawud:5069",
+      "https://saaid.org/Doat/almohanna/m2.pdf"
+    ],
+    "decision": "excluded_pending_qualified_review",
+    "alternativeId": "",
+    "alternativeDecision": "Existing sayyid al-istighfar is distinct and already included; do not duplicate."
+  },
+  {
+    "section": "evening",
+    "screen": 9,
+    "title": "ما أصبح / أمسى بي من نعمة",
+    "narrator": "Abdullah ibn Ghannam al-Bayadi",
+    "reference": "Abu Dawud 5073",
+    "grading": "Daif: al-Albani; Hasan chain: Ibn Baz, Tuhfat al-Akhyar pp.13–14. Exact variants, including أو بأحد من خلقك, must not be silently blended.",
+    "timingCountsBenefits": "Morning/evening gratitude; fulfilling the day/night gratitude claim withheld.",
+    "sourceUrls": [
+      "https://sunnah.com/abudawud:5073",
+      "https://saaid.org/Doat/almohanna/m2.pdf"
+    ],
+    "decision": "excluded_pending_qualified_review",
+    "alternativeId": "",
+    "alternativeDecision": "Existing authentic gratitude/other timed supplications are not new entries."
+  },
+  {
+    "section": "evening",
+    "screen": 10,
+    "title": "العافية في البدن والسمع والبصر",
+    "narrator": "Abu Bakrah, through his son Abd al-Rahman",
+    "reference": "Abu Dawud 5090",
+    "grading": "Hasan in chain: al-Albani. Arnaut also records Hasan with corroboration; not relabeled Sahih.",
+    "timingCountsBenefits": "Three morning/evening; bodily/hearing/sight wellbeing and the associated refuge text. Supplication is not a medical guarantee.",
+    "sourceUrls": [
+      "https://sunnah.com/abudawud:5090",
+      "https://test.dorar.net/h/X085ab3d?osoul=1"
+    ],
+    "decision": "excluded_pending_qualified_review",
+    "alternativeId": "",
+    "alternativeDecision": "Abu Dawud 5074 wellbeing is already included; no duplicate."
+  },
+  {
+    "section": "evening",
+    "screen": 12,
+    "title": "حسبي الله لا إله إلا هو",
+    "narrator": "Abu al-Darda; attribution/chain requires separate review",
+    "reference": "Abu Dawud 5081; Quran 9:129",
+    "grading": "Al-Albani labels this report Mawdu. Other discussions of a companion chain do not resolve Prophetic attribution or the sevenfold benefit. This judgment is NOT against Quran 9:129.",
+    "timingCountsBenefits": "Seven morning/evening and sufficiency promise not admitted. No Quran text is assigned an unsupported reward.",
+    "sourceUrls": [
+      "https://sunnah.com/abudawud:5081"
+    ],
+    "decision": "excluded_pending_qualified_review",
+    "alternativeId": "",
+    "alternativeDecision": "No distinct authenticated timed substitute established in this audit."
+  },
+  {
+    "section": "evening",
+    "screen": 16,
+    "title": "رضيت بالله ربًا",
+    "narrator": "Abu Salam; variants differ in the intermediary",
+    "reference": "Ibn Majah 3870; Abu Dawud 5072",
+    "grading": "Hasan: Darussalam on Ibn Majah; Daif: al-Albani on Abu Dawud. Sahih general reports cannot establish this timed threefold wording/benefit.",
+    "timingCountsBenefits": "Morning/evening threefold practice withheld; general satisfaction with Allah/Islam/Muhammad is a different context.",
+    "sourceUrls": [
+      "https://sunnah.com/ibnmajah:3870",
+      "https://sunnah.com/abudawud:5072",
+      "https://sunnah.com/abudawud:1529",
+      "https://sunnah.com/muslim:34"
+    ],
+    "decision": "excluded_pending_qualified_review",
+    "alternativeId": "",
+    "alternativeDecision": "General Sahih wording not imported as a new prescribed morning/evening routine."
+  },
+  {
+    "section": "evening",
+    "screen": 17,
+    "title": "يا حي يا قيوم برحمتك أستغيث",
+    "narrator": "Anas ibn Malik, instruction to Fatimah",
+    "reference": "Sahih al-Jami 5820, via al-Nasai al-Kubra and others",
+    "grading": "Al-Albani: Hasan. A book called Sahih al-Jami does not make every individual classification Sahih.",
+    "timingCountsBenefits": "Morning/evening appeal for rectification; no authenticated numerical reward admitted.",
+    "sourceUrls": [
+      "https://dorar.net/h/YsQbIip8"
+    ],
+    "decision": "excluded_pending_qualified_review",
+    "alternativeId": "",
+    "alternativeDecision": "No distinct Sahih timed alternative established here; existing supplications not duplicated."
+  },
+  {
+    "section": "evening",
+    "screen": 18,
+    "title": "أصبح / أمسى الملك لله رب العالمين",
+    "narrator": "Abu Malik al-Ashari",
+    "reference": "Abu Dawud 5084",
+    "grading": "Daif: al-Albani. The رب العالمين / فتحه ونصره ونوره wording is not Muslim 2723.",
+    "timingCountsBenefits": "Morning/evening; no count/virtue imported from another report.",
+    "sourceUrls": [
+      "https://sunnah.com/abudawud:5084",
+      "https://dorar.net/h/1yd1o9ZV?osoul=1"
+    ],
+    "decision": "excluded_pending_qualified_review",
+    "alternativeId": "",
+    "alternativeDecision": "Muslim 2723 kingdom supplications already included; do not blend or duplicate."
+  },
+  {
+    "section": "evening",
+    "screen": 19,
+    "title": "أمسينا على فطرة الإسلام",
+    "narrator": "Ubayy ibn Kab in Ahmad Zawaid 21144; morning reports also from Abd al-Rahman ibn Abza",
+    "reference": "Ahmad Zawaid 21144; Sahih al-Jami 4674",
+    "grading": "Arnaut: Sahih for the evening extension; al-Albani: very weak chain for this route (al-Silsilah al-Sahihah 6/1233 discussion). Resolve route and wording before admission.",
+    "timingCountsBenefits": "Evening extension وإذا أمسينا مثل ذلك is disputed separately from established morning text.",
+    "sourceUrls": [
+      "https://dorar.net/h/pqQlwee2?osoul=1",
+      "https://dorar.net/hadith-category/cat/0cd6cd007af56fc4cd2f6b9602ddf43b?page=3",
+      "https://dorar.net/h/GLuDBTFW"
+    ],
+    "decision": "excluded_pending_qualified_review",
+    "alternativeId": "",
+    "alternativeDecision": "Morning fitrah remains unchanged; no invented evening adaptation."
+  },
+  {
+    "section": "sleep",
+    "screen": 16,
+    "title": "لا إله إلا الله الواحد القهار",
+    "narrator": "Aisha",
+    "reference": "al-Nasai al-Kubra 10810 (numbering also 10700); Ibn Hibban 5530",
+    "grading": "Al-Albani: Sahih (Sahih al-Jami 4693); Ibn Hajar: معلول (Ithaf 17/320). Material unresolved disagreement, not a Bukhari report.",
+    "timingCountsBenefits": "Turning/restlessness during the night, not an unconditional before-bed routine.",
+    "sourceUrls": [
+      "https://dorar.net/hadith/sharh/112428"
+    ],
+    "decision": "excluded_pending_qualified_review",
+    "alternativeId": "sleep_night_waking",
+    "alternativeDecision": "Distinct alternative: sleep_night_waking, Bukhari 1154; no assertion that the original is verified."
+  },
+  {
+    "section": "sleep",
+    "screen": 17,
+    "title": "دعاء الفزع في النوم",
+    "narrator": "Abdullah ibn Amr, through Amr ibn Shuayb from his father",
+    "reference": "Abu Dawud 3893",
+    "grading": "Hasan: al-Albani, excluding the companion amulet passage. Hasan is insufficient here; wording variants must not be blended.",
+    "timingCountsBenefits": "Fear during sleep; no numerical prescription admitted.",
+    "sourceUrls": [
+      "https://sunnah.com/abudawud:3893"
+    ],
+    "decision": "excluded_pending_qualified_review",
+    "alternativeId": "sleep_creator",
+    "alternativeDecision": "Distinct bedtime alternative: sleep_creator, Abu Dawud 5067. Not a fear-specific supplication; existing Sahih bad-dream guidance remains."
+  }
+]

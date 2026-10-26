@@ -27,7 +27,7 @@ screens = screen_map['screens']
 for section, target in [('morning',25),('evening',23),('sleep',18)]:
     section_screens = [s['screen'] for s in screens if s['section']==section]
     require(sorted(section_screens)==list(range(1,target+1)), 'Missing or duplicate reference screen')
-    require([e['referenceScreens'][0] for e in entries if e['section']==section] == sorted(e['referenceScreens'][0] for e in entries if e['section']==section), 'Reference order changed')
+    require([e['referenceScreens'][0] for e in entries if e['section']==section and e['referenceScreens']] == sorted(e['referenceScreens'][0] for e in entries if e['section']==section and e['referenceScreens']), 'Reference order changed')
 for screen in screens:
     require(all(id in {e['id'] for e in entries} for id in screen['entryIds']), 'Unknown mapped entry')
     if screen['decision']=='pending': require(not screen['entryIds'], 'Pending material exposed')

@@ -48,9 +48,9 @@ void main() {
       addTearDown(tester.view.resetDevicePixelRatio);
       final store=await mount(tester,language:language);
       expect(Directionality.of(tester.element(find.byType(HomePage))),language=='ar'?TextDirection.rtl:TextDirection.ltr);
-      expect(find.text(uiString('18 ذكر',language)),findsOneWidget);
+      expect(find.descendant(of: find.byKey(const Key('home-morning')), matching: find.text(uiString('18 ذكر',language))),findsOneWidget);
       expect(find.text(uiString('15 ذكر',language)),findsOneWidget);
-      expect(find.text(uiString('16 ذكر',language)),findsOneWidget);
+      expect(find.descendant(of: find.byKey(const Key('home-sleep')), matching: find.text(uiString('18 ذكر',language))),findsOneWidget);
       final arrow = find.descendant(of: find.byKey(const Key('home-morning')),
         matching: find.byIcon(language == 'ar' ? Icons.chevron_left_rounded : Icons.chevron_right_rounded));
       expect(tester.widget<Icon>(arrow).textDirection, TextDirection.ltr,
