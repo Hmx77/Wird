@@ -458,13 +458,13 @@ class HomePage extends StatelessWidget {
             UiText('$count ذكر', style: TextStyle(color: categoryInk, fontSize: 11)),
             if (done > 0) ...[
               SizedBox(height: 6),
-              LinearProgressIndicator(value: done / count, minHeight: 3,
+              LinearProgressIndicator(value: done / store.sectionTotal(section), minHeight: 3,
                 color: AppAppearance.of(context).gold, backgroundColor: Colors.white12,
                 semanticsLabel: tr(context, sectionLabel(section)), semanticsValue: '$done / $count'),
             ],
           ]))),
           SizedBox(width: 8),
-          _HomeArrow(ink: categoryInk, size: 28, complete: done == count),
+          _HomeArrow(ink: categoryInk, size: 28, complete: done == store.sectionTotal(section)),
         ]) : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Container(padding: EdgeInsets.all(7),
             decoration: BoxDecoration(color: badge, borderRadius: BorderRadius.circular(13),
