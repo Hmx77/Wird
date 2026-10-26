@@ -92,7 +92,7 @@ void main() {
       expect(e.authenticity, isNotEmpty);
       expect(e.evidence, contains('درجة الرواية:'));
       expect(e.countDescription, contains('لا تدخل في عداد'));
-      expect(e.benefit, contains('العرض والتوثيق فقط'));
+      expect(e.benefit, contains('للعرض والتوثيق فقط'));
     }
     expect(entries.any((e) => e.reviewOnly), isFalse);
   });

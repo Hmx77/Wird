@@ -34,7 +34,7 @@ jobs:
   android:
     if: github.event_name != 'workflow_dispatch' || inputs.build_android
     runs-on: ubuntu-24.04
-    timeout-minutes: 35
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
         with:
@@ -97,7 +97,7 @@ jobs:
   ios:
     if: (github.event_name == 'push' && (github.ref == 'refs/heads/redesign/ivory-settings-integration-20261024' || github.ref == 'refs/heads/review/athkar-authentication-20261026' || github.ref == 'refs/heads/redesign/graded-reference-entries-20261026')) || (github.event_name == 'workflow_dispatch' && inputs.build_ios)
     runs-on: macos-15
-    timeout-minutes: 35
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
         with:

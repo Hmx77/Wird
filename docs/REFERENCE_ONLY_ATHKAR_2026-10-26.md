@@ -43,3 +43,13 @@ All original 51 entries remain in the verified-development catalog unchanged. Or
 - The Arabic text here is a *provisional cited excerpt or adaptation*, not an independently approved new Sunnah formula. A credible editorial reviewer must verify verbatim source text, variants, reference-specific grade, translations, and context.
 
 **Do not publish or merge** until source-level review resolves these issues and native screenshots and tests pass. Only the display/reference count, not the Sahih count, meets 25/23/18.
+
+## PR #10 source comparison corrections
+
+On 26 October 2026 the linked source pages were re-read. Abu Dawud [5069](https://sunnah.com/abudawud:5069), [5073](https://sunnah.com/abudawud:5073) and [5084](https://sunnah.com/abudawud:5084) print morning wording and refer to evening without a separately transcribed evening formula. Their evening reader warning now explicitly identifies the retained text as the source's morning-language quotation. No invented evening quotation is attributed to the Prophet.
+
+The evening fitrah adaptation previously combined `دين نبينا` with the citation to Ahmad 21144. That cited [primary transcription](https://dorar.net/h/pqQlwee2?osoul=1) has `سنة نبينا`; this reference-only passage was corrected to that wording. Its opening remains an explicitly disclosed evening adaptation, and the grading dispute remains unresolved. No original development-admitted entry was edited.
+
+[Abu Dawud 5090](https://sunnah.com/abudawud:5090) displays Hasan in chain; the excerpt is the bodily-health supplication, with its omitted additional supplication disclosed. [Ibn Majah 3870](https://sunnah.com/ibnmajah:3870) displays Hasan (Darussalam). [Al-Jami 5820](https://dorar.net/h/YsQbIip8) displays Hasan despite the book title. [Abu Dawud 5081](https://sunnah.com/abudawud:5081) attributes the report to Abu al-Darda and displays Mawdu (al-Albani). That ruling concerns the sevenfold claim, not Quran 9:129. These are source comparisons, not new scholarly adjudications or independent qualified proofreading.
+
+The immutable 51-entry source payload and its existing audit are protected separately from the reference-only file. Runtime tests compare all 51 payloads field by field. All 66 displayed entries are exported with `reviewOnly`, grading, evidence and devotional/display totals; the reference display must never be described as 66 Sahih entries.

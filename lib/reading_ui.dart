@@ -524,7 +524,7 @@ class _LibraryPageState extends State<LibraryPage> {
                                         ),
                                         SizedBox(height: 5),
                                         if (e.reviewOnly) Padding(padding: const EdgeInsets.only(bottom: 7),
-                                          child: UiText('تنبيه: رواية غير ثابتة على شرط الصحيح — ${e.authenticity}',
+                                          child: UiText('مادة مرجعية — ${e.authenticity}',
                                             style: TextStyle(color: AppAppearance.of(context).gold, fontWeight: FontWeight.bold, fontSize: 12))),
                                         UiText(
                                           '${sectionLabel(e.section)} • ${e.source}',
@@ -736,9 +736,9 @@ class _ReaderPageState extends State<ReaderPage> {
                               ),
                               if (e.reviewOnly) Padding(
                                 padding: const EdgeInsets.only(top: 12),
-                                child: UiText('تنبيه مهم: هذا النص مرجعي، ودرجة الرواية: ${e.authenticity}. لا يُعرض على أنه سنة صحيحة ثابتة، ولا تُعتمد منه أعداد أو فضائل مخصوصة.',
+                                child: UiText('تنبيه مهم: مادة مرجعية. ${e.authenticity}. لا يُعتمد منها عدد أو فضل مخصوص على شرط الصحيح. ${e.timing}',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(color: AppAppearance.of(context).gold, fontWeight: FontWeight.bold, height: 1.9))),
+                                  style: TextStyle(color: AppAppearance.of(context).ink, fontWeight: FontWeight.bold, height: 1.9))),
                               SizedBox(height: 24),
                               SelectableText(
                                 e.arabic,
@@ -753,7 +753,7 @@ class _ReaderPageState extends State<ReaderPage> {
                               ),
                               SizedBox(height: 21),
                               if (e.reviewOnly) Padding(padding: const EdgeInsets.symmetric(vertical: 12),
-                                child: UiText('⚠ مادة للمراجعة، وليست ذكرًا ثابتًا بالسند الصحيح. ${e.authenticity}. لا تعتمد الأعداد والفضائل الواردة على أنها سنة ثابتة.',
+                                child: UiText(e.countDescription,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(fontWeight: FontWeight.w700, color: AppAppearance.of(context).gold, height: 1.8))),
                               if (!e.reviewOnly) AudioPanel(key: ValueKey(e.id), entry: e),

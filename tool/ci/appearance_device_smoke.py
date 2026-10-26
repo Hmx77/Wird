@@ -283,6 +283,53 @@ for mode,label in [('ivory','Ivory Serenity'),('midnight','Midnight Teal')]:
         adb('shell','input','keyevent','KEYCODE_BACK')
         home()
     checks.append(mode+': expanded 18-entry sleep library, both alternative readers/evidence and real share sheets')
+    # Filter by an observed source number, then open the first (morning) result.
+    for source_number, title, grade, ordinal, short in [
+        ('5090', 'العافية في البدن والسمع والبصر', 'حسن الإسناد', 10, 'hasan'),
+        ('5069', 'أشهدك وأشهد حملة عرشك', 'ضعيف عند الألباني', 8, 'daif'),
+        ('5081', 'حسبي الله لا إله إلا هو', 'الآية قرآنية ثابتة', 12, 'quran-disputed'),
+    ]:
+        tap('الأذكار', bottom=True)
+        top()
+        if any(normal('مسح البحث') in normal(n.get('content-desc', '') + n.get('text', '')) for n in snapshot()):
+            tap('مسح البحث')
+        tap('ابحث عن ذكر')
+        adb('shell','input','text',source_number)
+        adb('shell','input','keyevent','KEYCODE_BACK')
+        expect('2 ذكر')
+        tap(title, scroll=True, node_class='android.view.View')
+        expect(f'{ordinal} / 25')
+        expect('تنبيه مهم:')
+        expect(grade)
+        nodes = snapshot()
+        share = [n for n in nodes if normal('مشاركة بطاقة') in normal(n.get('content-desc','') + n.get('text',''))]
+        assert share and all(n.get('enabled') == 'false' for n in share), 'Reference share action must be disabled'
+        capture(f'android-reference-{mode}-{short}.png')
+        # Read the entire scroll surface, including the controls at its foot.
+        for attempt in range(30):
+            nodes = snapshot()
+            text = ' '.join(n.get('text','') + ' ' + n.get('content-desc','') for n in nodes)
+            assert normal('اضغط للعد') not in normal(text), 'Reference counter exposed'
+            assert normal('تراجع عن ضغطة') not in normal(text), 'Reference undo exposed'
+            if any(normal('التالي') in normal(n.get('content-desc','') + n.get('text','')) and
+                   int(re.findall(r'-?\d+', n.get('bounds','[0,0][0,0]'))[1]) > 0 for n in nodes):
+                break
+            scroll_content(nodes)
+        else: raise AssertionError('Reference navigation not reachable')
+        capture(f'android-reference-{mode}-{short}-controls.png')
+        top()
+        adb('shell','settings','put','system','font_scale','2.0')
+        time.sleep(2)
+        expect('تنبيه مهم:')
+        capture(f'android-reference-{mode}-{short}-text200.png')
+        scroll_content(snapshot())
+        capture(f'android-reference-{mode}-{short}-text200-continuation.png')
+        adb('shell','settings','put','system','font_scale','1.0')
+        time.sleep(1)
+        adb('shell','input','keyevent','KEYCODE_BACK')
+        home()
+    checks.append(mode+': Hasan, Daif and Quran/sevenfold distinction; 200% warnings; disabled share; no counter/undo')
+
     tap('النوافل',bottom=True)
     top()
     capture(f'android-appearance-{mode}-nawafil.png')

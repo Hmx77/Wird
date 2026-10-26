@@ -94,6 +94,14 @@ try:
     if shutil.which('ffmpeg'):
         run(['ffmpeg','-hide_banner','-loglevel','error','-i',str(out/'startup.mp4'),
              '-vf','fps=1/2',str(out/'ios-startup-%02d.png')])
+    # Instrumented simulator build exercises the same production Reader widgets.
+    # The unsigned device build and ordinary application launch are checked above.
+    run(['env', '-i', 'HOME=' + os.environ['RUNNER_TEMP'] + '/wird-home',
+         'PATH=' + os.environ['PATH'], 'CI=true', 'LANG=en_US.UTF-8',
+         'FLUTTER_SUPPRESS_ANALYTICS=true', 'COCOAPODS_DISABLE_STATS=true',
+         'flutter', 'drive', '--driver=test_driver/catalog_driver.dart',
+         '--target=integration_test/catalog_device_test.dart', '-d', sim],
+        seconds=1200, save=out/'catalog-integration.log')
     print('PASS: iOS 26 simulator installation, native launch and actual home-screen capture.',flush=True)
 finally:
     try: run(['xcrun','simctl','shutdown',sim],seconds=30)

@@ -301,6 +301,13 @@ void main() {
           t.widget<SelectableText>(find.byKey(const Key('reader-arabic'))).data,
           e.arabic,
         );
+        if (e.reviewOnly) {
+          expect(find.textContaining('تنبيه مهم:'), findsOneWidget);
+          expect(find.byKey(const Key('reader-counter')), findsNothing);
+          expect(find.byKey(const Key('reader-undo')), findsNothing);
+          final share = t.widget<IconButton>(find.widgetWithIcon(IconButton, Icons.ios_share));
+          expect(share.onPressed, isNull);
+        }
         expect(t.takeException(), isNull);
       }
       final mulk = entries.firstWhere((e) => e.id == 'sleep_mulk');
