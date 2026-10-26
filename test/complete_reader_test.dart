@@ -63,10 +63,7 @@ void main() {
                 locale: Locale(language),
                 supportedLocales: const [Locale('ar'), Locale('en')],
                 localizationsDelegates: GlobalMaterialLocalizations.delegates,
-                theme: ThemeData(
-                  fontFamily: 'NotoSansArabic',
-                  scaffoldBackgroundColor: state.palette.background,
-                ),
+                theme: wirdTheme(state.palette),
                 home: ReaderPage(
                   store: state,
                   section: entry.section,
@@ -156,10 +153,7 @@ void main() {
       state.changeTheme(i);
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData(
-            fontFamily: 'NotoSansArabic',
-            scaffoldBackgroundColor: state.palette.background,
-          ),
+          theme: wirdTheme(state.palette),
           home: ReaderPage(
             key: ValueKey(i),
             store: state,

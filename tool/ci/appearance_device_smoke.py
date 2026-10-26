@@ -243,6 +243,11 @@ for mode,label in [('ivory','Ivory Serenity'),('midnight','Midnight Teal')]:
     capture(f'android-appearance-{mode}-reader.png')
     adb('shell','input','keyevent','KEYCODE_BACK')
     home()
+    tap('أذكار المساء', scroll=True)
+    expect('1 / 15')
+    capture(f'android-content-{mode}-evening-reader.png')
+    adb('shell','input','keyevent','KEYCODE_BACK')
+    home()
     # Actual offline expanded collection and both newly admitted entries.
     for entry_title, ordinal, short in [('فاطر السماوات والأرض عند المضجع', 17, 'creator'), ('الذكر عند الاستيقاظ من الليل', 18, 'night-waking')]:
         tap('الأذكار', bottom=True)
