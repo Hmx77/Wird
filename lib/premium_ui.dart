@@ -721,7 +721,7 @@ class _IvoryHome extends StatelessWidget {
       Stack(alignment: Alignment.topCenter, children: [
         SizedBox(height: 115 * unit, child: Center(child: Semantics(
           label: tr(context, 'شعار ورد'), image: true,
-          child: ExcludeSemantics(child: Transform.scale(scale: 1.35, child: AppearanceWordmark(key: const Key('home-wordmark'),
+          child: ExcludeSemantics(child: Transform.scale(scale: 1.5, child: AppearanceWordmark(key: const Key('home-wordmark'),
             width: 158 * unit, height: 112 * unit)))))),
         Align(alignment: Alignment.topLeft, child: Row(mainAxisSize: MainAxisSize.min,
           textDirection: TextDirection.ltr, children: [
@@ -732,7 +732,7 @@ class _IvoryHome extends StatelessWidget {
               () => home.browse(context)),
           ])),
       ]),
-      UiText('وردك اليومي', textAlign: TextAlign.center, style: text(30 * unit, bold: true)),
+      UiText('وردك اليومي', textAlign: TextAlign.center, style: text(32 * unit, bold: true)),
       const SizedBox(height: 3),
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         const SizedBox(width: 29, child: Divider(color: edge, thickness: 1)),
@@ -792,9 +792,9 @@ class _IvoryHome extends StatelessWidget {
                 Align(alignment: AlignmentDirectional.centerStart,
                   child: Icon(Icons.spa_outlined, size: 24 * unit, color: IvoryContrast.gold)),
                 SizedBox(height: 6 * unit),
-                UiText('لحظات من السكينة', style: text(20 * unit, bold: true)),
+                UiText('لحظات من السكينة', style: text(22 * unit, bold: true)),
                 SizedBox(height: 5 * unit),
-                UiText('اختر وردك وابدأ القراءة', style: text(11.5 * unit)),
+                UiText('اختر وردك وابدأ القراءة', style: text(12.5 * unit)),
                 SizedBox(height: 13 * unit),
                 Container(width: double.infinity, padding: EdgeInsets.all(10 * unit),
                   decoration: BoxDecoration(color: paper.withValues(alpha: .95),
@@ -804,7 +804,7 @@ class _IvoryHome extends StatelessWidget {
                     Icon(Icons.menu_book_outlined, color: IvoryContrast.gold, size: 24 * unit),
                     const SizedBox(width: 8),
                     Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      UiText('متابعة القراءة', style: text(11 * unit, bold: true)),
+                      UiText('متابعة القراءة', style: text(12 * unit, bold: true)),
                       const SizedBox(height: 6),
                       LinearProgressIndicator(key: const Key('home-progress'), value: done / entries.length,
                         minHeight: 5, borderRadius: BorderRadius.circular(8),
@@ -812,7 +812,7 @@ class _IvoryHome extends StatelessWidget {
                         semanticsLabel: tr(context, 'تقدم اليوم'), semanticsValue: '$done / ${entries.length}'),
                       const SizedBox(height: 5),
                       UiText('$done / ${entries.length} مكتمل', textDirection: TextDirection.ltr,
-                        style: text(10.5 * unit)),
+                        style: text(12 * unit)),
                     ])),
                     const SizedBox(width: 9),
                     _HomeArrow(filled: true, size: 36 * unit),
@@ -827,16 +827,16 @@ class _IvoryHome extends StatelessWidget {
     final count = inSection(section).length;
     final done = store.completed(section);
     final ink = night ? homeCream : IvoryContrast.ink;
-    final icon = night ? Icons.bedtime_outlined : morning ? Icons.wb_sunny_outlined : Icons.nightlight_outlined;
+    final icon = night ? Icons.nightlight_round : morning ? Icons.wb_sunny_outlined : Icons.nightlight_outlined;
     final badge = Container(width: 48 * unit, height: 48 * unit,
       decoration: BoxDecoration(color: morning ? const Color(0xFFD8E5CB) : paper,
         borderRadius: BorderRadius.circular(13), border: Border.all(color: const Color(0xFFC8C5AD), width: .7)),
-      child: Icon(icon, size: 33 * unit, color: night ? const Color(0xFF426E8A) : IvoryContrast.ink));
+      child: Icon(icon, size: 33 * unit, color: night ? const Color(0xFF70A7C8) : IvoryContrast.ink));
     final label = RepaintBoundary(
       key: ValueKey('category-label-${section.name}-${store.themeIndex}-${store.languageCode}'),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-        UiText(sectionLabel(section), style: text((night ? 21 : 17) * unit, bold: true, color: ink)),
-        const SizedBox(height: 2), UiText('$count ذكر', style: text(12 * unit, color: ink)),
+        UiText(sectionLabel(section), style: text((night ? 23 : 18.5) * unit, bold: true, color: ink)),
+        const SizedBox(height: 2), UiText('$count ذكر', style: text(13 * unit, color: ink)),
       ]));
     return _surface(keyName: 'home-${section.name}', image: homeArt[section.name]!,
       onTap: () => openReader(context, store, section),
@@ -852,7 +852,7 @@ class _IvoryHome extends StatelessWidget {
               badge, SizedBox(height: 21 * unit),
               Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
                 Expanded(child: label), const SizedBox(width: 2),
-                _HomeArrow(size: 31 * unit, complete: done == count),
+                _HomeArrow(size: 34 * unit, complete: done == count),
               ]),
               if (done > 0) ...[const SizedBox(height: 5),
                 LinearProgressIndicator(value: done / count, minHeight: 3,
@@ -953,13 +953,13 @@ class _IvoryShortcut extends StatelessWidget {
         child: Padding(padding: EdgeInsets.symmetric(horizontal: 5, vertical: 13 * unit),
           child: Column(children: [
             IconTheme(data: IconThemeData(color: accent), child: SizedBox(height: 36 * unit,
-              child: Center(child: symbol ?? Icon(icon, color: accent, size: 31 * unit)))),
+              child: Center(child: symbol ?? Icon(icon, color: accent, size: 34 * unit)))),
             SizedBox(height: 9 * unit),
             UiText(label, textAlign: TextAlign.center,
-              style: TextStyle(color: IvoryContrast.ink, fontSize: 13 * unit,
+              style: TextStyle(color: IvoryContrast.ink, fontSize: 14 * unit,
                 height: 1.6, fontWeight: FontWeight.w600)),
             SizedBox(height: 4 * unit),
             UiText(subtitle, textAlign: TextAlign.center,
-              style: TextStyle(color: IvoryContrast.muted, fontSize: 10.5 * unit, height: 1.6)),
+              style: TextStyle(color: IvoryContrast.muted, fontSize: 11.5 * unit, height: 1.6)),
           ])))));
 }
