@@ -205,7 +205,7 @@ class WirdState extends ChangeNotifier {
   Future<void> _load() async {
     _prefs = await SharedPreferences.getInstance();
     final p = _prefs!;
-    contentExpandedOn = p.getString('content.expanded_sleep_20261026') ?? today;
+    contentExpandedOn = p.getString('content.expanded_sleep_20261026') ?? dayKey(_now());
     if (!p.containsKey('content.expanded_sleep_20261026')) {
       final adoptedOn = contentExpandedOn;
       save(() => p.setString('content.expanded_sleep_20261026', adoptedOn));

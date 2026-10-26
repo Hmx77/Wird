@@ -36,9 +36,15 @@ void main() {
   });
   test('alternative evidence and tracking counts cannot inherit excluded claims', () {
     final additions = jsonDecode(File('docs/content-review-20261026/additions.json').readAsStringSync()) as List;
+    final sources = jsonDecode(File('docs/content-review-20261026/retrieval-check.json').readAsStringSync()) as List;
+    String letters(String text) => normalizeArabic(text).replaceAll(RegExp(r'[^\u0621-\u064A]'), '');
     for (final row in additions) {
       final e = entries.singleWhere((e) => e.id == row['id']);
       expect(e.arabic, row['arabic']);
+      final primary = sources.singleWhere((source) => source['url'] == e.sourceUrl);
+      for (final passage in e.arabic.split('\n\n')) {
+        expect(letters(primary['arabicPrimaryText'] as String), contains(letters(passage)));
+      }
       expect(e.evidence, row['evidence']);
       expect(e.sourceUrl, row['sourceUrl']);
       expect(e.timing, row['timing']);
@@ -75,6 +81,8 @@ void main() {
       expect(s.sectionTotal(DhikrSection.sleep, '2026-11-01'), 16);
       expect(s.completed(DhikrSection.sleep, '2026-11-01'), 16);
       expect(s.sectionTotal(DhikrSection.sleep), 18);
+      expect(DhikrSection.values.expand((section) => s.progressEntries(section, '2026-11-01')), hasLength(49));
+      expect(DhikrSection.values.expand((section) => s.progressEntries(section)), hasLength(51));
       expect(s.favorites, {'sleep_mulk', 'morning_sayyid'});
       expect(s.tasbih, 37); expect(s.fontSize, 31); expect(s.themeIndex, theme);
       final p = await SharedPreferences.getInstance();

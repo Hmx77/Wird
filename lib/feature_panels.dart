@@ -433,14 +433,17 @@ class _ProgressCalendarState extends State<ProgressCalendar> {
                 if (cell < offset) return SizedBox.shrink();
                 final i = cell - offset;
                 final date = DateTime(month.year, month.month, i + 1);
-                final done = entries
+                final available = DhikrSection.values.expand(
+                  (section) => widget.store.progressEntries(section, dayKey(date)),
+                );
+                final done = available
                     .where((e) => widget.store.isDone(e, dayKey(date)))
                     .length;
                 return Semantics(
                   label:
-                      '${localizations.formatFullDate(date)}: $done / ${entries.length}',
+                      '${localizations.formatFullDate(date)}: $done / ${available.length}',
                   child: Tooltip(
-                    message: '$done / ${entries.length}',
+                    message: '$done / ${available.length}',
                     child: Container(
                       margin: EdgeInsets.all(3),
                       alignment: Alignment.center,

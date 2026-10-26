@@ -6,7 +6,7 @@ import shutil
 import subprocess
 
 BASE = 'e92057931e2be08804c94051899b5e26edecaa53'
-paths = ['lib/appearance.dart', 'lib/premium_ui.dart', 'lib/main.dart', 'lib/settings_ui.dart', 'lib/tasbih_ui.dart', 'test/appearance_test.dart']
+paths = ['lib/appearance.dart', 'lib/premium_ui.dart', 'lib/main.dart', 'lib/settings_ui.dart', 'lib/feature_panels.dart', 'lib/tasbih_ui.dart', 'test/appearance_test.dart']
 images = Path('verification/screenshots')
 after = Path('verification/ivory-after')
 before = Path('verification/ivory-before')
