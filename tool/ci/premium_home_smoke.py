@@ -77,7 +77,7 @@ def capture(name):
     (out/name).write_bytes(raw)
 
 checks=[]
-for label, count in [('أذكار الصباح',18),('أذكار المساء',15),('أذكار النوم',18)]:
+for label, count in [('أذكار الصباح',25),('أذكار المساء',23),('أذكار النوم',18)]:
     tap(label,scroll=True)
     expect(f'1 / {count}')
     checks.append(label)

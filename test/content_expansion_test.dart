@@ -73,6 +73,17 @@ void main() {
     expect(s.countChoices, isEmpty);
     expect(DhikrSection.values.map(s.sectionTotal), [18, 15, 18]);
     expect(DhikrSection.values.map(s.completed), [0, 0, 0]);
+    for (final e in entries) { s.setCount(e, s.target(e)); }
+    for (final e in referenceReviewEntries) { s.toggleFavorite(e.id); }
+    await s.pendingWrites;
+    expect(DhikrSection.values.map(s.completed), [18, 15, 18]);
+    final reopened = WirdState();
+    await reopened.initialize();
+    expect(reopened.favorites, containsAll(referenceReviewEntries.map((e) => e.id)));
+    expect(DhikrSection.values.map(reopened.completed), [18, 15, 18]);
+    expect(reopened.counts.keys.any((key) => key.contains('|reference_')), isFalse);
+    await reopened.pendingWrites;
+    reopened.dispose();
     s.dispose();
   });
   test('all 66 reference screens display transparently without treating weak reports as verified worship', () {
