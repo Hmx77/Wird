@@ -734,6 +734,11 @@ class _ReaderPageState extends State<ReaderPage> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
+                              if (e.reviewOnly) Padding(
+                                padding: const EdgeInsets.only(top: 12),
+                                child: UiText('تنبيه مهم: هذا النص مرجعي، ودرجة الرواية: ${e.authenticity}. لا يُعرض على أنه سنة صحيحة ثابتة، ولا تُعتمد منه أعداد أو فضائل مخصوصة.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: AppAppearance.of(context).gold, fontWeight: FontWeight.bold, height: 1.9))),
                               SizedBox(height: 24),
                               SelectableText(
                                 e.arabic,
