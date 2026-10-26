@@ -188,16 +188,34 @@ adb shell screenrecord --time-limit 100 /sdcard/wird-startup.mp4 &
 record_pid=$!
 sleep 1
 read -r wird_tap_x wird_tap_y < <(python3 - <<'PYTAP'
-import re, unicodedata, xml.etree.ElementTree as ET
-for node in ET.parse('verification/device/launcher.xml').getroot().iter('node'):
-    label = node.get('text', '') + ' ' + node.get('content-desc', '')
-    label = ''.join(c for c in unicodedata.normalize('NFD', label) if unicodedata.category(c) != 'Mn')
-    if 'wird' in label.lower() or 'ورد' in label:
-        x1,y1,x2,y2 = map(int, re.findall(r'\d+', node.attrib['bounds']))
+import pathlib, re, subprocess, sys, unicodedata, xml.etree.ElementTree as ET
+# The launcher can insert a prediction row after its first accessibility dump.
+# Require two fresh matching observations immediately before the real icon tap.
+previous = None
+for attempt in range(5):
+    subprocess.run(['adb', 'shell', 'uiautomator', 'dump', '/sdcard/wird-launcher-tap.xml'],
+                   check=True, stdout=subprocess.DEVNULL, timeout=15)
+    xml = subprocess.check_output(['adb', 'shell', 'cat', '/sdcard/wird-launcher-tap.xml'], timeout=10)
+    pathlib.Path(f'verification/device/launcher-tap-{attempt}.xml').write_bytes(xml)
+    targets = []
+    for node in ET.fromstring(xml).iter('node'):
+        label = node.get('text', '') + ' ' + node.get('content-desc', '')
+        label = ''.join(c for c in unicodedata.normalize('NFD', label) if unicodedata.category(c) != 'Mn')
+        if ('wird' in label.lower() or 'ورد' in label) and node.get('clickable') == 'true':
+            assert 'launcher' in node.get('package', '').lower(), 'Icon is outside the launcher'
+            bounds = tuple(map(int, re.findall(r'\d+', node.attrib['bounds'])))
+            if len(bounds) == 4 and bounds[2] - bounds[0] >= 32 and bounds[3] - bounds[1] >= 32:
+                targets.append(bounds)
+    assert targets, 'No visible clickable Wird launcher target'
+    target = targets[0]
+    if target == previous:
+        x1,y1,x2,y2 = target
         print((x1+x2)//2, (y1+y2)//2)
+        print('PASS: real launcher target stable across two fresh observations', file=sys.stderr)
         break
+    previous = target
 else:
-    raise SystemExit('No visible launcher target')
+    raise SystemExit('Launcher target did not stabilize; no tap sent')
 PYTAP
 )
 adb shell settings put system show_touches 1
