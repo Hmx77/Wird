@@ -36,6 +36,27 @@ void main() {
     expect(inSection(DhikrSection.evening), hasLength(23));
     expect(inSection(DhikrSection.sleep), hasLength(18));
   });
+  test('all 66 reference screens display transparently without treating weak reports as verified worship', () {
+    expect(displayedEntries.length, 66);
+    final pending = displayedEntries.where((entry) => entry.reviewOnly).toList();
+    expect(pending, hasLength(15));
+    expect(pending.map((e) => e.id).toSet(), hasLength(15));
+    for (final section in [DhikrSection.morning, DhikrSection.evening]) {
+      final collection = inSection(section);
+      expect(collection.map((e) => e.referenceScreens.first),
+          List.generate(collection.length, (index) => index + 1));
+      expect(collection.where((e) => e.reviewOnly).length,
+          section == DhikrSection.morning ? 7 : 8);
+    }
+    for (final e in pending) {
+      expect(e.reviewOnly, isTrue);
+      expect(e.authenticity, isNotEmpty);
+      expect(e.evidence, contains('درجة الرواية:'));
+      expect(e.countDescription, contains('لا تدخل في عداد'));
+      expect(e.benefit, contains('العرض والتوثيق فقط'));
+    }
+    expect(entries.any((e) => e.reviewOnly), isFalse);
+  });
   test('alternative evidence and tracking counts cannot inherit excluded claims', () {
     final additions = jsonDecode(File('docs/content-review-20261026/additions.json').readAsStringSync()) as List;
     final sources = jsonDecode(File('docs/content-review-20261026/retrieval-check.json').readAsStringSync()) as List;
