@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 mkdir -p verification
+git rev-parse HEAD > verification/source-commit.txt
 python3 tool/ci/check_approved_opening.py
 python3 tool/ci/check_appearance_preservation.py
 flutter --version

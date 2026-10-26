@@ -43,7 +43,8 @@ void main() {
     await store.pendingWrites;
     await tester.pumpWidget(const SizedBox.shrink());
     store.dispose();
-    binding.reportData = {'displayed': 66, 'devotional': 51, 'counts': [25,23,18],
-      'themes': 2, 'nativeReaderRenders': 132, 'referenceControlsDisabled': true};
+    binding.reportData ??= {};
+    binding.reportData!.addAll({'displayed': 66, 'devotional': 51, 'counts': [25,23,18],
+      'themes': 2, 'nativeReaderRenders': 132, 'referenceControlsDisabled': true});
   });
 }

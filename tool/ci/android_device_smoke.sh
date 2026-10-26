@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 mkdir -p verification/device
+git rev-parse HEAD > verification/device/source-commit.txt
+sha256sum build/app/outputs/flutter-apk/app-debug.apk > verification/device/apk-sha256.txt
 wird_sdk_user_root="${RUNNER_TEMP:?}/wird-emulator"
 export ANDROID_SDK_HOME="$wird_sdk_user_root"
 export ANDROID_USER_HOME="$wird_sdk_user_root/.android"

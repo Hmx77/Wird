@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wird/content.dart';
 import 'package:wird/main.dart';
+import 'package:wird/share_card.dart';
 import 'package:wird/ui_strings.dart';
 import 'fixtures/library_before.dart';
 
@@ -280,6 +281,28 @@ void main() {
       await close(t, s);
     },
   );
+  for (final theme in [0, 1]) {
+    testWidgets('Reference warnings and controls at 320dp and 200% theme $theme', (t) async {
+      t.view.physicalSize = const Size(320, 700);
+      t.view.devicePixelRatio = 1;
+      addTearDown(t.view.resetPhysicalSize);
+      addTearDown(t.view.resetDevicePixelRatio);
+      final s = await state(theme: theme);
+      for (final e in referenceReviewEntries) {
+        await t.pumpWidget(app(s, ReaderPage(key: ValueKey(e.id), store: s,
+          section: e.section, initialIndex: inSection(e.section).indexOf(e)), scale: 2));
+        await t.pumpAndSettle();
+        final warning = find.textContaining('تنبيه مهم:');
+        expect(warning, findsOneWidget);
+        await reveal(t, warning);
+        expect(t.widget<Text>(warning).data, contains(e.authenticity));
+        expect(find.byKey(const Key('reader-counter')), findsNothing);
+        await reveal(t, find.byKey(const Key('reader-next')));
+        expect(t.takeException(), isNull, reason: e.id);
+      }
+      await close(t, s);
+    });
+  }
   testWidgets(
     'All 66 reader entries expose the exact complete source text and large Mulk scrolls',
     (t) async {
@@ -307,6 +330,7 @@ void main() {
           expect(find.byKey(const Key('reader-undo')), findsNothing);
           final share = t.widget<IconButton>(find.widgetWithIcon(IconButton, Icons.ios_share));
           expect(share.onPressed, isNull);
+          await expectLater(shareDhikrCard(t.element(find.byType(ReaderPage)), e, s.palette.homeBackground, s.palette.ink), throwsStateError);
         }
         expect(t.takeException(), isNull);
       }
