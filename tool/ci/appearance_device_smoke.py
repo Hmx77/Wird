@@ -25,10 +25,28 @@ def snapshot():
 size = re.findall(r'(\d+)x(\d+)', adb('shell', 'wm', 'size'))[-1]
 width, height = map(int, size)
 
+def content_bottom(nodes):
+    # Home is in the bottom bar on every shell page. Its observed top edge
+    # bounds the scroll area even when accessibility text makes the bar taller.
+    edges = []
+    for n in nodes:
+        if any(normal(n.get(k, '')).strip() == normal('الرئيسية') for k in ['text', 'content-desc']):
+            bounds = list(map(int, re.findall(r'-?\d+', n.get('bounds', ''))))
+            if len(bounds) == 4 and bounds[1] > height * .5:
+                edges.append(bounds[1])
+    return min(edges) - 12 if edges else height * .89
+
+def scroll_content(nodes):
+    bottom = content_bottom(nodes)
+    adb('shell','input','swipe',str(width//2),str(int(bottom * .9)),
+        str(width//2),str(int(height * .28)),'450')
+
 def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_bottom=False, prefix=False, clickable=False):
     for attempt in range(50 if scroll else 3):
         candidates = []
-        for n in snapshot():
+        nodes = snapshot()
+        limit = height * .98 if allow_bottom else content_bottom(nodes)
+        for n in nodes:
             value = n.get('text', '') + ' ' + n.get('content-desc', '') + ' ' + n.get('hint', '')
             if node_class and n.get('class') != node_class:
                 continue
@@ -39,13 +57,13 @@ def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_b
                 continue
             if (exact and not any(normal(label) == normal(v) for v in values)) or (not exact and normal(label) not in normal(value)):
                 continue
-            bounds = list(map(int, re.findall(r'\d+', n.get('bounds', ''))))
+            bounds = list(map(int, re.findall(r'-?\d+', n.get('bounds', ''))))
             if len(bounds) != 4:
                 continue
             x1, y1, x2, y2 = bounds
             if x2 <= x1 or y2 <= y1 or y1 < 0 or y2 > height:
                 continue
-            if scroll and y2 > height * (.98 if allow_bottom else .89):
+            if scroll and y2 > limit:
                 continue
             candidates.append((n, bounds))
         if candidates:
@@ -54,13 +72,15 @@ def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_b
             adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
             return
         if scroll:
-            adb('shell','input','swipe',str(width//2),str(int(height*.77)),str(width//2),str(int(height*.32)),'450')
+            scroll_content(nodes)
         else:
             time.sleep(1)
+    capture('android-appearance-target-failure.png')
+    (out/'appearance-target-failure.xml').write_text(adb('shell','cat','/sdcard/wird-home-review.xml'))
     raise AssertionError(f'No visible target: {label}')
 
-def expect(label):
-    for _ in range(6):
+def expect(label, scroll=False):
+    for _ in range(20 if scroll else 6):
         nodes = snapshot()
         value = ' '.join(n.get('text','') + ' ' + n.get('content-desc','') for n in nodes)
         if label.isdecimal():
@@ -75,6 +95,8 @@ def expect(label):
             matched=normal(label) in normal(value)
         if matched:
             return
+        if scroll:
+            scroll_content(nodes)
         time.sleep(1)
     raise AssertionError(f'Destination missing: {label}')
 
@@ -103,7 +125,7 @@ def worship_preferences():
             if node.get('name') != 'flutter.appearance.v2'}
 
 checks=[]
-for mode,label in [('ivory','فاتح — Ivory Serenity'),('midnight','داكن — Midnight Teal')]:
+for mode,label in [('ivory','Ivory Serenity'),('midnight','Midnight Teal')]:
     original_preferences = worship_preferences()
     tap('الإعدادات',bottom=True)
     top()
@@ -113,20 +135,55 @@ for mode,label in [('ivory','فاتح — Ivory Serenity'),('midnight','داكن
     for expected in ['Midnight Teal','Ivory Serenity']: assert expected in all_text
     for retired in ['Olive & Cream','Ocean Blue','Mocha & Sand','Soft Lavender','Emerald & Gold','Midnight Blue','Charcoal & Sage','Dusty Rose & Stone','Stone & Teal','Sage & Ivory']:
         assert retired not in all_text, retired
-    capture(f'android-appearance-{mode}-selector.png')
-    tap(label,exact=True)
+    tap(label)
     capture(f'android-appearance-{mode}-settings.png')
+    tap('المظهر',scroll=True,clickable=True)
+    capture(f'android-appearance-{mode}-selector.png')
+    adb('shell','input','keyevent','KEYCODE_BACK')
+    tap('التفاصيل والمصادر',scroll=True)
+    expect('لا حسابات ولا إعلانات')
+    capture(f'android-appearance-{mode}-settings-privacy.png')
+    tap('مسح بياناتي المحلية',scroll=True)
+    expect('مسح المتابعة والمفضلة؟')
+    capture(f'android-appearance-{mode}-delete-confirmation.png')
+    tap('إلغاء')
+    capture(f'android-appearance-{mode}-settings-bottom.png')
+    assert not any('تراخيص البرمجيات' in (n.get('text','') + n.get('content-desc','')) for n in snapshot())
+    # Samsung-sized viewport, both themes, scrollable sheet and real choice.
+    saved_size = (width, height)
+    try:
+        adb('shell','wm','size','640x1136')
+        adb('shell','wm','density','320')
+        width, height = 640, 1136
+        time.sleep(2)
+        top()
+        capture(f'android-{mode}-settings-320dp.png')
+        tap('المظهر',scroll=True,clickable=True)
+        capture(f'android-{mode}-selector-320dp.png')
+        tap(label,scroll=True,allow_bottom=True)
+        adb('shell','settings','put','system','font_scale','2.0')
+        time.sleep(2)
+        top()
+        tap('المظهر',scroll=True,clickable=True)
+        capture(f'android-{mode}-selector-320dp-text200.png')
+        tap(label,scroll=True,allow_bottom=True)
+    finally:
+        adb('shell','settings','put','system','font_scale','1.0')
+        adb('shell','wm','size','reset')
+        adb('shell','wm','density','reset')
+        width, height = saved_size
+        time.sleep(2)
     home()
     capture(f'android-appearance-{mode}-home.png')
     if mode == 'ivory':
         # Check the changed visible surfaces actually navigate, not just render.
         for section in ['أذكار المساء', 'أذكار النوم']:
             tap(section, scroll=True)
-            expect('الفضل والدليل والمعنى')
+            expect('الفضل والدليل والمعنى', scroll=True)
             adb('shell','input','keyevent','KEYCODE_BACK')
             home()
         tap('لحظات من السكينة', scroll=True)
-        expect('الفضل والدليل والمعنى')
+        expect('الفضل والدليل والمعنى', scroll=True)
         adb('shell','input','keyevent','KEYCODE_BACK')
         home()
         tap('ابحث عن ذكر')
@@ -154,7 +211,7 @@ for mode,label in [('ivory','فاتح — Ivory Serenity'),('midnight','داكن
             home()
             capture('android-ivory-home-320dp-top.png')
             tap('أذكار الصباح', scroll=True)
-            expect('الفضل والدليل والمعنى')
+            expect('الفضل والدليل والمعنى', scroll=True)
             adb('shell','input','keyevent','KEYCODE_BACK')
             home()
             adb('shell','input','swipe','320','900','320','300','450')
@@ -167,7 +224,7 @@ for mode,label in [('ivory','فاتح — Ivory Serenity'),('midnight','داكن
             home()
             capture('android-ivory-home-320dp-text200-top.png')
             tap('أذكار المساء', scroll=True)
-            expect('الفضل والدليل والمعنى')
+            expect('الفضل والدليل والمعنى', scroll=True)
             adb('shell','input','keyevent','KEYCODE_BACK')
             checks.append('Ivory Home: 320dp, 200% text, Morning/Evening and Tasbih navigation')
         finally:
@@ -182,7 +239,7 @@ for mode,label in [('ivory','فاتح — Ivory Serenity'),('midnight','داكن
     capture(f'android-appearance-{mode}-library.png')
     home()
     tap('أذكار الصباح')
-    expect('الفضل والدليل والمعنى')
+    expect('الفضل والدليل والمعنى', scroll=True)
     capture(f'android-appearance-{mode}-reader.png')
     adb('shell','input','keyevent','KEYCODE_BACK')
     home()

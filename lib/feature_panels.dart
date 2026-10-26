@@ -119,7 +119,7 @@ class _ReminderPanelState extends State<ReminderPanel> {
             'أوقات تختارها أنت. قد يؤخر النظام التنبيه لتوفير البطارية.',
             style: TextStyle(
               color: AppAppearance.of(context).ink,
-              fontSize: 12,
+              fontSize: 14,
               height: 1.8,
             ),
           ),
@@ -151,7 +151,8 @@ class _ReminderPanelState extends State<ReminderPanel> {
                       color: AppAppearance.of(
                         context,
                       ).ink.withOpacity(enabled ? 1 : .72),
-                      fontSize: 15,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
                       height: 1.7,
                     ),
                   ),
@@ -182,7 +183,8 @@ class _ReminderPanelState extends State<ReminderPanel> {
                       color: AppAppearance.of(
                         context,
                       ).ink.withOpacity(enabled ? 1 : .7),
-                      fontSize: 13,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),

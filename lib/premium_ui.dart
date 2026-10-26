@@ -721,7 +721,7 @@ class _IvoryHome extends StatelessWidget {
       Stack(alignment: Alignment.topCenter, children: [
         SizedBox(height: 115 * unit, child: Center(child: Semantics(
           label: tr(context, 'شعار ورد'), image: true,
-          child: ExcludeSemantics(child: Transform.scale(scale: 1.35, child: AppearanceWordmark(key: const Key('home-wordmark'),
+          child: ExcludeSemantics(child: Transform.scale(scale: 1.5, child: AppearanceWordmark(key: const Key('home-wordmark'),
             width: 158 * unit, height: 112 * unit)))))),
         Align(alignment: Alignment.topLeft, child: Row(mainAxisSize: MainAxisSize.min,
           textDirection: TextDirection.ltr, children: [
@@ -732,7 +732,7 @@ class _IvoryHome extends StatelessWidget {
               () => home.browse(context)),
           ])),
       ]),
-      UiText('وردك اليومي', textAlign: TextAlign.center, style: text(30 * unit, bold: true)),
+      UiText('وردك اليومي', textAlign: TextAlign.center, style: text(32 * unit, bold: true)),
       const SizedBox(height: 3),
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         const SizedBox(width: 29, child: Divider(color: edge, thickness: 1)),
@@ -792,9 +792,9 @@ class _IvoryHome extends StatelessWidget {
                 Align(alignment: AlignmentDirectional.centerStart,
                   child: Icon(Icons.spa_outlined, size: 24 * unit, color: IvoryContrast.gold)),
                 SizedBox(height: 6 * unit),
-                UiText('لحظات من السكينة', style: text(20 * unit, bold: true)),
+                UiText('لحظات من السكينة', style: text(22 * unit, bold: true)),
                 SizedBox(height: 5 * unit),
-                UiText('اختر وردك وابدأ القراءة', style: text(11.5 * unit)),
+                UiText('اختر وردك وابدأ القراءة', style: text(12.5 * unit)),
                 SizedBox(height: 13 * unit),
                 Container(width: double.infinity, padding: EdgeInsets.all(10 * unit),
                   decoration: BoxDecoration(color: paper.withValues(alpha: .95),
@@ -804,7 +804,7 @@ class _IvoryHome extends StatelessWidget {
                     Icon(Icons.menu_book_outlined, color: IvoryContrast.gold, size: 24 * unit),
                     const SizedBox(width: 8),
                     Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      UiText('متابعة القراءة', style: text(11 * unit, bold: true)),
+                      UiText('متابعة القراءة', style: text(12 * unit, bold: true)),
                       const SizedBox(height: 6),
                       LinearProgressIndicator(key: const Key('home-progress'), value: done / entries.length,
                         minHeight: 5, borderRadius: BorderRadius.circular(8),
@@ -812,7 +812,7 @@ class _IvoryHome extends StatelessWidget {
                         semanticsLabel: tr(context, 'تقدم اليوم'), semanticsValue: '$done / ${entries.length}'),
                       const SizedBox(height: 5),
                       UiText('$done / ${entries.length} مكتمل', textDirection: TextDirection.ltr,
-                        style: text(10.5 * unit)),
+                        style: text(12 * unit)),
                     ])),
                     const SizedBox(width: 9),
                     _HomeArrow(filled: true, size: 36 * unit),
@@ -827,32 +827,32 @@ class _IvoryHome extends StatelessWidget {
     final count = inSection(section).length;
     final done = store.completed(section);
     final ink = night ? homeCream : IvoryContrast.ink;
-    final icon = night ? Icons.bedtime_outlined : morning ? Icons.wb_sunny_outlined : Icons.nightlight_outlined;
+    final icon = night ? Icons.nightlight_round : morning ? Icons.wb_sunny_outlined : Icons.nightlight_outlined;
     final badge = Container(width: 48 * unit, height: 48 * unit,
       decoration: BoxDecoration(color: morning ? const Color(0xFFD8E5CB) : paper,
         borderRadius: BorderRadius.circular(13), border: Border.all(color: const Color(0xFFC8C5AD), width: .7)),
-      child: Icon(icon, size: 33 * unit, color: night ? const Color(0xFF426E8A) : IvoryContrast.ink));
+      child: Icon(icon, size: 33 * unit, color: night ? const Color(0xFF70A7C8) : IvoryContrast.ink));
     final label = RepaintBoundary(
       key: ValueKey('category-label-${section.name}-${store.themeIndex}-${store.languageCode}'),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-        UiText(sectionLabel(section), style: text((night ? 21 : 17) * unit, bold: true, color: ink)),
-        const SizedBox(height: 2), UiText('$count ذكر', style: text(12 * unit, color: ink)),
+        UiText(sectionLabel(section), style: text((night ? 23 : 18.5) * unit, bold: true, color: ink)),
+        const SizedBox(height: 2), UiText('$count ذكر', style: text(13 * unit, color: ink)),
       ]));
     return _surface(keyName: 'home-${section.name}', image: homeArt[section.name]!,
       onTap: () => openReader(context, store, section),
       gradient: night ? const LinearGradient(colors: [Color(0x18002128), Color(0x30002128)])
         : LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
-          stops: large ? const [0, .12, .25, .40, 1] : const [0, .30, .45, .65, 1],
-          colors: const [Color(0x00FAF6E9), Color(0x00FAF6E9), Color(0x40FAF6E9), Color(0xF5FAF6E9), paper]),
+          stops: large ? const [0, .12, .30, .50, .75, 1] : const [0, .24, .42, .60, .82, 1],
+          colors: const [Color(0x00FAF6E9), Color(0x00FAF6E9), Color(0x35FAF6E9), Color(0xD9FAF6E9), Color(0xF2FAF6E9), paper]),
       child: Padding(padding: EdgeInsets.all(11 * unit),
         child: night ? ConstrainedBox(constraints: BoxConstraints(minHeight: 67 * unit),
           child: Row(children: [badge, const SizedBox(width: 12), Expanded(child: label),
             const SizedBox(width: 8), _HomeArrow(ink: ink, size: 32 * unit, complete: done == count)]))
           : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              badge, SizedBox(height: 15 * unit),
+              badge, SizedBox(height: 21 * unit),
               Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
                 Expanded(child: label), const SizedBox(width: 2),
-                _HomeArrow(size: 31 * unit, complete: done == count),
+                _HomeArrow(size: 34 * unit, complete: done == count),
               ]),
               if (done > 0) ...[const SizedBox(height: 5),
                 LinearProgressIndicator(value: done / count, minHeight: 3,
@@ -863,18 +863,18 @@ class _IvoryHome extends StatelessWidget {
 
   Widget _shortcuts(BuildContext context, double width, double unit, bool large) {
     final cards = <Widget>[
-      _HomeShortcut(key: const Key('home-favorites'), label: 'المفضلة',
+      _IvoryShortcut(unit: unit, key: const Key('home-favorites'), label: 'المفضلة',
         subtitle: '${store.favorites.length} ذكر', icon: Icons.favorite_border_rounded,
         accent: IvoryContrast.gold, onTap: () => home.browse(context, favorites: true)),
-      _HomeShortcut(key: const Key('home-nawafil'), label: 'النوافل', subtitle: 'السنن والنوافل',
+      _IvoryShortcut(unit: unit, key: const Key('home-nawafil'), label: 'النوافل', subtitle: 'السنن والنوافل',
         symbol: const SujoodIcon(size: 42), accent: IvoryContrast.gold,
         onTap: () => home.destination(context, 2)),
-      _HomeShortcut(key: const Key('home-tasbih'), label: 'التسبيح', subtitle: 'عداد رقمي',
+      _IvoryShortcut(unit: unit, key: const Key('home-tasbih'), label: 'التسبيح', subtitle: 'عداد رقمي',
         symbol: SizedBox.square(dimension: 34,
           child: CustomPaint(painter: const _BeadsPainter(IvoryContrast.accent))),
         accent: IvoryContrast.accent, onTap: () => Navigator.push(context,
           MaterialPageRoute(builder: (_) => _HomeTasbihPage(store: store)))),
-      _HomeShortcut(key: const Key('home-all'), label: 'جميع الأذكار', subtitle: 'كل الأقسام',
+      _IvoryShortcut(unit: unit, key: const Key('home-all'), label: 'جميع الأذكار', subtitle: 'كل الأقسام',
         icon: Icons.grid_view_rounded, accent: IvoryContrast.accent,
         onTap: () => home.destination(context, 1)),
     ];
@@ -895,30 +895,71 @@ class _IvoryHomeNavigation extends StatelessWidget {
         decoration: BoxDecoration(color: const Color(0xFFFFFAEF),
           borderRadius: BorderRadius.circular(25),
           border: Border.all(color: const Color(0xFFD0C09A), width: .75)),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.start,
-          children: List.generate(4, (index) {
+        child: LayoutBuilder(builder: (context, constraints) {
+          final large = MediaQuery.textScalerOf(context).scale(12) > 17;
+          final items = List.generate(4, (index) {
             const labels = ['الرئيسية', 'الأذكار', 'النوافل', 'الإعدادات'];
             const keys = ['nav-home', 'nav-library', 'nav-nawafil', 'nav-settings'];
             final selected = index == 0;
             final color = selected ? IvoryContrast.gold : IvoryContrast.ink;
-            final icon = switch (index) {
-              0 => const Icon(Icons.home_rounded),
-              1 => const Icon(Icons.auto_stories_outlined),
-              2 => const SujoodIcon(size: 29),
-              _ => const Icon(Icons.settings_outlined),
-            };
-            return Expanded(child: Semantics(selected: selected, button: true,
+            final icon = IconTheme(data: IconThemeData(color: color, size: 28),
+              child: switch (index) {
+                0 => const Icon(Icons.home_rounded),
+                1 => const Icon(Icons.auto_stories_outlined),
+                2 => const SujoodIcon(size: 29),
+                _ => const Icon(Icons.settings_outlined),
+              });
+            final label = UiText(labels[index], textAlign: TextAlign.center,
+              style: TextStyle(color: color, fontSize: 12, height: 1.4,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w400));
+            return Semantics(selected: selected, button: true,
               child: Material(color: selected ? const Color(0xFFF5EACF) : Colors.transparent,
                 borderRadius: BorderRadius.circular(20),
                 child: InkWell(key: Key(keys[index]), borderRadius: BorderRadius.circular(20),
                   onTap: () => onNavigate(index),
-                  child: Padding(padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      IconTheme(data: IconThemeData(color: color, size: 28), child: icon),
-                      const SizedBox(height: 3),
-                      UiText(labels[index], textAlign: TextAlign.center,
-                        style: TextStyle(color: color, fontSize: 12, height: 1.4,
-                          fontWeight: selected ? FontWeight.w700 : FontWeight.w400)),
-                    ]))))));
-          })))));
+                  child: Padding(padding: EdgeInsets.symmetric(vertical: large ? 10 : 8, horizontal: 2),
+                    child: large
+                      ? Row(children: [icon, const SizedBox(width: 5), Expanded(child: label)])
+                      : Column(mainAxisSize: MainAxisSize.min, children: [icon, const SizedBox(height: 3), label])))));
+          });
+          if (large) return Wrap(runSpacing: 3, children: items.map((item) =>
+            SizedBox(width: constraints.maxWidth / 2, child: item)).toList());
+          return Row(crossAxisAlignment: CrossAxisAlignment.start,
+            children: items.map((item) => Expanded(child: item)).toList());
+        }))));
+}
+
+/// Ivory shortcuts have their own responsive composition; dark cards are untouched.
+class _IvoryShortcut extends StatelessWidget {
+  const _IvoryShortcut({super.key, required this.unit, required this.label,
+    required this.subtitle, this.icon, this.symbol, required this.accent, required this.onTap});
+  final double unit;
+  final String label, subtitle;
+  final IconData? icon;
+  final Widget? symbol;
+  final Color accent;
+  final VoidCallback onTap;
+  @override
+  Widget build(BuildContext context) => Material(
+    color: Colors.transparent, clipBehavior: Clip.antiAlias,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(19 * unit),
+      side: const BorderSide(color: _IvoryHome.edge, width: .65)),
+    child: Ink(decoration: BoxDecoration(gradient: LinearGradient(
+      begin: Alignment.topLeft, end: Alignment.bottomRight,
+      colors: label == 'جميع الأذكار'
+        ? const [Color(0xFFEBEFDF), Color(0xFFF0F1E4)]
+        : const [Color(0xFFFFF9E9), Color(0xFFF6EDD9)])),
+      child: InkWell(onTap: onTap,
+        child: Padding(padding: EdgeInsets.symmetric(horizontal: 5, vertical: 13 * unit),
+          child: Column(children: [
+            IconTheme(data: IconThemeData(color: accent), child: SizedBox(height: 36 * unit,
+              child: Center(child: symbol ?? Icon(icon, color: accent, size: 34 * unit)))),
+            SizedBox(height: 9 * unit),
+            UiText(label, textAlign: TextAlign.center,
+              style: TextStyle(color: IvoryContrast.ink, fontSize: 14 * unit,
+                height: 1.6, fontWeight: FontWeight.w600)),
+            SizedBox(height: 4 * unit),
+            UiText(subtitle, textAlign: TextAlign.center,
+              style: TextStyle(color: IvoryContrast.muted, fontSize: 11.5 * unit, height: 1.6)),
+          ])))));
 }

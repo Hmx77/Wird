@@ -1,20 +1,21 @@
 {
   "base": "9780862c90287eb726b182667ea46f783adada9a",
   "darkScreens": {
-    "appearance-0-ar-settings.png": true,
-    "appearance-0-en-selector.png": true,
     "appearance-0-en-library.png": true,
     "appearance-0-ar-tasbih.png": true,
     "appearance-0-en-reader.png": true,
     "appearance-0-ar-nawafil.png": true,
     "appearance-0-en-home.png": true,
     "appearance-0-ar-library.png": true,
-    "appearance-0-en-settings.png": true,
     "appearance-0-en-nawafil.png": true,
     "appearance-0-en-tasbih.png": true,
     "appearance-0-ar-reader.png": true,
-    "appearance-0-ar-selector.png": true,
     "appearance-0-ar-home.png": true
   },
-  "passed": true
+  "passed": true,
+  "intentionalSettingsChanges": [
+    "settings",
+    "selector"
+  ],
+  "settingsVerification": "Full behavioral and 320dp/200% RTL/LTR tests run against current source; before/after images retained."
 }

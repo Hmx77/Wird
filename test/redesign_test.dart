@@ -60,7 +60,20 @@ void main() {
       await tester.ensureVisible(find.byKey(const Key('appearance-picker')));
       await tester.tap(find.byKey(const Key('appearance-picker')));
       await tester.pumpAndSettle();
-      expect(find.text('فاتح — Ivory Serenity'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('settings-theme-1')),
+          matching: find.text('الوضع الفاتح'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('settings-theme-1')),
+          matching: find.text('Ivory Serenity'),
+        ),
+        findsOneWidget,
+      );
       expect(tester.takeException(), isNull);
       await store.pendingWrites;
       await tester.pumpWidget(const SizedBox.shrink());
