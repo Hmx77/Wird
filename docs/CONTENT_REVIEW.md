@@ -1,6 +1,6 @@
 # Current review
 
-Superseded by [the complete 66-screen verification report](CONTENT_VERIFICATION_2026-10-14.md). Current source-checked development catalog: 49 category entries; 17 reference screens pending. Qualified approval remains absent.
+Current review: [26 October source-backed audit and full 51-entry register](CONTENT_VERIFICATION_2026-10-26.md). Counts: 18 Morning, 15 Evening, 18 Bedtime. All 17 withheld original screens remain excluded; two distinct sleep alternatives are included. Qualified approval remains absent. The historical report below is retained for provenance.
 
 ---
 

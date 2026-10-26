@@ -1115,5 +1115,25 @@
       "reason": "Abu Dawud 3893 is Hasan excluding the later companion practice. Screenshot adds وعقابه absent in that matn. Do not guess an exact composite or treat Hasan as Sahih.",
       "sourceUrl": "https://sunnah.com/abudawud:3893"
     }
+  ],
+  "supplementaryAlternatives": [
+    {
+      "entryId": "sleep_night_waking",
+      "reviewedInsteadOf": {
+        "section": "sleep",
+        "screen": 16
+      },
+      "originalAuthenticated": false,
+      "reason": "Different authenticated waking-at-night remembrance; Bukhari 1154."
+    },
+    {
+      "entryId": "sleep_creator",
+      "reviewedInsteadOf": {
+        "section": "sleep",
+        "screen": 17
+      },
+      "originalAuthenticated": false,
+      "reason": "Bedtime alternative, not a fear-specific replacement; Abu Dawud 5067. Existing Muslim bad-dream guidance remains the appropriate response to a disliked dream."
+    }
   ]
 }

@@ -40,7 +40,7 @@ void main() {
       e.allowedCounts.toSet().length == e.allowedCounts.length,
       'Duplicate alternatives ${e.id}',
     );
-    check(e.referenceScreens.isNotEmpty, 'Missing screenshot mapping ${e.id}');
+    check(e.referenceScreens.isNotEmpty || expandedSleepEntryIds.contains(e.id), 'Missing screenshot or alternative mapping ${e.id}');
   }
   for (final section in DhikrSection.values) {
     check(inSection(section).isNotEmpty, 'Empty section $section');

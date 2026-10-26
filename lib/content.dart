@@ -1127,7 +1127,62 @@ const contentCatalog = <DhikrEntry>[
     countAlternatives: [],
     quranSourceUrl: "",
   ),
+  DhikrEntry(
+    id: "sleep_creator",
+    section: DhikrSection.sleep,
+    referenceScreens: [],
+    title: "فاطر السماوات والأرض عند المضجع",
+    arabic:
+        "اللَّهُمَّ فَاطِرَ السَّمَوَاتِ وَالْأَرْضِ، عَالِمَ الْغَيْبِ وَالشَّهَادَةِ، رَبَّ كُلِّ شَيْءٍ وَمَلِيكَهُ، أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا أَنْتَ، أَعُوذُ بِكَ مِنْ شَرِّ نَفْسِي وَشَرِّ الشَّيْطَانِ وَشِرْكِهِ",
+    count: 1,
+    source: "سنن أبي داود (٥٠٦٧) • صحيح: الألباني",
+    sourceUrl: "https://sunnah.com/abudawud:5067",
+    timing:
+        "عند أخذ المضجع؛ نص مستقل الدليل في هذا الموضع، وليس دعاءً خاصًا بالفزع.",
+    evidence:
+        "روى أبو هريرة أن أبا بكر سأل النبي ﷺ، فقال له هذا الدعاء وأمره به إذا أصبح وإذا أمسى وإذا أخذ مضجعه. لا تضاف زيادة «وأن أقترف» من رواية أخرى.",
+    meaning:
+        "إقرار بتوحيد الله وعلمه وملكه، واستعاذة من شر النفس والشيطان وشركه.",
+    benefit:
+        "دعاء ثابت عند المضجع؛ لا يذكر هذا النص وعدًا عدديًا أو منفعة خاصة بالفزع.",
+    countDescription: "قراءة للتتبع؛ لا يحدد المصدر عدد تكرار مخصوصًا.",
+    isQuran: false,
+    reviewed: true,
+    countAlternatives: [],
+    quranSourceUrl: "",
+  ),
+  DhikrEntry(
+    id: "sleep_night_waking",
+    section: DhikrSection.sleep,
+    referenceScreens: [],
+    title: "الذكر عند الاستيقاظ من الليل",
+    arabic:
+        "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ، وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ. الْحَمْدُ لِلَّهِ، وَسُبْحَانَ اللَّهِ، وَلَا إِلَهَ إِلَّا اللَّهُ، وَاللَّهُ أَكْبَرُ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ.\n\nاللَّهُمَّ اغْفِرْ لِي.",
+    count: 1,
+    source: "صحيح البخاري (١١٥٤) • عن عبادة بن الصامت",
+    sourceUrl: "https://sunnah.com/bukhari:1154",
+    timing:
+        "عند الاستيقاظ أثناء الليل؛ ليس ذكرًا مخصوصًا قبل النوم ولا قراءة يومية لازمة.",
+    evidence:
+        "قال النبي ﷺ فيمن تعار من الليل فقال الذكر: ثم قال اللهم اغفر لي أو دعا استجيب له، فإن توضأ وصلى قبلت صلاته. جملة الاستغفار تأتي بعد الذكر، وله أن يدعو.",
+    meaning:
+        "توحيد وثناء وتنزيه وتعظيم لله، وإقرار بأن الحول والقوة به، ثم طلب المغفرة.",
+    benefit:
+        "وردت استجابة الدعاء بعد الذكر في هذا السياق، وقبول الصلاة إذا توضأ وصلى؛ لا ينقل الوعد إلى مجرد القراءة قبل النوم.",
+    countDescription:
+        "العداد لتسجيل قراءة واحدة عند حصول الاستيقاظ؛ لا يحدد الحديث عدد تكرار مخصوصًا.",
+    isQuran: false,
+    reviewed: true,
+    countAlternatives: [],
+    quranSourceUrl: "",
+  ),
 ];
+
+// Separate alternatives; these do not authenticate the withheld screenshot texts.
+const expandedSleepEntryIds = <String>{
+  'sleep_creator',
+  'sleep_night_waking',
+};
 
 String sectionLabel(DhikrSection section) => switch (section) {
   DhikrSection.morning => 'أذكار الصباح',

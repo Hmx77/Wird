@@ -87,6 +87,7 @@ class WirdState extends ChangeNotifier {
   Map<String, int> countChoices = {};
   Set<String> prayers = {};
   int tasbih = 0;
+  String contentExpandedOn = '';
   SharedPreferences? _prefs;
   bool ready = false;
   bool _disposed = false;
@@ -178,8 +179,15 @@ class WirdState extends ChangeNotifier {
       );
   bool isDone(DhikrEntry entry, [String? date]) =>
       count(entry, date) >= target(entry, date);
+  // Preserve historical completion against the catalog available before upgrade.
+  List<DhikrEntry> progressEntries(DhikrSection section, [String? date]) =>
+      inSection(section).where((e) => date == null ||
+          contentExpandedOn.isEmpty || date.compareTo(contentExpandedOn) >= 0 ||
+          !expandedSleepEntryIds.contains(e.id)).toList();
+  int sectionTotal(DhikrSection section, [String? date]) =>
+      progressEntries(section, date).length;
   int completed(DhikrSection section, [String? date]) =>
-      inSection(section).where((e) => isDone(e, date)).length;
+      progressEntries(section, date).where((e) => isDone(e, date)).length;
   bool prayerDone(String id, [String? date]) =>
       prayers.contains('${date ?? dayKey(_now())}|$id');
 
@@ -197,6 +205,11 @@ class WirdState extends ChangeNotifier {
   Future<void> _load() async {
     _prefs = await SharedPreferences.getInstance();
     final p = _prefs!;
+    contentExpandedOn = p.getString('content.expanded_sleep_20261026') ?? today;
+    if (!p.containsKey('content.expanded_sleep_20261026')) {
+      final adoptedOn = contentExpandedOn;
+      save(() => p.setString('content.expanded_sleep_20261026', adoptedOn));
+    }
     languageCode = p.getString('language') == 'en' ? 'en' : 'ar';
     final savedAppearance = p.getString(appearancePreference);
     final selectedAppearance = appearanceIds.indexOf(savedAppearance ?? '');
@@ -726,7 +739,7 @@ class ProgressPage extends StatelessWidget {
                         ),
                         const Spacer(),
                         ...DhikrSection.values.map((section) {
-                          final total = inSection(section).length;
+                          final total = store.sectionTotal(section, date);
                           final checked =
                               total > 0 &&
                               store.completed(section, date) == total;

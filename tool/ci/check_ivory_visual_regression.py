@@ -5,7 +5,7 @@ from pathlib import Path
 import shutil
 import subprocess
 
-BASE = '9780862c90287eb726b182667ea46f783adada9a'
+BASE = 'e92057931e2be08804c94051899b5e26edecaa53'
 paths = ['lib/appearance.dart', 'lib/premium_ui.dart', 'lib/main.dart', 'lib/settings_ui.dart', 'lib/tasbih_ui.dart', 'test/appearance_test.dart']
 images = Path('verification/screenshots')
 after = Path('verification/ivory-after')
@@ -29,12 +29,11 @@ finally:
     for image in after.glob('appearance-*'):
         shutil.copyfile(image, images / image.name)
 checks = {image.name: image.read_bytes() == (before / image.name).read_bytes()
-          for image in after.glob('appearance-0-*.png')
-          if not image.stem.endswith(('-settings', '-selector'))}
-assert len(checks) == 10, checks
+          for image in after.glob('appearance-*.png')}
+assert len(checks) == 28, checks
 Path('verification/midnight-exact-regression.json').write_text(json.dumps(
     {'base': BASE, 'darkScreens': checks, 'passed': all(checks.values()),
-     'intentionalSettingsChanges': ['settings', 'selector'],
+     'intentionalSettingsChanges': [], 'comparison': 'Approved PR8 UI rendered with the same expanded catalog; count changes are data, not design changes',
      'settingsVerification': 'Full behavioral and 320dp/200% RTL/LTR tests run against current source; before/after images retained.'}, indent=2))
 assert all(checks.values()), checks
-print('PASS: 10 unchanged Midnight Teal renders byte-for-byte identical to approved base; before/after retained')
+print('PASS: 28 both-theme renders identical to approved PR8 UI with expanded data; before/after retained')

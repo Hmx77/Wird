@@ -77,7 +77,7 @@ def capture(name):
 
 # Actual offline UI. Religious content is never extracted from the mockups.
 tap('الأذكار',bottom=True)
-expect('49 ذكر')
+expect('51 ذكر')
 capture('android-library-premium.png')
 tap('ابحث عن ذكر')
 for attempt in range(6):
@@ -89,7 +89,7 @@ expect('15 ذكر')
 adb('shell','input','keyevent','KEYCODE_BACK')
 capture('android-library-search.png')
 tap('مسح البحث')
-expect('49 ذكر')
+expect('51 ذكر')
 tap('حفظ في المفضلة آية الكرسي',scroll=True)
 tap('المفضلة', exact=True)
 expect('1 ذكر')
@@ -135,15 +135,15 @@ else:raise AssertionError('Search input did not receive focus')
 adb('shell','input','text','Bedtime')
 adb('shell','input','keyevent','KEYCODE_BACK')
 # Favorites filter was reset on process restart, as in the original application.
-expect('16 ذكر')
+expect('18 ذكر')
 tap('سورة الملك',scroll=True,node_class='android.view.View')
-expect('12 / 16')
+expect('12 / 18')
 # Long SelectableText exposes the full passage but may omit its offscreen title.
 passages=[n.get('text','') for n in snapshot() if '\u06dd' in n.get('text','')]
 assert any([int(v) for v in re.findall(r'\u06dd([٠-٩]+)', passage)]==list(range(1,31)) for passage in passages), 'Mulk must expose all 30 ordered verse markers'
 adb('shell','input','swipe',str(width//2),str(int(height*.35)),str(width//2),str(int(height*.8)),'450')
 capture('android-reader-mulk.png')
-print('PASS: native Mulk destination 12/16 with all 30 ordered verse markers',flush=True)
+print('PASS: native Mulk destination 12/18 with all 30 ordered verse markers',flush=True)
 adb('shell','settings','put','system','font_scale','1.5')
 # System text-scale updates must preserve complete selectable text and scrolling.
 time.sleep(2)
@@ -159,6 +159,6 @@ else:raise AssertionError('Long Quran counter did not become reachable')
 adb('shell','settings','put','system','font_scale','1.0')
 adb('shell','input','keyevent','KEYCODE_BACK')
 tap('الرئيسية',bottom=True)
-(out/'reader-interactions.json').write_text(json.dumps({'passed':True,'offline':True,'library_count':49,'search_evening':15,'search_bedtime':16,'bookmark_filter':1,'reader_count_sequence':['1/3','0/3','1/3','restart','2/3'],'navigation':['next','previous'],'evidence':'expanded','long_passage':'Mulk at system font scale 1.5'},ensure_ascii=False,indent=2)+'\n')
+(out/'reader-interactions.json').write_text(json.dumps({'passed':True,'offline':True,'library_count':51,'search_evening':15,'search_bedtime':18,'bookmark_filter':1,'reader_count_sequence':['1/3','0/3','1/3','restart','2/3'],'navigation':['next','previous'],'evidence':'expanded','long_passage':'Mulk at system font scale 1.5'},ensure_ascii=False,indent=2)+'\n')
 print('PASS: premium Library search/bookmarks, Reader count/Undo/restart/navigation/evidence and large Mulk',flush=True)
 

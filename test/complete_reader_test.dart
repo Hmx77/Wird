@@ -35,11 +35,12 @@ void main() {
   }
 
   for (final language in ['ar', 'en']) {
-    for (final id in ['sleep_mulk', 'sleep_bad_dream', 'morning_tahlil']) {
+    for (final id in ['sleep_mulk', 'sleep_bad_dream', 'morning_tahlil', 'sleep_creator', 'sleep_night_waking']) {
+      for (final theme in (expandedSleepEntryIds.contains(id) ? [0, 1] : [0])) {
       testWidgets(
-        'complete offline reader $id $language with large Arabic text',
+        'complete offline reader $id $language theme $theme with large Arabic text',
         (tester) async {
-          tester.view.physicalSize = const Size(430, 932);
+          tester.view.physicalSize = expandedSleepEntryIds.contains(id) ? const Size(320, 740) : const Size(430, 932);
           tester.view.devicePixelRatio = 1;
           addTearDown(tester.view.resetPhysicalSize);
           addTearDown(tester.view.resetDevicePixelRatio);
@@ -47,6 +48,7 @@ void main() {
             'haptics': false,
             'language': language,
             'font': 38.0,
+            appearancePreference: appearanceIds[theme],
           });
           final state = WirdState();
           await state.initialize();
@@ -87,7 +89,7 @@ void main() {
           );
           expect(position.textDirection, TextDirection.ltr);
           expect(tester.takeException(), isNull);
-          await capture(tester, key, 'complete-$id-$language-top');
+          await capture(tester, key, 'complete-$id-$language-$theme-top');
           if (id == 'morning_tahlil') {
             await tester.scrollUntilVisible(
               find.byType(DropdownButton<int>),
@@ -133,16 +135,17 @@ void main() {
             find.text('${state.count(entry)} / ${state.target(entry)}'),
           );
           expect(counter.textDirection, TextDirection.ltr);
-          await capture(tester, key, 'complete-$id-$language-counter');
+          await capture(tester, key, 'complete-$id-$language-$theme-counter');
           expect(tester.takeException(), isNull);
           await state.pendingWrites;
           await tester.pumpWidget(const SizedBox.shrink());
           state.dispose();
         },
       );
+      }
     }
   }
-  testWidgets('full Mulk renders without overflow in all ten existing themes', (
+  testWidgets('full Mulk renders without overflow in both approved themes', (
     tester,
   ) async {
     SharedPreferences.setMockInitialValues({'haptics': false});

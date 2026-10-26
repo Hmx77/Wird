@@ -403,7 +403,7 @@
     },
     {
       "path": "lib/content.dart",
-      "sha": "1e22a145cc77b3414ba1ba9ea9407c8db9e18d2d"
+      "sha": "0b044db57a883e38532cc73bf600366a0ee14c10"
     },
     {
       "path": "lib/quran_text.dart",
@@ -429,5 +429,6 @@
       "path": "pubspec.lock",
       "sha": "270f1b989f7f9c81df95fe0d7f5b5abd340d0294"
     }
-  ]
+  ],
+  "authorizedContentReview": "docs/CONTENT_VERIFICATION_2026-10-26.md"
 }
