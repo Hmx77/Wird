@@ -34,7 +34,7 @@ def scroll_content(nodes):
     adb('shell','input','swipe',str(width//2),str(int(bottom * .9)),
         str(width//2),str(int(height * .28)),'450')
 
-def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_bottom=False, prefix=False, clickable=False):
+def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_bottom=False, prefix=False, clickable=False, capture_before=None):
     for attempt in range(50 if scroll else 3):
         candidates = []
         nodes = snapshot()
@@ -62,6 +62,8 @@ def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_b
         if candidates:
             candidates.sort(key=lambda pair: pair[1][1] if bottom else -(pair[1][2]-pair[1][0])*(pair[1][3]-pair[1][1]), reverse=True)
             _, (x1,y1,x2,y2) = candidates[0]
+            if capture_before:
+                capture(capture_before)
             adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
             time.sleep(.4)
             return
@@ -244,9 +246,11 @@ for mode,label in [('ivory','Ivory Serenity'),('midnight','Midnight Teal')]:
             time.sleep(2)
             home()
             capture('android-ivory-home-320dp-text200-top.png')
-            tap('أذكار المساء', scroll=True)
-            expect('الفضل والدليل والمعنى', scroll=True)
-            adb('shell','input','keyevent','KEYCODE_BACK')
+            for section, slug in [('أذكار الصباح', 'morning'), ('أذكار المساء', 'evening')]:
+                home()
+                tap(section, scroll=True, capture_before=f'android-ivory-{slug}-320dp-text200.png')
+                expect('الفضل والدليل والمعنى', scroll=True)
+                adb('shell','input','keyevent','KEYCODE_BACK')
             checks.append('Ivory Home: 320dp, 200% text, Morning/Evening and Tasbih navigation')
         finally:
             adb('shell','settings','put','system','font_scale','1.0')
@@ -374,4 +378,5 @@ for mode,label in [('ivory','Ivory Serenity'),('midnight','Midnight Teal')]:
     home()
 (out/'appearance-interactions.json').write_text(json.dumps({'passed':True,'offline':True,'checks':checks},ensure_ascii=False,indent=2))
 print('PASS: both appearances, only two choices, offline captures and restart persistence')
+
 

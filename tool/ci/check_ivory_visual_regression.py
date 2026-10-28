@@ -6,7 +6,7 @@ from pathlib import Path
 import shutil
 import subprocess
 
-BASE = 'd1b5663ccda092a06f5c87ffc24f9d9311f8c1b0'
+BASE = '82aa15a8b3bf7c06b32fc2672149136464ae098d'
 # Keep the current capture harness for both revisions so it records comparable
 # text geometry and raw pixels; only production code changes for the replay.
 paths = ['lib/appearance.dart', 'lib/premium_ui.dart', 'lib/main.dart',
@@ -41,7 +41,12 @@ finally:
 def home_scope(name, must_change=False):
     current = json.loads((after / f'{name}-text.json').read_text())
     prior = json.loads((before / f'{name}-text.json').read_text())
-    assert current == prior, f'{name}: text, counts, colors or layout changed'
+    # Only the two approved caption colors change; content and geometry cannot.
+    expected = json.loads(json.dumps(prior))
+    for item in expected['text']:
+        if item.get('card') in ('home-morning', 'home-evening'):
+            item['argb'] = 0xFFFAF6E9
+    assert current == expected, f'{name}: unapproved text, count, color or layout change'
     width, height = current['width'], current['height']
     scale = current['pixelRatio']
     bounds = [[math.floor(v * scale) if i < 2 else math.ceil(v * scale)
@@ -63,8 +68,23 @@ def home_scope(name, must_change=False):
     assert outside == 0, f'{name}: {outside} changed pixels outside approved cards'
     if must_change:
         assert changed > 1000, f'{name}: approved scenery update did not render'
+    lower_cream = []
+    if must_change:
+        for left, top, right, bottom in bounds:
+            start = top + round((bottom - top) * .55)
+            pixels = 0
+            cream = 0
+            for y in range(max(0, start), min(height, bottom - 2)):
+                for x in range(max(0, left + 2), min(width, right - 2)):
+                    i = (y * width + x) * 4
+                    pixels += 1
+                    cream += a[i] > 215 and a[i+1] > 210 and a[i+2] > 190
+            fraction = cream / pixels
+            assert fraction < .28, f'{name}: lower scenery obscured by cream ({fraction:.1%})'
+            lower_cream.append(fraction)
     return {'changedInsideCards': changed, 'changedOutsideCards': outside,
-            'textAndLayoutIdentical': True, 'cardBoundsPixels': bounds}
+            'textContentAndGeometryIdentical': True, 'approvedCaptionColor': '#FAF6E9',
+            'lowerSceneCreamFraction': lower_cream, 'cardBoundsPixels': bounds}
 
 checks = {}
 scoped = {}
@@ -82,9 +102,10 @@ shell = 'ivory-shell-320-ar-text200.png'
 assert (after / shell).read_bytes() == (before / shell).read_bytes(), shell
 result = {
     'base': BASE, 'unchangedScreens': checks, 'scopedIvoryHomes': scoped,
-    'passed': True, 'intentionalChanges': ['Ivory Morning and Evening artwork and caption feather only'],
+    'passed': True, 'intentionalChanges': ['Ivory Morning/Evening full scenery, cream captions and Morning badge; no wash'],
     'comparison': '14 Midnight renders and 12 other Ivory renders exact; Ivory Home pixels exact outside the two category cards',
     'smallScreenVerification': '320dp RTL/LTR at 100%/200%; text geometry and outside-card pixels unchanged',
 }
 Path('verification/midnight-exact-regression.json').write_text(json.dumps(result, indent=2))
-print('PASS: 26 unchanged screen renders; Ivory Home changes confined to Morning/Evening cards with identical text and layout')
+print('PASS: 26 unchanged renders; only approved cards change, text geometry preserved, no cream lower panels')
+

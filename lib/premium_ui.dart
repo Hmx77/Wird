@@ -666,8 +666,8 @@ class _HomeTasbihPage extends PersonalTasbihPage {
 // above remains unchanged, including its typography and illustration layers.
 const ivoryHomeHeader = AssetImage('assets/appearance/ivory-home-header-v2.webp');
 const ivoryHomeFeature = AssetImage('assets/appearance/ivory-home-feature-v2.webp');
-const ivoryMorning = AssetImage('assets/appearance/ivory-morning-v3.webp');
-const ivoryEvening = AssetImage('assets/appearance/ivory-evening-v3.webp');
+const ivoryMorning = AssetImage('assets/appearance/ivory-morning-v4.webp');
+const ivoryEvening = AssetImage('assets/appearance/ivory-evening-v4.webp');
 
 class _IvoryHome extends StatelessWidget {
   const _IvoryHome({required this.home});
@@ -827,22 +827,32 @@ class _IvoryHome extends StatelessWidget {
     final morning = section == DhikrSection.morning;
     final count = inSection(section).length;
     final done = store.completed(section);
-    final ink = night ? homeCream : IvoryContrast.ink;
+    final ink = night ? homeCream : paper;
+    // Contrast follows the glyphs, leaving the scenic foreground unobscured.
+    TextStyle caption(double size, {bool bold = false}) =>
+      text(size, bold: bold, color: ink).copyWith(shadows: night ? null : const [
+        Shadow(color: Color(0xE611251D), blurRadius: 2, offset: Offset(0, 1)),
+        Shadow(color: Color(0xB311251D), blurRadius: .5),
+      ]);
     final icon = night ? Icons.nightlight_round : morning ? Icons.wb_sunny_outlined : Icons.nightlight_outlined;
     final badge = Container(width: 48 * unit, height: 48 * unit,
-      decoration: BoxDecoration(color: morning ? const Color(0xFFD8E5CB) : paper,
+      decoration: BoxDecoration(color: paper,
         borderRadius: BorderRadius.circular(13), border: Border.all(color: const Color(0xFFC8C5AD), width: .7)),
       child: Icon(icon, size: 33 * unit, color: night ? const Color(0xFF70A7C8) : IvoryContrast.ink));
     final label = RepaintBoundary(
       key: ValueKey('category-label-${section.name}-${store.themeIndex}-${store.languageCode}'),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-        UiText(sectionLabel(section), style: text((night ? 23 : 18.5) * unit, bold: true, color: ink)),
-        const SizedBox(height: 2), UiText('$count ذكر', style: text(13 * unit, color: ink)),
+        UiText(sectionLabel(section), style: caption((night ? 23 : 18.5) * unit, bold: true)),
+        const SizedBox(height: 2), UiText('$count ذكر', style: caption(13 * unit)),
       ]));
     return _surface(keyName: 'home-${section.name}', image: homeArt[section.name]!,
       onTap: () => openReader(context, store, section),
-      scenery: night ? null : _IvoryDayScenery(
-        image: morning ? ivoryMorning : ivoryEvening, unit: unit),
+      // No wash, gradient, tint or panel: all lower foliage is real artwork.
+      // Center framing retains sun, architecture and foliage in wider cards.
+      scenery: night ? null : Image(key: ValueKey('ivory-day-artwork-${section.name}'),
+        image: morning ? ivoryMorning : ivoryEvening, fit: BoxFit.cover,
+        alignment: Alignment.center, filterQuality: FilterQuality.high,
+        excludeFromSemantics: true),
       gradient: night ? const LinearGradient(colors: [Color(0x18002128), Color(0x30002128)]) : null,
       child: Padding(padding: EdgeInsets.all(11 * unit),
         child: night ? ConstrainedBox(constraints: BoxConstraints(minHeight: 67 * unit),
@@ -882,35 +892,6 @@ class _IvoryHome extends StatelessWidget {
     return Wrap(spacing: 7, runSpacing: 8, children: cards.map((card) => SizedBox(
       width: (width - 7 * (columns - 1)) / columns, child: card)).toList());
   }
-}
-
-/// A crisp illustration and a caption-sized feather, independent of card height.
-/// Text, badges, progress and hit targets keep their existing layout above it.
-class _IvoryDayScenery extends StatelessWidget {
-  const _IvoryDayScenery({required this.image, required this.unit});
-  final AssetImage image;
-  final double unit;
-
-  @override
-  Widget build(BuildContext context) => LayoutBuilder(builder: (context, box) {
-    // The existing column places its caption after inset + badge + gap.
-    // Measure the remaining space so wrapped or enlarged labels keep the same
-    // feather at their top instead of letting scenery show through the text.
-    final captionDepth = box.maxHeight - (11 + 48 + 21) * unit;
-    final feather = 28 * unit;
-    final washHeight = captionDepth + feather;
-    final captionStop = feather / washHeight;
-    return Stack(fit: StackFit.expand, children: [
-      Image(image: image, fit: BoxFit.cover, alignment: Alignment.topCenter,
-        filterQuality: FilterQuality.high, excludeFromSemantics: true),
-      Positioned(left: 0, right: 0, bottom: 0, height: washHeight,
-        child: DecoratedBox(decoration: BoxDecoration(
-          gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
-            stops: [0, captionStop * .56, captionStop, (captionStop + 1) / 2, 1],
-            colors: const [Color(0x00FAF6E9), Color(0x59FAF6E9), Color(0xD1FAF6E9),
-              Color(0xF5FAF6E9), _IvoryHome.paper])))),
-    ]);
-  });
 }
 
 /// The reference's full Home selection tile, restricted to the Ivory Home.
@@ -992,3 +973,4 @@ class _IvoryShortcut extends StatelessWidget {
               style: TextStyle(color: IvoryContrast.muted, fontSize: 11.5 * unit, height: 1.6)),
           ])))));
 }
+

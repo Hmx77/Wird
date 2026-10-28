@@ -109,10 +109,38 @@ void main() {
         const AssetImage('assets/appearance/ivory-home-header-v2.webp'),
         const AssetImage('assets/appearance/ivory-home-feature-v2.webp'),
         const AssetImage('assets/appearance/ivory-morning-v3.webp'),
-        const AssetImage('assets/appearance/ivory-evening-v3.webp')]
+        const AssetImage('assets/appearance/ivory-evening-v3.webp'),
+        const AssetImage('assets/appearance/ivory-morning-v4.webp'),
+        const AssetImage('assets/appearance/ivory-evening-v4.webp')]
         .map((image) => precacheImage(image, context)));
     });
     await t.pumpAndSettle();
+    if (page is HomePage && s.themeIndex == 1 &&
+        Platform.environment['WIRD_BASELINE_RENDER'] != '1') {
+      for (final section in ['morning', 'evening']) {
+        final art = find.byKey(ValueKey('ivory-day-artwork-$section'));
+        final image = t.widget<Image>(art);
+        expect(image.color, isNull);
+        expect(image.opacity, isNull);
+        expect(image.fit, BoxFit.cover);
+        expect(image.alignment, Alignment.center);
+        final layers = t.widgetList<Stack>(find.ancestor(of: art,
+          matching: find.byType(Stack))).singleWhere((stack) =>
+            stack.children.whereType<Positioned>().any((layer) => identical(layer.child, image)));
+        expect(layers.children.length, 2,
+          reason: 'Only full scenic artwork and real controls; no wash layer');
+        expect((layers.children.first as Positioned).child, same(image));
+        final label = find.byKey(ValueKey('category-label-$section-1-${s.languageCode}'));
+        final texts = t.widgetList<Text>(find.descendant(of: label, matching: find.byType(Text)));
+        expect(texts.length, 2);
+        for (final text in texts) {
+          expect(text.style!.color, const Color(0xFFFAF6E9));
+          expect(text.style!.backgroundColor, isNull);
+          expect(text.style!.background, isNull);
+          expect(text.style!.shadows, isNotEmpty);
+        }
+      }
+    }
   }
   Future<void> capture(WidgetTester t, String name) async {
     if (Platform.environment['WIRD_REVIEW_IMAGES'] != '1') return;
@@ -140,7 +168,9 @@ void main() {
         final origin = render.localToGlobal(Offset.zero);
         final color = render.text.style?.color;
         if (color == null) continue;
+        final card = e.findAncestorWidgetOfExactType<InkWell>()?.key;
         text.add({'text': render.text.toPlainText(), 'argb': color.toARGB32(),
+          'card': card is ValueKey<String> ? card.value : null,
           'left': origin.dx, 'top': origin.dy,
           'width': render.size.width, 'height': render.size.height});
       }
@@ -152,6 +182,52 @@ void main() {
           'لحظات من السكينة', 'اختر وردك وابدأ القراءة', 'متابعة القراءة',
           'أذكار الصباح', 'أذكار المساء', 'أذكار النوم'];
         for (final item in text.where((item) => labels.contains(item['text']))) {
+          if (item['card'] == 'home-morning' || item['card'] == 'home-evening') {
+            // These captions now use cream glyphs and a localized dark halo.
+            // Probe actual glyph edges, not an empty row above the caption.
+            final section = (item['card'] as String).substring(5);
+            final label = t.renderObject<RenderRepaintBoundary>(find.byKey(
+              ValueKey('category-label-$section-1-ar')));
+            final maskImage = await label.toImage(pixelRatio: 2);
+            final mask = (await maskImage.toByteData(format: ui.ImageByteFormat.rawRgba))!;
+            final origin = label.localToGlobal(Offset.zero) * 2;
+            bool glyph(int x, int y) {
+              if (x < 0 || y < 0 || x >= maskImage.width || y >= maskImage.height) return false;
+              final i = (y * maskImage.width + x) * 4;
+              return mask.getUint8(i + 3) > 230 && mask.getUint8(i) > 235 &&
+                mask.getUint8(i + 1) > 230 && mask.getUint8(i + 2) > 218;
+            }
+            var edges = 0, readable = 0;
+            final foreground = Color(item['argb'] as int).computeLuminance();
+            for (var y = 0; y < maskImage.height; y++) {
+              for (var x = 0; x < maskImage.width; x++) {
+                if (!glyph(x, y) || (glyph(x-1, y) && glyph(x+1, y) &&
+                    glyph(x, y-1) && glyph(x, y+1))) continue;
+                edges++;
+                var best = 1.0;
+                for (var dy = -4; dy <= 4; dy++) {
+                  for (var dx = -4; dx <= 4; dx++) {
+                    if (glyph(x+dx, y+dy)) continue;
+                    final px = origin.dx.round() + x + dx;
+                    final py = origin.dy.round() + y + dy;
+                    if (px < 0 || py < 0 || px >= image.width || py >= image.height) continue;
+                    final i = (py * image.width + px) * 4;
+                    final background = Color.fromARGB(raw.getUint8(i+3), raw.getUint8(i),
+                      raw.getUint8(i+1), raw.getUint8(i+2)).computeLuminance();
+                    final ratio = (foreground + .05) / (background + .05);
+                    if (ratio > best) best = ratio;
+                  }
+                }
+                if (best >= 4.5) readable++;
+              }
+            }
+            expect(edges, greaterThan(100));
+            expect(readable / edges, greaterThanOrEqualTo(.95),
+              reason: '${item['text']}: rendered glyph/halo contrast');
+            checked.add({'text': item['text'], 'readableGlyphEdgeFraction': readable / edges});
+            maskImage.dispose();
+            continue;
+          }
           final y = ((item['top'] as double) * 2).floor() + 1;
           if (y < 0 || y >= image.height) continue;
           final left = ((item['left'] as double) * 2).floor().clamp(0, image.width - 1).toInt();
@@ -290,5 +366,6 @@ void main() {
   });
 
 }
+
 
 
