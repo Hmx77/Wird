@@ -63,6 +63,17 @@ def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_b
             candidates.sort(key=lambda pair: pair[1][1] if bottom else -(pair[1][2]-pair[1][0])*(pair[1][3]-pair[1][1]), reverse=True)
             _, (x1,y1,x2,y2) = candidates[0]
             if capture_before:
+                # A valid tap target may still be partly behind the fixed nav.
+                # Place the observed card in the upper content area so its
+                # foreground/count are visible in the accessibility capture.
+                if y1 < height * .12 or y1 > height * .28:
+                    delta = int(y1 - height * .20)
+                    start = int(limit * .70 if delta > 0 else height * .25)
+                    end = max(100, min(int(limit - 30), start - delta))
+                    adb('shell','input','swipe',str(width//2),str(start),
+                        str(width//2),str(end),'450')
+                    time.sleep(.4)
+                    continue
                 capture(capture_before)
             adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
             time.sleep(.4)
