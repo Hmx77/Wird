@@ -33,18 +33,22 @@ def nodes():
         adb('shell', 'rm', '-f', '/sdcard/wird-polish.xml')
         result = adb('shell', 'uiautomator', 'dump', '/sdcard/wird-polish.xml')
         if 'dumped to' in result:
-            return list(ET.fromstring(adb('shell', 'cat', '/sdcard/wird-polish.xml')).iter('node'))
+            xml = adb('shell', 'cat', '/sdcard/wird-polish.xml')
+            (out/'home-polish-last.xml').write_text(xml)
+            return list(ET.fromstring(xml).iter('node'))
         time.sleep(1)
     raise AssertionError('UIAutomator could not capture the current screen')
 
 def dimensions():
     return tuple(map(int, re.findall(r'(\d+)x(\d+)', adb('shell', 'wm', 'size'))[-1]))
 
-def target(label, scroll=False, bottom=False, center=False):
+def target(label, scroll=False, bottom=False, center=False, modal=False):
     width, height = dimensions()
     for _ in range(40 if scroll else 8):
         current_nodes = nodes()
-        limit = height if bottom else content_bottom(current_nodes, height)
+        # A modal sheet covers the shell navigation, so its visible choice
+        # cards must not be clipped against the underlying Home tab's bounds.
+        limit = height if bottom or modal else content_bottom(current_nodes, height)
         matches = []
         for n in current_nodes:
             if n.get('clickable') != 'true': continue
@@ -108,7 +112,9 @@ labels = ['الرئيسية', 'الأذكار', 'النوافل', 'الإعدا�
 def review(stage):
     for mode, label in [('midnight','Midnight Teal'), ('ivory','Ivory Serenity')]:
         tap('الإعدادات', bottom=True); top()
-        tap('المظهر', scroll=True); tap(label)
+        tap('المظهر', scroll=True); tap(label, scroll=True, modal=True)
+        appearance = ET.fromstring(preferences()['flutter.appearance.v2']).text
+        assert appearance == ('midnight-teal' if mode == 'midnight' else 'ivory-serenity'), appearance
         home()
         capture(f'android-{stage}-{mode}-home.png')
         if stage == 'after':
@@ -139,8 +145,8 @@ def review(stage):
 signer = sorted(Path(os.environ['ANDROID_HOME']).glob('build-tools/*/apksigner'))[-1]
 def certificate(apk):
     result = subprocess.check_output([str(signer),'verify','--print-certs',str(apk)],text=True)
-    # New build-tools include the signer's SDK range in this line. Match the
-    # certificate field rather than its version-dependent signer prefix.
+    # Build-tools can prefix this with "V2 Signer" instead of "Signer #1".
+    # Match the certificate field rather than that version-dependent prefix.
     name = 'baseline' if apk == baseline else 'current'
     (out/f'apksigner-{name}.txt').write_text(result)
     fingerprints = set(re.findall(r'certificate SHA-256 digest:\s*([0-9a-fA-F]{64})\b', result))
