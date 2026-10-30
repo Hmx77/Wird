@@ -27,8 +27,15 @@ def normal(value):
     return ''.join(c for c in unicodedata.normalize('NFD', value) if unicodedata.category(c) != 'Mn')
 
 def nodes():
-    adb('shell', 'uiautomator', 'dump', '/sdcard/wird-polish.xml')
-    return list(ET.fromstring(adb('shell', 'cat', '/sdcard/wird-polish.xml')).iter('node'))
+    # UIAutomator can briefly have no root while Flutter changes routes.
+    # Never accept a stale dump from the preceding screen.
+    for attempt in range(5):
+        adb('shell', 'rm', '-f', '/sdcard/wird-polish.xml')
+        result = adb('shell', 'uiautomator', 'dump', '/sdcard/wird-polish.xml')
+        if 'dumped to' in result:
+            return list(ET.fromstring(adb('shell', 'cat', '/sdcard/wird-polish.xml')).iter('node'))
+        time.sleep(1)
+    raise AssertionError('UIAutomator could not capture the current screen')
 
 def dimensions():
     return tuple(map(int, re.findall(r'(\d+)x(\d+)', adb('shell', 'wm', 'size'))[-1]))
@@ -132,7 +139,13 @@ def review(stage):
 signer = sorted(Path(os.environ['ANDROID_HOME']).glob('build-tools/*/apksigner'))[-1]
 def certificate(apk):
     result = subprocess.check_output([str(signer),'verify','--print-certs',str(apk)],text=True)
-    return re.search(r'Signer #1 certificate SHA-256 digest: (\w+)',result).group(1)
+    # New build-tools include the signer's SDK range in this line. Match the
+    # certificate field rather than its version-dependent signer prefix.
+    name = 'baseline' if apk == baseline else 'current'
+    (out/f'apksigner-{name}.txt').write_text(result)
+    fingerprints = set(re.findall(r'certificate SHA-256 digest:\s*([0-9a-fA-F]{64})\b', result))
+    assert len(fingerprints) == 1, f'Expected one signing certificate for {name}: {result}'
+    return fingerprints.pop().lower()
 assert certificate(baseline) == certificate(current), 'Upgrade fixture must share the current APK signing key'
 saved = preferences()
 replace_and_launch(baseline)

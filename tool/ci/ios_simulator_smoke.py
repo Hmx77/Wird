@@ -113,13 +113,23 @@ try:
              'FLUTTER_SUPPRESS_ANALYTICS=true', 'COCOAPODS_DISABLE_STATS=true',
              'flutter', 'drive', '--driver=test_driver/home_polish_driver.dart',
              '--target=integration_test/home_polish_device_test.dart', '-d', sim]
+    def reset_debug_connection():
+        # Sequential Flutter drive builds can leave CoreSimulator's log reader
+        # attached to the previous app process. Reboot this disposable device
+        # between builds; retain its installed apps and data, and all assertions.
+        run(['xcrun', 'simctl', 'shutdown', sim], seconds=60)
+        run(['xcrun', 'simctl', 'boot', sim], seconds=120)
+        run(['xcrun', 'simctl', 'bootstatus', sim, '-b'], seconds=300)
+
     try:
         for path in production:
             Path(path).write_bytes(subprocess.check_output(['git', 'show', f'{baseline}:{path}']))
+        reset_debug_connection()
         run(drive + ['--dart-define=WIRD_BASELINE_RENDER=true'], seconds=1200,
             save=out/'home-polish-before.log')
     finally:
         for path, content in current.items(): Path(path).write_bytes(content)
+    reset_debug_connection()
     run(drive, seconds=1200, save=out/'home-polish-after.log')
     print('PASS: iOS 26 simulator installation, native launch, both-theme Home/navigation and 200% text.',flush=True)
 finally:
