@@ -30,9 +30,82 @@ void main() {
       expect(e.quranSourceUrl, row['quranSourceUrl']);
     }
     expect(entries.where((e) => !old.any((r) => r['id'] == e.id)).map((e) => e.id).toSet(), expandedSleepEntryIds);
-    expect(inSection(DhikrSection.morning), hasLength(18));
-    expect(inSection(DhikrSection.evening), hasLength(15));
+    expect(inSection(DhikrSection.morning).where((e) => !e.reviewOnly), hasLength(18));
+    expect(inSection(DhikrSection.morning), hasLength(25));
+    expect(inSection(DhikrSection.evening).where((e) => !e.reviewOnly), hasLength(15));
+    expect(inSection(DhikrSection.evening), hasLength(23));
     expect(inSection(DhikrSection.sleep), hasLength(18));
+  });
+  test('all 51 development-admitted payloads match the immutable audit', () {
+    final audit = jsonDecode(File('docs/content-audit.json').readAsStringSync()) as Map<String, dynamic>;
+    final rows = audit['entries'] as List;
+    expect(rows, hasLength(51));
+    expect(entries.map((e) => e.id), rows.map((e) => e['id']));
+    for (final row in rows) {
+      final e = entries.singleWhere((e) => e.id == row['id']);
+      final actual = <String, dynamic>{
+        'id': e.id, 'section': e.section.name, 'title': e.title,
+        'arabic': e.arabic, 'count': e.count, 'source': e.source,
+        'sourceUrl': e.sourceUrl, 'evidence': e.evidence,
+        'meaning': e.meaning, 'benefit': e.benefit, 'isQuran': e.isQuran,
+        'countDescription': e.countDescription, 'timing': e.timing,
+        'reviewed': e.reviewed, 'referenceScreens': e.referenceScreens,
+        'countAlternatives': e.countAlternatives, 'quranSourceUrl': e.quranSourceUrl,
+      };
+      for (final field in actual.keys) {
+        expect(actual[field], row[field], reason: '${e.id}: $field');
+      }
+      expect(e.reviewOnly, isFalse);
+    }
+  });
+  test('reference-only counters cannot mutate storage or worship completion', () async {
+    SharedPreferences.setMockInitialValues({'haptics': false});
+    final s = WirdState();
+    await s.initialize(); await s.pendingWrites;
+    for (final e in referenceReviewEntries) {
+      s.setCount(e, 1); s.chooseCount(e, 1);
+      expect(s.isDone(e), isFalse);
+      expect(s.count(e), 0);
+    }
+    await s.pendingWrites;
+    expect(s.counts, isEmpty);
+    expect(s.countTargets, isEmpty);
+    expect(s.countChoices, isEmpty);
+    expect(DhikrSection.values.map(s.sectionTotal), [18, 15, 18]);
+    expect(DhikrSection.values.map(s.completed), [0, 0, 0]);
+    for (final e in entries) { s.setCount(e, s.target(e)); }
+    for (final e in referenceReviewEntries) { s.toggleFavorite(e.id); }
+    await s.pendingWrites;
+    expect(DhikrSection.values.map(s.completed), [18, 15, 18]);
+    final reopened = WirdState();
+    await reopened.initialize();
+    expect(reopened.favorites, containsAll(referenceReviewEntries.map((e) => e.id)));
+    expect(DhikrSection.values.map(reopened.completed), [18, 15, 18]);
+    expect(reopened.counts.keys.any((key) => key.contains('|reference_')), isFalse);
+    await reopened.pendingWrites;
+    reopened.dispose();
+    s.dispose();
+  });
+  test('all 66 reference screens display transparently without treating weak reports as verified worship', () {
+    expect(displayedEntries.length, 66);
+    final pending = displayedEntries.where((entry) => entry.reviewOnly).toList();
+    expect(pending, hasLength(15));
+    expect(pending.map((e) => e.id).toSet(), hasLength(15));
+    for (final section in [DhikrSection.morning, DhikrSection.evening]) {
+      final collection = inSection(section);
+      expect(collection.map((e) => e.referenceScreens.first),
+          List.generate(collection.length, (index) => index + 1));
+      expect(collection.where((e) => e.reviewOnly).length,
+          section == DhikrSection.morning ? 7 : 8);
+    }
+    for (final e in pending) {
+      expect(e.reviewOnly, isTrue);
+      expect(e.authenticity, isNotEmpty);
+      expect(e.evidence, contains('درجة الرواية:'));
+      expect(e.countDescription, contains('لا تدخل في عداد'));
+      expect(e.benefit, contains('للعرض والتوثيق فقط'));
+    }
+    expect(entries.any((e) => e.reviewOnly), isFalse);
   });
   test('alternative evidence and tracking counts cannot inherit excluded claims', () {
     final additions = jsonDecode(File('docs/content-review-20261026/additions.json').readAsStringSync()) as List;

@@ -1,5 +1,6 @@
 """Actual emulator navigation checks using observed accessibility node bounds."""
 import json
+from native_targets import content_bottom as visible_bottom, usable_target
 import math
 from pathlib import Path
 import re
@@ -28,7 +29,9 @@ width, height = map(int, size)
 def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_bottom=False, prefix=False):
     for attempt in range(50 if scroll else 3):
         candidates = []
-        for n in snapshot():
+        nodes = snapshot()
+        limit = visible_bottom(nodes, height)
+        for n in nodes:
             value = n.get('text', '') + ' ' + n.get('content-desc', '') + ' ' + n.get('hint', '')
             if node_class and n.get('class') != node_class:
                 continue
@@ -43,13 +46,14 @@ def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_b
             x1, y1, x2, y2 = bounds
             if x2 <= x1 or y2 <= y1 or y1 < 0 or y2 > height:
                 continue
-            if scroll and y2 > height * (.98 if allow_bottom else .89):
+            if scroll and not usable_target((x1,y1,x2,y2), height * .98 if allow_bottom else limit):
                 continue
             candidates.append((n, bounds))
         if candidates:
             candidates.sort(key=lambda pair: pair[1][1] if bottom else -(pair[1][2]-pair[1][0])*(pair[1][3]-pair[1][1]), reverse=True)
             _, (x1,y1,x2,y2) = candidates[0]
             adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
+            time.sleep(.4)
             return
         if scroll:
             adb('shell','input','swipe',str(width//2),str(int(height*.77)),str(width//2),str(int(height*.32)),'450')
@@ -77,7 +81,7 @@ def capture(name):
 
 # Actual offline UI. Religious content is never extracted from the mockups.
 tap('الأذكار',bottom=True)
-expect('51 ذكر')
+expect('66 ذكر')
 capture('android-library-premium.png')
 tap('ابحث عن ذكر')
 for attempt in range(6):
@@ -85,18 +89,18 @@ for attempt in range(6):
     time.sleep(.3)
 else:raise AssertionError('Search input did not receive focus')
 adb('shell','input','text','Evening')
-expect('15 ذكر')
+expect('23 ذكر')
 adb('shell','input','keyevent','KEYCODE_BACK')
 capture('android-library-search.png')
 tap('مسح البحث')
-expect('51 ذكر')
+expect('66 ذكر')
 tap('حفظ في المفضلة آية الكرسي',scroll=True)
 tap('المفضلة', exact=True)
 expect('1 ذكر')
 capture('android-library-favorites.png')
 print('PASS: native Library search, independent bookmark and exact favorites filter',flush=True)
 tap('آية الكرسي',scroll=True,node_class='android.view.View')
-expect('1 / 18')
+expect('1 / 25')
 capture('android-reader-main.png')
 tap('الفضل والدليل والمعنى',scroll=True)
 expect('المعنى')
@@ -104,7 +108,7 @@ tap('المعنى',scroll=True,prefix=True)
 capture('android-reader-evidence.png')
 print('PASS: native Reader opened and meaning panel prefix reached in expanded evidence',flush=True)
 tap('التالي',scroll=True,allow_bottom=True)
-expect('2 / 18')
+expect('2 / 25')
 tap('اضغط للعد',scroll=True)
 expect('1 / 3')
 capture('android-reader-counter.png')
@@ -117,13 +121,13 @@ adb('shell','am','start','-W','-n','ae.wird.app/.MainActivity')
 expect('الرئيسية')
 tap('أذكار الصباح',scroll=True)
 tap('التالي',scroll=True,allow_bottom=True)
-expect('2 / 18')
+expect('2 / 25')
 tap('اضغط للعد',scroll=True)
 expect('2 / 3')
 capture('android-reader-persisted.png')
 print('PASS: native Reader count, Undo and process restart persistence',flush=True)
 tap('السابق',scroll=True,allow_bottom=True)
-expect('1 / 18')
+expect('1 / 25')
 adb('shell','input','keyevent','KEYCODE_BACK')
 tap('الأذكار',bottom=True)
 # A new tab visit keeps live bookmark state. Show all collections for long text.
@@ -159,6 +163,6 @@ else:raise AssertionError('Long Quran counter did not become reachable')
 adb('shell','settings','put','system','font_scale','1.0')
 adb('shell','input','keyevent','KEYCODE_BACK')
 tap('الرئيسية',bottom=True)
-(out/'reader-interactions.json').write_text(json.dumps({'passed':True,'offline':True,'library_count':51,'search_evening':15,'search_bedtime':18,'bookmark_filter':1,'reader_count_sequence':['1/3','0/3','1/3','restart','2/3'],'navigation':['next','previous'],'evidence':'expanded','long_passage':'Mulk at system font scale 1.5'},ensure_ascii=False,indent=2)+'\n')
+(out/'reader-interactions.json').write_text(json.dumps({'passed':True,'offline':True,'library_count':66,'search_evening':23,'search_bedtime':18,'bookmark_filter':1,'reader_count_sequence':['1/3','0/3','1/3','restart','2/3'],'navigation':['next','previous'],'evidence':'expanded','long_passage':'Mulk at system font scale 1.5'},ensure_ascii=False,indent=2)+'\n')
 print('PASS: premium Library search/bookmarks, Reader count/Undo/restart/navigation/evidence and large Mulk',flush=True)
 

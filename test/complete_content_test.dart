@@ -39,7 +39,7 @@ void main() {
   });
 
   test('category counts and exact reading order are not screenshot totals', () {
-    expect(inSection(DhikrSection.morning).map((e) => e.id), [
+    expect(inSection(DhikrSection.morning).where((e) => !e.reviewOnly).map((e) => e.id), [
       'morning_kursi',
       'morning_ikhlas',
       'morning_falaq',
@@ -59,7 +59,7 @@ void main() {
       'morning_istighfar',
       'morning_salawat',
     ]);
-    expect(inSection(DhikrSection.evening).map((e) => e.id), [
+    expect(inSection(DhikrSection.evening).where((e) => !e.reviewOnly).map((e) => e.id), [
       'evening_kursi',
       'evening_ikhlas',
       'evening_falaq',
@@ -97,11 +97,15 @@ void main() {
       'sleep_night_waking',
     ]);
     expect(entries, hasLength(51));
+    expect(displayedEntries, hasLength(66));
+    expect(inSection(DhikrSection.morning), hasLength(25));
+    expect(inSection(DhikrSection.evening), hasLength(23));
+    expect(inSection(DhikrSection.sleep), hasLength(18));
     expect(entries.map((e) => e.arabic).toSet(), hasLength(37));
     for (final section in DhikrSection.values) {
       expect(
-        inSection(section).map((e) => normalizeArabic(e.arabic)).toSet(),
-        hasLength(inSection(section).length),
+        inSection(section).where((e) => !e.reviewOnly).map((e) => normalizeArabic(e.arabic)).toSet(),
+        hasLength(inSection(section).where((e) => !e.reviewOnly).length),
       );
     }
   });

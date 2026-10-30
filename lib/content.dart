@@ -1,3 +1,5 @@
+part 'reference_review.dart';
+
 /// Source-checked development corpus. Qualified proofreading is still pending.
 /// See docs/CONTENT_VERIFICATION_2026-10-14.md for all 66 reference decisions.
 /// All timing/count/reward claims must pass an editorial Sahih-only gate.
@@ -22,6 +24,8 @@ class DhikrEntry {
     this.referenceScreens = const [],
     this.countAlternatives = const [],
     this.quranSourceUrl = '',
+    this.reviewOnly = false,
+    this.authenticity = 'صحيح',
   });
 
   final String id;
@@ -39,6 +43,9 @@ class DhikrEntry {
   final bool reviewed;
   final List<int> referenceScreens, countAlternatives;
   final String quranSourceUrl;
+  /// Displayed for authenticity transparency, not a prescribed worship item.
+  final bool reviewOnly;
+  final String authenticity;
 
   List<int> get allowedCounts =>
       countAlternatives.isEmpty ? [count] : countAlternatives;
@@ -1190,8 +1197,19 @@ String sectionLabel(DhikrSection section) => switch (section) {
   DhikrSection.sleep => 'أذكار النوم',
 };
 
-List<DhikrEntry> inSection(DhikrSection section) =>
-    entries.where((entry) => entry.section == section).toList();
+/// All displayed reference pages; questionable reports are visibly identified.
+final displayedEntries = List<DhikrEntry>.unmodifiable([
+  ...entries,
+  ...referenceReviewEntries,
+]);
+
+List<DhikrEntry> inSection(DhikrSection section) {
+  final visible = displayedEntries.where((entry) => entry.section == section).toList();
+  if (section != DhikrSection.sleep) {
+    visible.sort((a, b) => a.referenceScreens.first.compareTo(b.referenceScreens.first));
+  }
+  return visible;
+}
 
 // Fail closed: unreviewed items cannot reach reading, search or sharing.
 final entries = List<DhikrEntry>.unmodifiable(

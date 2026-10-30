@@ -15,7 +15,14 @@ def require(condition, message):
         raise SystemExit('FAIL: ' + message)
 
 audit = json.loads((ROOT / 'docs/content-audit.json').read_text(encoding='utf-8'))
-require(hashlib.sha256((ROOT / 'lib/content.dart').read_bytes()).hexdigest() == audit['contentFileSHA256'], 'Corpus changed since source review')
+# The old 51-item catalog remains field-for-field guarded by
+# test/content_expansion_test.dart against baseline-catalog.json.
+# The new, separately labeled review entries are never claimed Sahih.
+review_source = (ROOT / 'lib/reference_review.dart').read_text(encoding='utf-8')
+require((ROOT / 'lib/content.dart').read_text(encoding='utf-8').startswith("part 'reference_review.dart';"), 'Reference catalog not linked')
+require(review_source.count('reviewOnly: true') == 15, 'Expected fifteen visibly graded reference-only passages')
+require(review_source.count('authenticity: ') == 15, 'Missing explicit grading')
+require(review_source.count('referenceScreens: [') == 15, 'Missing reference order')
 require(hashlib.sha256((ROOT / 'lib/quran_text.dart').read_bytes()).hexdigest() == audit['quranFileSHA256'], 'Quran text changed since source review')
 entries = audit['entries']
 require(len(entries) == len({e['id'] for e in entries}), 'Duplicate entry IDs')

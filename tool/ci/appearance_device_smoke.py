@@ -1,5 +1,6 @@
 """Actual emulator navigation checks using observed accessibility node bounds."""
 import json
+from native_targets import content_bottom as visible_bottom, usable_target
 import math
 from pathlib import Path
 import re
@@ -26,22 +27,14 @@ size = re.findall(r'(\d+)x(\d+)', adb('shell', 'wm', 'size'))[-1]
 width, height = map(int, size)
 
 def content_bottom(nodes):
-    # Home is in the bottom bar on every shell page. Its observed top edge
-    # bounds the scroll area even when accessibility text makes the bar taller.
-    edges = []
-    for n in nodes:
-        if any(normal(n.get(k, '')).strip() == normal('الرئيسية') for k in ['text', 'content-desc']):
-            bounds = list(map(int, re.findall(r'-?\d+', n.get('bounds', ''))))
-            if len(bounds) == 4 and bounds[1] > height * .5:
-                edges.append(bounds[1])
-    return min(edges) - 12 if edges else height * .89
+    return visible_bottom(nodes, height)
 
 def scroll_content(nodes):
     bottom = content_bottom(nodes)
     adb('shell','input','swipe',str(width//2),str(int(bottom * .9)),
         str(width//2),str(int(height * .28)),'450')
 
-def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_bottom=False, prefix=False, clickable=False):
+def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_bottom=False, prefix=False, clickable=False, capture_before=None):
     for attempt in range(50 if scroll else 3):
         candidates = []
         nodes = snapshot()
@@ -63,13 +56,27 @@ def tap(label, scroll=False, bottom=False, exact=False, node_class=None, allow_b
             x1, y1, x2, y2 = bounds
             if x2 <= x1 or y2 <= y1 or y1 < 0 or y2 > height:
                 continue
-            if scroll and y2 > limit:
+            if scroll and not usable_target((x1,y1,x2,y2), limit):
                 continue
             candidates.append((n, bounds))
         if candidates:
             candidates.sort(key=lambda pair: pair[1][1] if bottom else -(pair[1][2]-pair[1][0])*(pair[1][3]-pair[1][1]), reverse=True)
             _, (x1,y1,x2,y2) = candidates[0]
+            if capture_before:
+                # A valid tap target may still be partly behind the fixed nav.
+                # Place the observed card in the upper content area so its
+                # foreground/count are visible in the accessibility capture.
+                if y1 < height * .12 or y1 > height * .28:
+                    delta = int(y1 - height * .20)
+                    start = int(limit * .70 if delta > 0 else height * .25)
+                    end = max(100, min(int(limit - 30), start - delta))
+                    adb('shell','input','swipe',str(width//2),str(start),
+                        str(width//2),str(end),'450')
+                    time.sleep(.4)
+                    continue
+                capture(capture_before)
             adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
+            time.sleep(.4)
             return
         if scroll:
             scroll_content(nodes)
@@ -98,6 +105,7 @@ def expect(label, scroll=False):
         if scroll:
             scroll_content(nodes)
         time.sleep(1)
+    capture('android-appearance-expect-failure.png')
     raise AssertionError(f'Destination missing: {label}')
 
 def capture(name):
@@ -114,8 +122,33 @@ def top():
         adb('shell','input','swipe',str(width//2),str(int(height*.30)),str(width//2),str(int(height*.83)),'150')
 
 def home():
-    tap('الرئيسية',bottom=True)
-    top()
+    # A popped Reader and a system font-scale change can still be animating
+    # while the underlying Library's accessibility nodes are already exposed.
+    # Wait for that transition, then use freshly observed clickable tab bounds.
+    for attempt in range(3):
+        time.sleep(1)
+        nodes = snapshot()
+        home_visible = any(normal('الرئيسية') in normal(n.get('text', '') + ' ' + n.get('content-desc', ''))
+                           and n.get('clickable') == 'true' for n in nodes)
+        if not home_visible:
+            # A quick system Back after dismissing a native share sheet may
+            # be consumed by its closing animation. Use the visible Reader
+            # back button instead of assuming the shell is already exposed.
+            reader_back = any(normal(n.get('content-desc', '')).strip() == normal('رجوع')
+                              and n.get('clickable') == 'true' for n in nodes)
+            if reader_back:
+                tap('رجوع', exact=True, clickable=True)
+                time.sleep(1)
+                continue
+        tap('الرئيسية', bottom=True, clickable=True)
+        time.sleep(1)
+        top()
+        nodes = snapshot()
+        text = ' '.join(n.get('text', '') + ' ' + n.get('content-desc', '') for n in nodes)
+        if normal('وردك اليومي') in normal(text):
+            return
+        (out / f'home-transition-attempt-{attempt + 1}.xml').write_text(
+            adb('shell', 'cat', '/sdcard/wird-home-review.xml'))
     expect('وردك اليومي')
 
 def worship_preferences():
@@ -126,6 +159,7 @@ def worship_preferences():
 
 checks=[]
 for mode,label in [('ivory','Ivory Serenity'),('midnight','Midnight Teal')]:
+    print('START: native appearance and reference checks', mode, flush=True)
     original_preferences = worship_preferences()
     tap('الإعدادات',bottom=True)
     top()
@@ -223,9 +257,11 @@ for mode,label in [('ivory','Ivory Serenity'),('midnight','Midnight Teal')]:
             time.sleep(2)
             home()
             capture('android-ivory-home-320dp-text200-top.png')
-            tap('أذكار المساء', scroll=True)
-            expect('الفضل والدليل والمعنى', scroll=True)
-            adb('shell','input','keyevent','KEYCODE_BACK')
+            for section, slug in [('أذكار الصباح', 'morning'), ('أذكار المساء', 'evening')]:
+                home()
+                tap(section, scroll=True, capture_before=f'android-ivory-{slug}-320dp-text200.png')
+                expect('الفضل والدليل والمعنى', scroll=True)
+                adb('shell','input','keyevent','KEYCODE_BACK')
             checks.append('Ivory Home: 320dp, 200% text, Morning/Evening and Tasbih navigation')
         finally:
             adb('shell','settings','put','system','font_scale','1.0')
@@ -244,7 +280,7 @@ for mode,label in [('ivory','Ivory Serenity'),('midnight','Midnight Teal')]:
     adb('shell','input','keyevent','KEYCODE_BACK')
     home()
     tap('أذكار المساء', scroll=True)
-    expect('1 / 15')
+    expect('1 / 23')
     capture(f'android-content-{mode}-evening-reader.png')
     adb('shell','input','keyevent','KEYCODE_BACK')
     home()
@@ -283,6 +319,55 @@ for mode,label in [('ivory','Ivory Serenity'),('midnight','Midnight Teal')]:
         adb('shell','input','keyevent','KEYCODE_BACK')
         home()
     checks.append(mode+': expanded 18-entry sleep library, both alternative readers/evidence and real share sheets')
+    # Filter by an observed source number, then open the first (morning) result.
+    for source_number, title, grade, ordinal, short in [
+        ('5090', 'العافية في البدن والسمع والبصر', 'حسن الإسناد', 10, 'hasan'),
+        ('5069', 'أشهدك وأشهد حملة عرشك', 'ضعيف عند الألباني', 8, 'daif'),
+        ('5081', 'حسبي الله لا إله إلا هو', 'الآية قرآنية ثابتة', 12, 'quran-disputed'),
+    ]:
+        tap('الأذكار', bottom=True)
+        top()
+        if any(normal('مسح البحث') in normal(n.get('content-desc', '') + n.get('text', '')) for n in snapshot()):
+            tap('مسح البحث')
+        tap('ابحث عن ذكر')
+        adb('shell','input','text',source_number)
+        adb('shell','input','keyevent','KEYCODE_BACK')
+        expect('2 ذكر')
+        tap(title, scroll=True, node_class='android.view.View')
+        capture(f'android-reference-{mode}-{short}.png')
+        expect(f'{ordinal} / 25')
+        expect('تنبيه مهم:')
+        expect(grade)
+        nodes = snapshot()
+        share = [n for n in nodes if normal('مشاركة بطاقة') in normal(n.get('content-desc','') + n.get('text',''))]
+        assert share and all(n.get('enabled') == 'false' for n in share), 'Reference share action must be disabled'
+        # Read the entire scroll surface, including the controls at its foot.
+        for attempt in range(30):
+            nodes = snapshot()
+            text = ' '.join(n.get('text','') + ' ' + n.get('content-desc','') for n in nodes)
+            assert normal('اضغط للعد') not in normal(text), 'Reference counter exposed'
+            assert normal('تراجع عن ضغطة') not in normal(text), 'Reference undo exposed'
+            if any(normal('التالي') in normal(n.get('content-desc','') + n.get('text','')) and
+                   int(re.findall(r'-?\d+', n.get('bounds','[0,0][0,0]'))[1]) > 0 for n in nodes):
+                break
+            scroll_content(nodes)
+        else: raise AssertionError('Reference navigation not reachable')
+        capture(f'android-reference-{mode}-{short}-controls.png')
+        top()
+        adb('shell','settings','put','system','font_scale','2.0')
+        time.sleep(2)
+        expect('تنبيه مهم:')
+        capture(f'android-reference-{mode}-{short}-text200.png')
+        scroll_content(snapshot())
+        capture(f'android-reference-{mode}-{short}-text200-continuation.png')
+        print('PASS: native reference', mode, short, 'normal and 200% text; sharing and devotional controls disabled', flush=True)
+        adb('shell','settings','put','system','font_scale','1.0')
+        time.sleep(1)
+        adb('shell','input','keyevent','KEYCODE_BACK')
+        home()
+    print('PASS: native reference warnings, disabled controls and 200% text', mode, flush=True)
+    checks.append(mode+': Hasan, Daif and Quran/sevenfold distinction; 200% warnings; disabled share; no counter/undo')
+
     tap('النوافل',bottom=True)
     top()
     capture(f'android-appearance-{mode}-nawafil.png')
@@ -304,4 +389,5 @@ for mode,label in [('ivory','Ivory Serenity'),('midnight','Midnight Teal')]:
     home()
 (out/'appearance-interactions.json').write_text(json.dumps({'passed':True,'offline':True,'checks':checks},ensure_ascii=False,indent=2))
 print('PASS: both appearances, only two choices, offline captures and restart persistence')
+
 

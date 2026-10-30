@@ -12,7 +12,7 @@ void main() {
     'Duplicate IDs',
   );
   for (final e in entries) {
-    check(e.reviewed, 'Unreviewed entry exposed: ${e.id}');
+    check(e.reviewed && !e.reviewOnly, 'Unreviewed entry exposed: ${e.id}');
     check(
       e.count > 0 &&
           e.arabic.isNotEmpty &&
@@ -44,6 +44,7 @@ void main() {
   }
   for (final section in DhikrSection.values) {
     check(inSection(section).isNotEmpty, 'Empty section $section');
+    check(inSection(section).where((e) => !e.reviewOnly).isNotEmpty, 'No verified entries $section');
   }
   int count(String id) => entries.singleWhere((e) => e.id == id).count;
   check(

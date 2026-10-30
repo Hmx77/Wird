@@ -48,15 +48,15 @@ void main() {
       addTearDown(tester.view.resetDevicePixelRatio);
       final store=await mount(tester,language:language);
       expect(Directionality.of(tester.element(find.byType(HomePage))),language=='ar'?TextDirection.rtl:TextDirection.ltr);
-      expect(find.descendant(of: find.byKey(const Key('home-morning')), matching: find.text(uiString('18 ذكر',language))),findsOneWidget);
-      expect(find.text(uiString('15 ذكر',language)),findsOneWidget);
+      expect(find.descendant(of: find.byKey(const Key('home-morning')), matching: find.text(uiString('25 ذكر',language))),findsOneWidget);
+      expect(find.text(uiString('23 ذكر',language)),findsOneWidget);
       expect(find.descendant(of: find.byKey(const Key('home-sleep')), matching: find.text(uiString('18 ذكر',language))),findsOneWidget);
       final arrow = find.descendant(of: find.byKey(const Key('home-morning')),
         matching: find.byIcon(language == 'ar' ? Icons.chevron_left_rounded : Icons.chevron_right_rounded));
       expect(tester.widget<Icon>(arrow).textDirection, TextDirection.ltr,
         reason: 'Explicit icon direction prevents RTL auto-mirroring twice');
       final shortcut = tester.getRect(find.byKey(const Key('home-all')));
-      final navigation = tester.getRect(find.byType(NavigationBar));
+      final navigation = tester.getRect(find.byKey(const Key('bottom-navigation-surface')));
       expect(shortcut.bottom, lessThanOrEqualTo(navigation.top),
         reason: 'All four normal-size shortcuts must be fully above bottom navigation');
       for(final section in DhikrSection.values) {

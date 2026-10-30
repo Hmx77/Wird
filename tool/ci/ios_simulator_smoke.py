@@ -94,8 +94,46 @@ try:
     if shutil.which('ffmpeg'):
         run(['ffmpeg','-hide_banner','-loglevel','error','-i',str(out/'startup.mp4'),
              '-vf','fps=1/2',str(out/'ios-startup-%02d.png')])
-    print('PASS: iOS 26 simulator installation, native launch and actual home-screen capture.',flush=True)
+    # Instrumented simulator build exercises the same production Reader widgets.
+    # The unsigned device build and ordinary application launch are checked above.
+    run(['env', '-i', 'HOME=' + os.environ['RUNNER_TEMP'] + '/wird-home',
+         'PATH=' + os.environ['PATH'], 'CI=true', 'LANG=en_US.UTF-8',
+         'FLUTTER_SUPPRESS_ANALYTICS=true', 'COCOAPODS_DISABLE_STATS=true',
+         'flutter', 'drive', '--driver=test_driver/catalog_driver.dart',
+         '--target=integration_test/catalog_device_test.dart', '-d', sim],
+        seconds=1200, save=out/'catalog-integration.log')
+    # Reuse the native harness against the exact previous production widgets,
+    # then restore the reviewed source. Baseline captures have explicit names.
+    baseline = '210009a5fac64df097385375c3628d8ad3a7b2cb'
+    production = ['lib/main.dart', 'lib/premium_ui.dart']
+    current = {p: Path(p).read_bytes() for p in production}
+    (out/'home-polish-baseline-source.txt').write_text(baseline + '\n')
+    drive = ['env', '-i', 'HOME=' + os.environ['RUNNER_TEMP'] + '/wird-home',
+             'PATH=' + os.environ['PATH'], 'CI=true', 'LANG=en_US.UTF-8',
+             'FLUTTER_SUPPRESS_ANALYTICS=true', 'COCOAPODS_DISABLE_STATS=true',
+             'flutter', 'drive', '--driver=test_driver/home_polish_driver.dart',
+             '--target=integration_test/home_polish_device_test.dart', '-d', sim]
+    def reset_debug_connection():
+        # Sequential Flutter drive builds can leave CoreSimulator's log reader
+        # attached to the previous app process. Reboot this disposable device
+        # between builds; retain its installed apps and data, and all assertions.
+        run(['xcrun', 'simctl', 'shutdown', sim], seconds=60)
+        run(['xcrun', 'simctl', 'boot', sim], seconds=120)
+        run(['xcrun', 'simctl', 'bootstatus', sim, '-b'], seconds=300)
+
+    try:
+        for path in production:
+            Path(path).write_bytes(subprocess.check_output(['git', 'show', f'{baseline}:{path}']))
+        reset_debug_connection()
+        run(drive + ['--dart-define=WIRD_BASELINE_RENDER=true'], seconds=1200,
+            save=out/'home-polish-before.log')
+    finally:
+        for path, content in current.items(): Path(path).write_bytes(content)
+    reset_debug_connection()
+    run(drive, seconds=1200, save=out/'home-polish-after.log')
+    print('PASS: iOS 26 simulator installation, native launch, both-theme Home/navigation and 200% text.',flush=True)
 finally:
     try: run(['xcrun','simctl','shutdown',sim],seconds=30)
     except RuntimeError as error: print('Simulator cleanup:', error, flush=True)
+
 

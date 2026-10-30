@@ -309,7 +309,7 @@ class HomePage extends StatelessWidget {
       }
     }
     final list = inSection(section);
-    final index = list.indexWhere((e) => !store.isDone(e));
+    final index = list.indexWhere((e) => !e.reviewOnly && !store.isDone(e));
     openReader(context, store, section, initial: index < 0 ? 0 : index);
   }
 
@@ -424,72 +424,78 @@ class HomePage extends StatelessWidget {
 
   Widget _category(BuildContext context, DhikrSection section, {bool wide = false}) {
     final count = inSection(section).length;
-    final categoryInk = !store.palette.dark && section == DhikrSection.sleep
-        ? homeCream : AppAppearance.of(context).ink;
+    final categoryInk = AppAppearance.of(context).ink;
     final done = store.completed(section);
-    final icon = switch (section) {
-      DhikrSection.morning => Icons.wb_sunny_outlined,
-      DhikrSection.evening => Icons.nightlight_outlined,
-      DhikrSection.sleep => Icons.bedtime_outlined,
-    };
-    final badge = AppAppearance.of(context).dark
-        ? (section == DhikrSection.morning ? appearanceTone(context, 0xAA507B70) : appearanceTone(context, 0xAA343D88))
-        : section == DhikrSection.morning ? const Color(0xFFD4E2CB) : IvoryContrast.cream;
-    final badgeInk = !store.palette.dark && section == DhikrSection.sleep
-        ? const Color(0xFF426E8A) : categoryInk;
+    final titleStyle = TextStyle(color: categoryInk, fontSize: wide ? 18 : 16,
+      fontWeight: FontWeight.w700, height: 1.5);
+    final countStyle = TextStyle(color: categoryInk, fontSize: 11);
+    final label = RepaintBoundary(
+      key: ValueKey('category-label-${section.name}-${store.themeIndex}-${store.languageCode}'),
+      child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+        UiText(sectionLabel(section), style: titleStyle),
+        const SizedBox(height: 3), UiText('$count ذكر', style: countStyle),
+        if (wide && done > 0) ...[
+          const SizedBox(height: 6),
+          LinearProgressIndicator(value: done / store.sectionTotal(section), minHeight: 3,
+            color: AppAppearance.of(context).gold, backgroundColor: Colors.white12,
+            semanticsLabel: tr(context, sectionLabel(section)), semanticsValue: '$done / ${store.sectionTotal(section)}'),
+        ],
+      ]));
     return _HomeIllustratedSurface(
       art: homeArt[section.name]!, radius: 21,
       actionKey: Key('home-${section.name}'), onTap: () => openReader(context, store, section),
       shade: true,
       child: Padding(padding: EdgeInsets.all(wide ? 16 : 13),
-        child: wide ? Row(children: [
-          Container(padding: EdgeInsets.all(7),
-            decoration: BoxDecoration(color: badge, borderRadius: BorderRadius.circular(13),
-              border: Border.all(color: appearanceTone(context, 0x55E9D8AE))),
-            child: Icon(icon, color: badgeInk, size: 25)),
-          SizedBox(width: 12),
-          Expanded(child: RepaintBoundary(
-            key: ValueKey('category-label-${section.name}-${store.themeIndex}-${store.languageCode}'),
-            child: Column(mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start, children: [
-            UiText(sectionLabel(section), style: TextStyle(color: categoryInk,
-              fontSize: 18, fontWeight: FontWeight.w700, height: 1.5)),
-            SizedBox(height: 3),
-            UiText('$count ذكر', style: TextStyle(color: categoryInk, fontSize: 11)),
-            if (done > 0) ...[
-              SizedBox(height: 6),
-              LinearProgressIndicator(value: done / count, minHeight: 3,
-                color: AppAppearance.of(context).gold, backgroundColor: Colors.white12,
-                semanticsLabel: tr(context, sectionLabel(section)), semanticsValue: '$done / $count'),
-            ],
-          ]))),
-          SizedBox(width: 8),
-          _HomeArrow(ink: categoryInk, size: 28, complete: done == count),
-        ]) : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Container(padding: EdgeInsets.all(7),
-            decoration: BoxDecoration(color: badge, borderRadius: BorderRadius.circular(13),
-              border: Border.all(color: appearanceTone(context, 0x55E9D8AE))),
-            child: Icon(icon, color: badgeInk, size: 29)),
-          SizedBox(height: 12),
-          IvoryReadingBacking(child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              UiText(sectionLabel(section), style: TextStyle(color: categoryInk,
-                fontSize: 16, fontWeight: FontWeight.w700, height: 1.5)),
-              SizedBox(height: 3),
-              UiText('$count ذكر', style: TextStyle(color: categoryInk, fontSize: 11)),
-            ])),
-            SizedBox(width: 5),
-            _HomeArrow(ink: categoryInk, size: 24, complete: done == count),
-          ])),
-          if (done > 0) ...[
-            SizedBox(height: 8),
-            LinearProgressIndicator(value: done / count, minHeight: 3,
-              color: AppAppearance.of(context).gold, backgroundColor: Colors.white12,
-              semanticsLabel: tr(context, sectionLabel(section)), semanticsValue: '$done / $count'),
-          ],
-        ])),
+        child: LayoutBuilder(builder: (context, box) {
+          // Card geometry belongs to the scenery, not to a decorative badge.
+          // Keep the established frame at every text scale without an empty
+          // badge widget or a reserved horizontal badge column.
+          final captionHeight = _categoryCaptionHeight(context,
+            width: box.maxWidth - (wide ? 89 : 29), title: sectionLabel(section),
+            count: '$count ذكر', titleStyle: titleStyle, countStyle: countStyle, gap: 3);
+          final minimum = wide
+            ? (captionHeight + (done > 0 ? 9 : 0)).clamp(41.0, double.infinity).toDouble()
+            : 57 + captionHeight.clamp(24.0, double.infinity) + (done > 0 ? 11 : 0);
+          return ConstrainedBox(constraints: BoxConstraints(minHeight: minimum.toDouble()),
+            child: wide ? Row(children: [Expanded(child: label),
+              const SizedBox(width: 8),
+              _HomeArrow(ink: categoryInk, size: 28, complete: done == store.sectionTotal(section)),
+            ]) : Align(alignment: Alignment.bottomCenter, heightFactor: 1,
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                IvoryReadingBacking(child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                  Expanded(child: label), const SizedBox(width: 5),
+                  _HomeArrow(ink: categoryInk, size: 24, complete: done == count),
+                ])),
+                if (done > 0) ...[
+                  const SizedBox(height: 8),
+                  LinearProgressIndicator(value: done / store.sectionTotal(section), minHeight: 3,
+                    color: AppAppearance.of(context).gold, backgroundColor: Colors.white12,
+                    semanticsLabel: tr(context, sectionLabel(section)), semanticsValue: '$done / ${store.sectionTotal(section)}'),
+                ],
+              ])));
+        })),
     );
   }
+}
+
+/// Measure the localized caption so the existing scenic frame stays stable
+/// when a title wraps or accessibility text grows. This paints no placeholder.
+double _categoryCaptionHeight(BuildContext context, {required double width,
+    required String title, required String count, required TextStyle titleStyle,
+    required TextStyle countStyle, required double gap}) {
+  double height(String value, TextStyle style) {
+    final text = tr(context, value);
+    final painter = TextPainter(
+      text: TextSpan(text: text, style: DefaultTextStyle.of(context).style.merge(style)),
+      textDirection: RegExp(r'[\u0600-\u06ff]').hasMatch(text)
+        ? TextDirection.rtl : Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context), locale: Localizations.localeOf(context),
+    )..layout(maxWidth: width.clamp(1.0, double.infinity).toDouble());
+    final result = painter.height;
+    painter.dispose();
+    return result;
+  }
+  return height(title, titleStyle) + gap + height(count, countStyle);
 }
 
 class _HomeHeader extends StatelessWidget {
@@ -666,6 +672,8 @@ class _HomeTasbihPage extends PersonalTasbihPage {
 // above remains unchanged, including its typography and illustration layers.
 const ivoryHomeHeader = AssetImage('assets/appearance/ivory-home-header-v2.webp');
 const ivoryHomeFeature = AssetImage('assets/appearance/ivory-home-feature-v2.webp');
+const ivoryMorning = AssetImage('assets/appearance/ivory-morning-v4.webp');
+const ivoryEvening = AssetImage('assets/appearance/ivory-evening-v4.webp');
 
 class _IvoryHome extends StatelessWidget {
   const _IvoryHome({required this.home});
@@ -754,14 +762,14 @@ class _IvoryHome extends StatelessWidget {
 
   Widget _surface({required String keyName, required AssetImage image,
       required Widget child, required VoidCallback onTap, Gradient? gradient,
-      double radius = 22, bool mirror = false}) => DecoratedBox(
+      double radius = 22, bool mirror = false, Widget? scenery}) => DecoratedBox(
     decoration: BoxDecoration(borderRadius: BorderRadius.circular(radius), boxShadow: const [
       BoxShadow(color: Color(0x0A70572D), offset: Offset(0, 3), blurRadius: 9)]),
     child: Material(color: paper, clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius),
         side: const BorderSide(color: edge, width: .75)),
       child: Stack(children: [
-        Positioned.fill(child: Transform(
+        Positioned.fill(child: scenery ?? Transform(
           alignment: Alignment.center, transform: Matrix4.diagonal3Values(mirror ? -1 : 1, 1, 1),
           child: Image(image: image, fit: BoxFit.cover, alignment: Alignment.topCenter,
             filterQuality: FilterQuality.high, excludeFromSemantics: true))),
@@ -821,44 +829,56 @@ class _IvoryHome extends StatelessWidget {
   }
 
   Widget _category(BuildContext context, DhikrSection section, double unit) {
-    final large = MediaQuery.textScalerOf(context).scale(14) > 20;
     final night = section == DhikrSection.sleep;
     final morning = section == DhikrSection.morning;
     final count = inSection(section).length;
     final done = store.completed(section);
-    final ink = night ? homeCream : IvoryContrast.ink;
-    final icon = night ? Icons.nightlight_round : morning ? Icons.wb_sunny_outlined : Icons.nightlight_outlined;
-    final badge = Container(width: 48 * unit, height: 48 * unit,
-      decoration: BoxDecoration(color: morning ? const Color(0xFFD8E5CB) : paper,
-        borderRadius: BorderRadius.circular(13), border: Border.all(color: const Color(0xFFC8C5AD), width: .7)),
-      child: Icon(icon, size: 33 * unit, color: night ? const Color(0xFF70A7C8) : IvoryContrast.ink));
+    final ink = night ? homeCream : paper;
+    // Contrast follows the glyphs, leaving the scenic foreground unobscured.
+    TextStyle caption(double size, {bool bold = false}) =>
+      text(size, bold: bold, color: ink).copyWith(shadows: night ? null : const [
+        Shadow(color: Color(0xE611251D), blurRadius: 2, offset: Offset(0, 1)),
+        Shadow(color: Color(0xB311251D), blurRadius: .5),
+      ]);
     final label = RepaintBoundary(
       key: ValueKey('category-label-${section.name}-${store.themeIndex}-${store.languageCode}'),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-        UiText(sectionLabel(section), style: text((night ? 23 : 18.5) * unit, bold: true, color: ink)),
-        const SizedBox(height: 2), UiText('$count ذكر', style: text(13 * unit, color: ink)),
+        UiText(sectionLabel(section), style: caption((night ? 23 : 18.5) * unit, bold: true)),
+        const SizedBox(height: 2), UiText('$count ذكر', style: caption(13 * unit)),
       ]));
     return _surface(keyName: 'home-${section.name}', image: homeArt[section.name]!,
       onTap: () => openReader(context, store, section),
-      gradient: night ? const LinearGradient(colors: [Color(0x18002128), Color(0x30002128)])
-        : LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
-          stops: large ? const [0, .12, .30, .50, .75, 1] : const [0, .24, .42, .60, .82, 1],
-          colors: const [Color(0x00FAF6E9), Color(0x00FAF6E9), Color(0x35FAF6E9), Color(0xD9FAF6E9), Color(0xF2FAF6E9), paper]),
+      // No wash, gradient, tint or panel: all lower foliage is real artwork.
+      // Center framing retains sun, architecture and foliage in wider cards.
+      scenery: night ? null : Image(key: ValueKey('ivory-day-artwork-${section.name}'),
+        image: morning ? ivoryMorning : ivoryEvening, fit: BoxFit.cover,
+        alignment: Alignment.center, filterQuality: FilterQuality.high,
+        excludeFromSemantics: true),
+      gradient: night ? const LinearGradient(colors: [Color(0x18002128), Color(0x30002128)]) : null,
       child: Padding(padding: EdgeInsets.all(11 * unit),
-        child: night ? ConstrainedBox(constraints: BoxConstraints(minHeight: 67 * unit),
-          child: Row(children: [badge, const SizedBox(width: 12), Expanded(child: label),
-            const SizedBox(width: 8), _HomeArrow(ink: ink, size: 32 * unit, complete: done == count)]))
-          : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              badge, SizedBox(height: 21 * unit),
-              Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                Expanded(child: label), const SizedBox(width: 2),
-                _HomeArrow(size: 34 * unit, complete: done == count),
-              ]),
-              if (done > 0) ...[const SizedBox(height: 5),
-                LinearProgressIndicator(value: done / count, minHeight: 3,
-                  color: IvoryContrast.accent, backgroundColor: IvoryContrast.progressTrack,
-                  semanticsLabel: tr(context, sectionLabel(section)), semanticsValue: '$done / $count')],
-            ])));
+        child: LayoutBuilder(builder: (context, box) {
+          final captionHeight = _categoryCaptionHeight(context,
+            width: box.maxWidth - (night ? 80 * unit + 20 : 34 * unit + 2),
+            title: sectionLabel(section), count: '$count ذكر',
+            titleStyle: caption((night ? 23 : 18.5) * unit, bold: true),
+            countStyle: caption(13 * unit), gap: 2);
+          final minimum = night ? captionHeight.clamp(67 * unit, double.infinity)
+            : 69 * unit + captionHeight.clamp(34 * unit, double.infinity) + (done > 0 ? 8 : 0);
+          return ConstrainedBox(constraints: BoxConstraints(minHeight: minimum.toDouble()),
+            child: night ? Row(children: [Expanded(child: label),
+              const SizedBox(width: 8), _HomeArrow(ink: ink, size: 32 * unit, complete: done == count)])
+              : Align(alignment: Alignment.bottomCenter, heightFactor: 1,
+                child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                    Expanded(child: label), const SizedBox(width: 2),
+                    _HomeArrow(size: 34 * unit, complete: done == count),
+                  ]),
+                  if (done > 0) ...[const SizedBox(height: 5),
+                    LinearProgressIndicator(value: done / store.sectionTotal(section), minHeight: 3,
+                      color: IvoryContrast.accent, backgroundColor: IvoryContrast.progressTrack,
+                      semanticsLabel: tr(context, sectionLabel(section)), semanticsValue: '$done / ${store.sectionTotal(section)}')],
+                ])));
+        })));
   }
 
   Widget _shortcuts(BuildContext context, double width, double unit, bool large) {
@@ -884,49 +904,74 @@ class _IvoryHome extends StatelessWidget {
   }
 }
 
-/// The reference's full Home selection tile, restricted to the Ivory Home.
-class _IvoryHomeNavigation extends StatelessWidget {
-  const _IvoryHomeNavigation({required this.onNavigate});
+/// One geometry for every destination and both palettes. The OS gesture inset
+/// is outside the bordered surface, never extra blank space inside a nav item.
+class _WirdBottomNavigation extends StatelessWidget {
+  const _WirdBottomNavigation({required this.palette, required this.background,
+    required this.selectedIndex, required this.onNavigate});
+  final WirdPalette palette;
+  final Color background;
+  final int selectedIndex;
   final ValueChanged<int> onNavigate;
   @override
-  Widget build(BuildContext context) => ColoredBox(color: _IvoryHome.paper,
-    child: SafeArea(top: false, minimum: const EdgeInsets.fromLTRB(11, 0, 11, 5),
-      child: Container(padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(color: const Color(0xFFFFFAEF),
-          borderRadius: BorderRadius.circular(25),
-          border: Border.all(color: const Color(0xFFD0C09A), width: .75)),
-        child: LayoutBuilder(builder: (context, constraints) {
-          final large = MediaQuery.textScalerOf(context).scale(12) > 17;
-          final items = List.generate(4, (index) {
-            const labels = ['الرئيسية', 'الأذكار', 'النوافل', 'الإعدادات'];
-            const keys = ['nav-home', 'nav-library', 'nav-nawafil', 'nav-settings'];
-            final selected = index == 0;
-            final color = selected ? IvoryContrast.gold : IvoryContrast.ink;
-            final icon = IconTheme(data: IconThemeData(color: color, size: 28),
-              child: switch (index) {
-                0 => const Icon(Icons.home_rounded),
-                1 => const Icon(Icons.auto_stories_outlined),
-                2 => const SujoodIcon(size: 29),
-                _ => const Icon(Icons.settings_outlined),
+  Widget build(BuildContext context) {
+    final a = AppAppearance(palette);
+    return ColoredBox(color: background,
+      child: SafeArea(top: false, minimum: const EdgeInsets.fromLTRB(11, 0, 11, 5),
+        child: Padding(padding: const EdgeInsets.only(top: 4),
+          child: Container(key: const Key('bottom-navigation-surface'),
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: a.dark ? null : const Color(0xFFFFFAEF),
+              gradient: a.dark ? LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
+                colors: [palette.homeSurface, palette.homeBackground]) : null,
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(color: a.dark ? palette.homeAccent.withValues(alpha: .3)
+                : const Color(0xFFD0C09A), width: a.dark ? 1 : .75)),
+            child: LayoutBuilder(builder: (context, constraints) {
+              final large = MediaQuery.textScalerOf(context).scale(12.5) > 18;
+              final items = List.generate(4, (index) {
+                const labels = ['الرئيسية', 'الأذكار', 'النوافل', 'الإعدادات'];
+                const keys = ['nav-home', 'nav-library', 'nav-nawafil', 'nav-settings'];
+                final selected = index == selectedIndex;
+                final color = selected ? a.gold : a.ink;
+                final icon = IconTheme(data: IconThemeData(color: color, size: 28),
+                  child: switch (index) {
+                    0 => Icon(selected ? Icons.home_rounded : Icons.home_outlined),
+                    1 => const Icon(Icons.auto_stories_outlined),
+                    2 => SujoodIcon(size: 28, selected: selected),
+                    _ => Icon(selected ? Icons.settings : Icons.settings_outlined),
+                  });
+                final label = UiText(labels[index], textAlign: TextAlign.center,
+                  style: TextStyle(color: color, fontSize: 12.5, height: 1.35,
+                    fontWeight: selected ? FontWeight.w700 : FontWeight.w400));
+                return Semantics(key: ValueKey('navigation-item-$index'),
+                  label: tr(context, labels[index]), selected: selected, button: true,
+                  onTap: () => onNavigate(index), excludeSemantics: true,
+                  child: Material(
+                    key: ValueKey('navigation-highlight-$index'),
+                    color: selected ? (a.dark ? homeGold.withValues(alpha: .18)
+                      : const Color(0xFFF5EACF)) : Colors.transparent,
+                    borderRadius: BorderRadius.circular(20),
+                    child: InkWell(key: Key(keys[index]), borderRadius: BorderRadius.circular(20),
+                      onTap: () => onNavigate(index),
+                      child: ConstrainedBox(constraints: const BoxConstraints(minHeight: 48),
+                        child: Padding(padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 3),
+                          child: large
+                            ? Row(mainAxisAlignment: MainAxisAlignment.center,
+                                children: [icon, const SizedBox(width: 5), Expanded(child: label)])
+                            : Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center,
+                                children: [icon, const SizedBox(height: 3), label]))))));
               });
-            final label = UiText(labels[index], textAlign: TextAlign.center,
-              style: TextStyle(color: color, fontSize: 12, height: 1.4,
-                fontWeight: selected ? FontWeight.w700 : FontWeight.w400));
-            return Semantics(selected: selected, button: true,
-              child: Material(color: selected ? const Color(0xFFF5EACF) : Colors.transparent,
-                borderRadius: BorderRadius.circular(20),
-                child: InkWell(key: Key(keys[index]), borderRadius: BorderRadius.circular(20),
-                  onTap: () => onNavigate(index),
-                  child: Padding(padding: EdgeInsets.symmetric(vertical: large ? 10 : 8, horizontal: 2),
-                    child: large
-                      ? Row(children: [icon, const SizedBox(width: 5), Expanded(child: label)])
-                      : Column(mainAxisSize: MainAxisSize.min, children: [icon, const SizedBox(height: 3), label])))));
-          });
-          if (large) return Wrap(runSpacing: 3, children: items.map((item) =>
-            SizedBox(width: constraints.maxWidth / 2, child: item)).toList());
-          return Row(crossAxisAlignment: CrossAxisAlignment.start,
-            children: items.map((item) => Expanded(child: item)).toList());
-        }))));
+              Widget row(List<Widget> children) => IntrinsicHeight(child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: children.map((item) => Expanded(child: item)).toList()));
+              if (large) return Column(mainAxisSize: MainAxisSize.min, children: [
+                row(items.sublist(0, 2)), const SizedBox(height: 3), row(items.sublist(2)),
+              ]);
+              return row(items);
+            })))));
+  }
 }
 
 /// Ivory shortcuts have their own responsive composition; dark cards are untouched.
@@ -963,3 +1008,5 @@ class _IvoryShortcut extends StatelessWidget {
               style: TextStyle(color: IvoryContrast.muted, fontSize: 11.5 * unit, height: 1.6)),
           ])))));
 }
+
+

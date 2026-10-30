@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 mkdir -p verification
+git rev-parse HEAD > verification/source-commit.txt
 python3 tool/ci/check_approved_opening.py
 python3 tool/ci/check_appearance_preservation.py
+python3 -m unittest discover -s tool/ci -p 'test_native_targets.py' -v
 flutter --version
 flutter doctor -v
 flutter pub get
@@ -16,6 +18,7 @@ done
 dart format --output=none --set-exit-if-changed lib test tool
 dart tool/content_check.dart
 mkdir -p verification/content
+cp docs/REFERENCE_ONLY_ATHKAR_2026-10-26.md docs/appearance-preservation.json verification/content/
 cp docs/CONTENT_VERIFICATION_2026-10-14.md docs/reference-comparison.csv docs/reference-screen-map.json docs/content-audit.json docs/quran-source.json verification/content/
 cp docs/CONTENT_VERIFICATION_2026-10-26.md verification/content/
 cp -R docs/content-review-20261026 verification/content/

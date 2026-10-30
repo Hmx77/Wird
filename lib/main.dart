@@ -178,12 +178,12 @@ class WirdState extends ChangeNotifier {
         target(entry, date),
       );
   bool isDone(DhikrEntry entry, [String? date]) =>
-      count(entry, date) >= target(entry, date);
+      !entry.reviewOnly && count(entry, date) >= target(entry, date);
   // Preserve historical completion against the catalog available before upgrade.
   List<DhikrEntry> progressEntries(DhikrSection section, [String? date]) =>
-      inSection(section).where((e) => date == null ||
+      inSection(section).where((e) => !e.reviewOnly && (date == null ||
           contentExpandedOn.isEmpty || date.compareTo(contentExpandedOn) >= 0 ||
-          !expandedSleepEntryIds.contains(e.id)).toList();
+          !expandedSleepEntryIds.contains(e.id))).toList();
   int sectionTotal(DhikrSection section, [String? date]) =>
       progressEntries(section, date).length;
   int completed(DhikrSection section, [String? date]) =>
@@ -528,52 +528,9 @@ class _WirdShellState extends State<WirdShell> {
         body: SafeArea(
           child: IndexedStack(index: page, children: screens),
         ),
-        bottomNavigationBar: !p.dark && page == 0
-            ? _IvoryHomeNavigation(onNavigate: (index) => setState(() => page = index))
-            : Container(
-          margin: EdgeInsets.fromLTRB(10, 4, 10, 5),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(29),
-            border: Border.all(color: p.dark ? p.homeAccent.withOpacity(.3) : const Color(0xFFD0C49D)),
-            gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight,
-              colors: [p.homeSurface, p.homeBackground]),
-          ),
-          child: ClipRRect(borderRadius: BorderRadius.circular(29), child: NavigationBar(
-          selectedIndex: page,
-          onDestinationSelected: (index) => setState(() => page = index),
-          backgroundColor: Colors.transparent,
-          indicatorColor: p.dark ? Color(0xFFE4C47E).withOpacity(.18) : IvoryContrast.selected,
-          surfaceTintColor: Colors.transparent,
-          elevation: 0,
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          destinations: [
-            NavigationDestination(
-              key: Key('nav-home'),
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home_rounded, color: AppAppearance.of(context).gold),
-              label: tr(context, 'الرئيسية'),
-            ),
-            NavigationDestination(
-              key: Key('nav-library'),
-              icon: Icon(Icons.auto_stories_outlined),
-              selectedIcon: Icon(Icons.auto_stories_outlined),
-              label: tr(context, 'الأذكار'),
-            ),
-            NavigationDestination(
-              key: Key('nav-nawafil'),
-              icon: SujoodIcon(),
-              selectedIcon: IconTheme(data: IconThemeData(color: AppAppearance.of(context).gold), child: SujoodIcon(selected: true)),
-              label: tr(context, 'النوافل'),
-            ),
-            NavigationDestination(
-              key: Key('nav-settings'),
-              icon: Icon(Icons.settings_outlined),
-              selectedIcon: Icon(Icons.settings, color: AppAppearance.of(context).gold),
-              label: tr(context, 'الإعدادات'),
-            ),
-          ],
-        )),
-        ),
+        bottomNavigationBar: _WirdBottomNavigation(
+          palette: p, background: homeSurface, selectedIndex: page,
+          onNavigate: (index) => setState(() => page = index)),
       ),
     );
   }
@@ -669,7 +626,7 @@ class ProgressPage extends StatelessWidget {
         ),
         ProgressCalendar(store: store),
         ...DhikrSection.values.map((section) {
-          final total = inSection(section).length;
+          final total = store.sectionTotal(section);
           final complete = store.completed(section);
           return Padding(
             padding: const EdgeInsets.fromLTRB(19, 0, 19, 11),
@@ -772,5 +729,6 @@ class ProgressPage extends StatelessWidget {
     );
   }
 }
+
 
 

@@ -5,12 +5,18 @@ import 'package:wird/content.dart';
 void main() {
   stdout.writeln(
     const JsonEncoder.withIndent('  ').convert({
-      'reviewDate': '2026-10-14',
+      'reviewDate': '2026-10-26',
       'reviewLevel': 'source-checked; independent release proofreading pending',
-      'entries': entries
+      'devotionalCount': entries.length,
+      'displayedCount': displayedEntries.length,
+      'entries': displayedEntries
           .map(
             (e) => {
               'id': e.id,
+              'title': e.title,
+              'reviewOnly': e.reviewOnly,
+              'authenticity': e.authenticity,
+              'evidence': e.evidence,
               'section': e.section.name,
               'arabic': e.arabic,
               'count': e.count,

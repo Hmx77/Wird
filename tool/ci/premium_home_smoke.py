@@ -1,5 +1,6 @@
 """Actual emulator navigation checks using observed accessibility node bounds."""
 import json
+from native_targets import content_bottom as visible_bottom, usable_target
 import math
 from pathlib import Path
 import re
@@ -28,7 +29,9 @@ width, height = map(int, size)
 def tap(label, scroll=False, bottom=False):
     for attempt in range(7 if scroll else 3):
         candidates = []
-        for n in snapshot():
+        nodes = snapshot()
+        limit = visible_bottom(nodes, height)
+        for n in nodes:
             value = n.get('text', '') + ' ' + n.get('content-desc', '')
             if normal(label) not in normal(value):
                 continue
@@ -38,13 +41,14 @@ def tap(label, scroll=False, bottom=False):
             x1, y1, x2, y2 = bounds
             if x2 <= x1 or y2 <= y1 or y1 < 0 or y2 > height:
                 continue
-            if scroll and y2 > height * .89:
+            if scroll and not usable_target((x1,y1,x2,y2), limit):
                 continue
             candidates.append((n, bounds))
         if candidates:
             candidates.sort(key=lambda pair: pair[1][1] if bottom else -(pair[1][2]-pair[1][0])*(pair[1][3]-pair[1][1]), reverse=True)
             _, (x1,y1,x2,y2) = candidates[0]
             adb('shell','input','tap',str((x1+x2)//2),str((y1+y2)//2))
+            time.sleep(.4)
             return
         if scroll:
             adb('shell','input','swipe',str(width//2),str(int(height*.77)),str(width//2),str(int(height*.32)),'450')
@@ -77,7 +81,7 @@ def capture(name):
     (out/name).write_bytes(raw)
 
 checks=[]
-for label, count in [('أذكار الصباح',18),('أذكار المساء',15),('أذكار النوم',18)]:
+for label, count in [('أذكار الصباح',25),('أذكار المساء',23),('أذكار النوم',18)]:
     tap(label,scroll=True)
     expect(f'1 / {count}')
     checks.append(label)

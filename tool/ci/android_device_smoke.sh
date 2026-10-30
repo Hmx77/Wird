@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 mkdir -p verification/device
+git rev-parse HEAD | tee verification/device/source-commit.txt
+sha256sum build/app/outputs/flutter-apk/app-debug.apk | tee verification/device/apk-sha256.txt
 wird_sdk_user_root="${RUNNER_TEMP:?}/wird-emulator"
 export ANDROID_SDK_HOME="$wird_sdk_user_root"
 export ANDROID_USER_HOME="$wird_sdk_user_root/.android"
@@ -141,8 +143,13 @@ PYPNG
   return 1
 }
 if ! command -v ffmpeg >/dev/null; then
-  sudo apt-get update -qq
-  sudo apt-get install -y --no-install-recommends ffmpeg
+  # Pinned binary-only CI dependency; no application dependency or system upgrade.
+  python3 -m pip install --disable-pip-version-check --only-binary=:all: --no-deps \
+    --target "$RUNNER_TEMP/wird-ffmpeg" imageio-ffmpeg==0.6.0
+  wird_ffmpeg_binary="$(PYTHONPATH="$RUNNER_TEMP/wird-ffmpeg" python3 -c 'import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())')"
+  mkdir -p "$RUNNER_TEMP/wird-native-tools"
+  ln -s "$wird_ffmpeg_binary" "$RUNNER_TEMP/wird-native-tools/ffmpeg"
+  export PATH="$RUNNER_TEMP/wird-native-tools:$PATH"
 fi
 command -v ffmpeg >/dev/null
 # Observe launcher coordinates after tool installation, never before a long install.
@@ -181,16 +188,34 @@ adb shell screenrecord --time-limit 100 /sdcard/wird-startup.mp4 &
 record_pid=$!
 sleep 1
 read -r wird_tap_x wird_tap_y < <(python3 - <<'PYTAP'
-import re, unicodedata, xml.etree.ElementTree as ET
-for node in ET.parse('verification/device/launcher.xml').getroot().iter('node'):
-    label = node.get('text', '') + ' ' + node.get('content-desc', '')
-    label = ''.join(c for c in unicodedata.normalize('NFD', label) if unicodedata.category(c) != 'Mn')
-    if 'wird' in label.lower() or 'ورد' in label:
-        x1,y1,x2,y2 = map(int, re.findall(r'\d+', node.attrib['bounds']))
+import pathlib, re, subprocess, sys, unicodedata, xml.etree.ElementTree as ET
+# The launcher can insert a prediction row after its first accessibility dump.
+# Require two fresh matching observations immediately before the real icon tap.
+previous = None
+for attempt in range(5):
+    subprocess.run(['adb', 'shell', 'uiautomator', 'dump', '/sdcard/wird-launcher-tap.xml'],
+                   check=True, stdout=subprocess.DEVNULL, timeout=15)
+    xml = subprocess.check_output(['adb', 'shell', 'cat', '/sdcard/wird-launcher-tap.xml'], timeout=10)
+    pathlib.Path(f'verification/device/launcher-tap-{attempt}.xml').write_bytes(xml)
+    targets = []
+    for node in ET.fromstring(xml).iter('node'):
+        label = node.get('text', '') + ' ' + node.get('content-desc', '')
+        label = ''.join(c for c in unicodedata.normalize('NFD', label) if unicodedata.category(c) != 'Mn')
+        if ('wird' in label.lower() or 'ورد' in label) and node.get('clickable') == 'true':
+            assert 'launcher' in node.get('package', '').lower(), 'Icon is outside the launcher'
+            bounds = tuple(map(int, re.findall(r'\d+', node.attrib['bounds'])))
+            if len(bounds) == 4 and bounds[2] - bounds[0] >= 32 and bounds[3] - bounds[1] >= 32:
+                targets.append(bounds)
+    assert targets, 'No visible clickable Wird launcher target'
+    target = targets[0]
+    if target == previous:
+        x1,y1,x2,y2 = target
         print((x1+x2)//2, (y1+y2)//2)
+        print('PASS: real launcher target stable across two fresh observations', file=sys.stderr)
         break
+    previous = target
 else:
-    raise SystemExit('No visible launcher target')
+    raise SystemExit('Launcher target did not stabilize; no tap sent')
 PYTAP
 )
 adb shell settings put system show_touches 1
@@ -250,6 +275,7 @@ else
 fi
 python3 tool/ci/reader_device_smoke.py
 python3 tool/ci/tasbih_device_smoke.py
+python3 tool/ci/home_polish_device_smoke.py
 python3 tool/ci/appearance_device_smoke.py
 adb shell wm size 720x1280
 adb shell wm density 320
@@ -277,5 +303,6 @@ adb emu kill
 printf '%s\n' 'PASS: Android 36 emulator offline feature checks, large-font/small/tablet captures; no fatal runtime errors.'
 # An opening guard failure remains a real nonzero job result, never a green pass.
 exit "$wird_startup_guard"
+
 
 

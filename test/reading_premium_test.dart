@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wird/content.dart';
 import 'package:wird/main.dart';
+import 'package:wird/share_card.dart';
 import 'package:wird/ui_strings.dart';
 import 'fixtures/library_before.dart';
 
@@ -141,13 +142,13 @@ void main() {
       await t.pumpAndSettle();
       await t.pumpWidget(app(s, LibraryPage(store: s)));
       await t.pumpAndSettle();
-      expect(find.text('51 ذكر'), findsOneWidget);
+      expect(find.text('66 ذكر'), findsOneWidget);
       await t.enterText(find.byKey(const Key('library-search')), 'اللَّه');
       await t.pumpAndSettle();
       expect(find.byType(DevotionCard), findsWidgets);
       await t.enterText(find.byKey(const Key('library-search')), 'Evening');
       await t.pumpAndSettle();
-      expect(find.text('15 ذكر'), findsOneWidget);
+      expect(find.text('23 ذكر'), findsOneWidget);
       await t.enterText(find.byKey(const Key('library-search')), 'zzzz');
       await t.pumpAndSettle();
       expect(find.text('لا توجد نتائج'), findsOneWidget);
@@ -280,11 +281,41 @@ void main() {
       await close(t, s);
     },
   );
+  for (final theme in [0, 1]) {
+    testWidgets('Reference warnings and controls at 320dp and 200% theme $theme', (t) async {
+      final semantics = t.ensureSemantics();
+      try {
+      t.view.physicalSize = const Size(320, 700);
+      t.view.devicePixelRatio = 1;
+      addTearDown(t.view.resetPhysicalSize);
+      addTearDown(t.view.resetDevicePixelRatio);
+      final s = await state(theme: theme);
+      for (final e in referenceReviewEntries) {
+        await t.pumpWidget(app(s, ReaderPage(key: ValueKey(e.id), store: s,
+          section: e.section, initialIndex: inSection(e.section).indexOf(e)), scale: 2));
+        await t.pumpAndSettle();
+        final warning = find.textContaining('تنبيه مهم:');
+        expect(warning, findsOneWidget);
+        await reveal(t, warning);
+        expect(t.widget<Text>(warning).data, contains(e.authenticity));
+        final accessible = t.getSemantics(find.byKey(const Key('reader-reference-warning')));
+        expect(accessible.label, contains('تنبيه مهم:'));
+        expect(accessible.label, contains(e.authenticity));
+        expect(find.byKey(const Key('reader-counter')), findsNothing);
+        await reveal(t, find.byKey(const Key('reader-next')));
+        expect(t.takeException(), isNull, reason: e.id);
+      }
+      await close(t, s);
+      } finally {
+        semantics.dispose();
+      }
+    });
+  }
   testWidgets(
-    'All 51 reader entries expose the exact complete source text and large Mulk scrolls',
+    'All 66 reader entries expose the exact complete source text and large Mulk scrolls',
     (t) async {
       final s = await state();
-      for (final e in entries) {
+      for (final e in displayedEntries) {
         await t.pumpWidget(
           app(
             s,
@@ -301,6 +332,14 @@ void main() {
           t.widget<SelectableText>(find.byKey(const Key('reader-arabic'))).data,
           e.arabic,
         );
+        if (e.reviewOnly) {
+          expect(find.textContaining('تنبيه مهم:'), findsOneWidget);
+          expect(find.byKey(const Key('reader-counter')), findsNothing);
+          expect(find.byKey(const Key('reader-undo')), findsNothing);
+          final share = t.widget<IconButton>(find.widgetWithIcon(IconButton, Icons.ios_share));
+          expect(share.onPressed, isNull);
+          await expectLater(shareDhikrCard(t.element(find.byType(ReaderPage)), e, s.palette.homeBackground, s.palette.ink), throwsStateError);
+        }
         expect(t.takeException(), isNull);
       }
       final mulk = entries.firstWhere((e) => e.id == 'sleep_mulk');
