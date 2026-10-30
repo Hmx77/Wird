@@ -152,7 +152,7 @@ void main() {
       File('${output.path}/$name.png').writeAsBytesSync(bytes!.buffer.asUint8List());
       final cardBounds = <String, List<double>>{};
       if (name.contains('home')) {
-        for (final section in ['morning', 'evening']) {
+        for (final section in ['morning', 'evening', 'sleep']) {
           final card = find.byKey(Key('home-$section'));
           if (card.evaluate().length != 1) continue;
           final rect = t.getRect(card);
@@ -160,6 +160,26 @@ void main() {
         }
         final raw = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
         File('${output.path}/$name.rgba').writeAsBytesSync(raw!.buffer.asUint8List());
+      }
+      final badges = <String, List<double>>{};
+      if (name.contains('home')) {
+        for (final section in ['morning', 'evening', 'sleep']) {
+          final card = find.byKey(Key('home-$section'));
+          final icons = find.descendant(of: card, matching: find.byWidgetPredicate((w) =>
+            w is Icon && [Icons.wb_sunny_outlined, Icons.nightlight_outlined,
+              Icons.nightlight_round, Icons.bedtime_outlined].contains(w.icon)));
+          if (icons.evaluate().length != 1) continue;
+          Element? badge;
+          icons.evaluate().single.visitAncestorElements((e) {
+            if (e.widget is Container) { badge = e; return false; }
+            return true;
+          });
+          if (badge != null) {
+            final box = badge!.findRenderObject()! as RenderBox;
+            final rect = box.localToGlobal(Offset.zero) & box.size;
+            badges[section] = [rect.left, rect.top, rect.right, rect.bottom];
+          }
+        }
       }
       final text = <Map<String, Object?>>[];
       for (final e in find.byType(Text).evaluate()) {
@@ -252,7 +272,7 @@ void main() {
       }
       File('${output.path}/$name-text.json').writeAsStringSync(jsonEncode(
         {'pixelRatio': 2, 'width': image.width, 'height': image.height,
-         'cards': cardBounds, 'text': text}));
+         'cards': cardBounds, 'badges': badges, 'text': text}));
       image.dispose();
     });
   }
@@ -366,6 +386,7 @@ void main() {
   });
 
 }
+
 
 
 

@@ -50,7 +50,9 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.byType(NavigationDestination), findsNWidgets(4));
+      for (final destination in ['nav-home', 'nav-library', 'nav-nawafil', 'nav-settings']) {
+        expect(find.byKey(Key(destination)).hitTestable(), findsOneWidget);
+      }
       expect(find.text('متابعتي'), findsNothing);
       expect(find.byType(ProgressPage), findsNothing);
       expect(find.byType(SujoodIcon), findsWidgets);
@@ -328,3 +330,4 @@ void main() {
     });
   }
 }
+

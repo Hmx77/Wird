@@ -276,6 +276,7 @@ fi
 python3 tool/ci/reader_device_smoke.py
 python3 tool/ci/tasbih_device_smoke.py
 python3 tool/ci/appearance_device_smoke.py
+python3 tool/ci/home_polish_device_smoke.py
 adb shell wm size 720x1280
 adb shell wm density 320
 adb shell settings put system font_scale 1.5
@@ -302,5 +303,6 @@ adb emu kill
 printf '%s\n' 'PASS: Android 36 emulator offline feature checks, large-font/small/tablet captures; no fatal runtime errors.'
 # An opening guard failure remains a real nonzero job result, never a green pass.
 exit "$wird_startup_guard"
+
 
 

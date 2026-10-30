@@ -1,4 +1,4 @@
-"""Keep all prior UI pixels except the two owner-approved Ivory Home cards."""
+"""Lock prior UI and artwork, allowing only badge removal and navigation polish."""
 import json
 import math
 import os
@@ -6,106 +6,75 @@ from pathlib import Path
 import shutil
 import subprocess
 
-BASE = '82aa15a8b3bf7c06b32fc2672149136464ae098d'
-# Keep the current capture harness for both revisions so it records comparable
-# text geometry and raw pixels; only production code changes for the replay.
-paths = ['lib/appearance.dart', 'lib/premium_ui.dart', 'lib/main.dart',
-         'lib/settings_ui.dart', 'lib/feature_panels.dart', 'lib/tasbih_ui.dart']
+BASE = '210009a5fac64df097385375c3628d8ad3a7b2cb'
+paths = ['lib/premium_ui.dart', 'lib/main.dart']
 images = Path('verification/screenshots')
 after = Path('verification/ivory-after')
 before = Path('verification/ivory-before')
-for folder in [after, before]:
-    folder.mkdir(parents=True, exist_ok=True)
+for folder in [after, before]: folder.mkdir(parents=True, exist_ok=True)
 
 def captures(folder):
-    return [p for p in folder.iterdir()
-            if p.name.startswith(('appearance-', 'ivory-home-', 'ivory-shell-'))]
+    return [p for p in folder.iterdir() if p.name.startswith(
+        ('appearance-', 'ivory-home-', 'ivory-shell-', 'polish-'))]
 
-for image in captures(images):
-    shutil.copyfile(image, after / image.name)
-assert len(list(after.glob('appearance-0-*.png'))) == 14
+for image in captures(images): shutil.copyfile(image, after / image.name)
 original = {path: Path(path).read_bytes() for path in paths}
 try:
     for path in paths:
         Path(path).write_bytes(subprocess.check_output(['git', 'show', f'{BASE}:{path}']))
-    subprocess.run(['flutter', 'test', 'test/appearance_test.dart', '--reporter', 'expanded'],
-                   env={**os.environ, 'WIRD_REVIEW_IMAGES': '1', 'WIRD_BASELINE_RENDER': '1'}, check=True)
-    for image in captures(images):
-        shutil.copyfile(image, before / image.name)
+    subprocess.run(['flutter', 'test', 'test/appearance_test.dart', 'test/home_polish_test.dart',
+                    '--reporter', 'expanded'], env={**os.environ, 'WIRD_REVIEW_IMAGES': '1',
+                    'WIRD_BASELINE_RENDER': '1'}, check=True)
+    for image in captures(images): shutil.copyfile(image, before / image.name)
 finally:
-    for path, data in original.items():
-        Path(path).write_bytes(data)
-    for image in captures(after):
-        shutil.copyfile(image, images / image.name)
+    for path, data in original.items(): Path(path).write_bytes(data)
+    for image in captures(after): shutil.copyfile(image, images / image.name)
 
-def home_scope(name, must_change=False):
+subprocess.run(['git', 'diff', '--exit-code', BASE, '--', 'assets/'], check=True)
+
+def home_scope(name):
     current = json.loads((after / f'{name}-text.json').read_text())
     prior = json.loads((before / f'{name}-text.json').read_text())
-    # Only the two approved caption colors change; content and geometry cannot.
-    expected = json.loads(json.dumps(prior))
-    for item in expected['text']:
-        if item.get('card') in ('home-morning', 'home-evening'):
-            item['argb'] = 0xFFFAF6E9
-    assert current == expected, f'{name}: unapproved text, count, color or layout change'
-    width, height = current['width'], current['height']
-    scale = current['pixelRatio']
+    assert not current['badges'], f'{name}: decorative badge still present'
+    assert len(prior['badges']) == 3, f'{name}: incomplete baseline badge evidence'
+    assert current['cards'].keys() == prior['cards'].keys() and all(abs(a-b) < 1e-6 for k in current['cards'] for a,b in zip(current['cards'][k],prior['cards'][k])), f'{name}: card geometry changed: {current["cards"]} vs {prior["cards"]}'
+    assert len(current['text']) == len(prior['text']), name
+    allowed = list(prior['badges'].values())
+    for new, old in zip(current['text'], prior['text']):
+        assert (new['text'], new['argb'], new['card']) == (old['text'], old['argb'], old['card']), f'{name}: text/count/color changed'
+        if new['card'] in ('home-morning', 'home-evening', 'home-sleep'):
+            # Only old/new caption bounds may differ outside the removed badges.
+            for text in [old, new]:
+                allowed.append([text['left']-3, text['top']-3,
+                    text['left']+text['width']+3, text['top']+text['height']+3])
+        else:
+            assert all(abs(v-old[k]) < 1e-6 if isinstance(v,(int,float)) else v == old[k] for k,v in new.items()), f'{name}: unrelated typography or layout changed: {new["text"]}'
+    width, height, scale = current['width'], current['height'], current['pixelRatio']
     bounds = [[math.floor(v * scale) if i < 2 else math.ceil(v * scale)
-               for i, v in enumerate(rect)] for rect in current['cards'].values()]
-    a = (after / f'{name}.rgba').read_bytes()
-    b = (before / f'{name}.rgba').read_bytes()
+               for i, v in enumerate(rect)] for rect in allowed]
+    a, b = (after / f'{name}.rgba').read_bytes(), (before / f'{name}.rgba').read_bytes()
     assert len(a) == len(b) == width * height * 4
-    changed = 0
-    outside = 0
+    changed = outside = 0
     for pixel in range(width * height):
         offset = pixel * 4
-        if a[offset:offset + 4] == b[offset:offset + 4]:
-            continue
+        if a[offset:offset+4] == b[offset:offset+4]: continue
         x, y = pixel % width, pixel // width
-        if any(left <= x < right and top <= y < bottom for left, top, right, bottom in bounds):
-            changed += 1
-        else:
-            outside += 1
-    assert outside == 0, f'{name}: {outside} changed pixels outside approved cards'
-    if must_change:
-        assert changed > 1000, f'{name}: approved scenery update did not render'
-    lower_cream = []
-    if must_change:
-        for left, top, right, bottom in bounds:
-            start = top + round((bottom - top) * .55)
-            pixels = 0
-            cream = 0
-            for y in range(max(0, start), min(height, bottom - 2)):
-                for x in range(max(0, left + 2), min(width, right - 2)):
-                    i = (y * width + x) * 4
-                    pixels += 1
-                    cream += a[i] > 215 and a[i+1] > 210 and a[i+2] > 190
-            fraction = cream / pixels
-            assert fraction < .28, f'{name}: lower scenery obscured by cream ({fraction:.1%})'
-            lower_cream.append(fraction)
-    return {'changedInsideCards': changed, 'changedOutsideCards': outside,
-            'textContentAndGeometryIdentical': True, 'approvedCaptionColor': '#FAF6E9',
-            'lowerSceneCreamFraction': lower_cream, 'cardBoundsPixels': bounds}
+        if any(l <= x < r and t <= y < bottom for l, t, r, bottom in bounds): changed += 1
+        else: outside += 1
+    assert outside == 0, f'{name}: {outside} scenic/unapproved pixels changed'
+    return {'changedInApprovedRegions': changed, 'changedOutsideApprovedRegions': outside,
+        'cardGeometryIdentical': True, 'badgesRemoved': 3, 'artworkIdentical': True}
 
-checks = {}
-scoped = {}
+checks, scoped = {}, {}
 for image in after.glob('appearance-*.png'):
-    if image.stem in ('appearance-1-ar-home', 'appearance-1-en-home'):
-        scoped[image.stem] = home_scope(image.stem, must_change=True)
-    else:
-        checks[image.name] = image.read_bytes() == (before / image.name).read_bytes()
-assert len(checks) == 26, checks
-assert all(checks.values()), checks
-for image in after.glob('ivory-home-*.png'):
-    scoped[image.stem] = home_scope(image.stem)
-# The 320dp/200% shell capture also keeps its full navigation and layout.
-shell = 'ivory-shell-320-ar-text200.png'
-assert (after / shell).read_bytes() == (before / shell).read_bytes(), shell
-result = {
-    'base': BASE, 'unchangedScreens': checks, 'scopedIvoryHomes': scoped,
-    'passed': True, 'intentionalChanges': ['Ivory Morning/Evening full scenery, cream captions and Morning badge; no wash'],
-    'comparison': '14 Midnight renders and 12 other Ivory renders exact; Ivory Home pixels exact outside the two category cards',
-    'smallScreenVerification': '320dp RTL/LTR at 100%/200%; text geometry and outside-card pixels unchanged',
-}
+    if image.stem.endswith('-home'): scoped[image.stem] = home_scope(image.stem)
+    else: checks[image.name] = image.read_bytes() == (before / image.name).read_bytes()
+assert len(checks) == 24 and all(checks.values()), checks
+for image in after.glob('ivory-home-*.png'): scoped[image.stem] = home_scope(image.stem)
+result = {'base': BASE, 'passed': True, 'unchangedScreens': checks, 'scopedHomes': scoped,
+    'intentionalChanges': ['Remove the three category badges in both themes; compact shared bottom navigation'],
+    'navigationVerification': '24 RTL/LTR cases: iPhone/Android/320dp, both themes, 100%/200% text, all selected tabs, gestures inset and stored activity',
+    'comparison': '24 other screen renders exact; Home artwork unchanged outside removed badges and relocated captions'}
 Path('verification/midnight-exact-regression.json').write_text(json.dumps(result, indent=2))
-print('PASS: 26 unchanged renders; only approved cards change, text geometry preserved, no cream lower panels')
+print('PASS: 24 unchanged renders; same artwork/card geometry; only badges/captions and tested navigation change')
 

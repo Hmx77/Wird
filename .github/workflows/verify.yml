@@ -73,6 +73,23 @@ jobs:
           unzip -t build/app/outputs/flutter-apk/app-debug.apk
           git rev-parse HEAD | tee verification/source-commit.txt
           sha256sum build/app/outputs/flutter-apk/app-debug.apk | tee verification/apk-sha256.txt
+      - name: Build previous source with the same disposable debug signing key for upgrade verification
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          env -i HOME="$RUNNER_TEMP/wird-home" PATH="$PATH" \
+            RUNNER_TEMP="$RUNNER_TEMP" ANDROID_HOME="$ANDROID_HOME" ANDROID_SDK_ROOT="$ANDROID_HOME" \
+            JAVA_HOME="$JAVA_HOME" CI=true LANG=C.UTF-8 FLUTTER_SUPPRESS_ANALYTICS=true \
+            bash tool/ci/build_upgrade_baseline.sh 2>&1 | tee verification/upgrade-baseline-build.log
+      - name: Preserve explicitly labeled upgrade-test baseline
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: wird-upgrade-baseline
+          path: build/upgrade-baseline/
+          if-no-files-found: error
+          retention-days: 14
       - name: Upload installable debug APK
         uses: actions/upload-artifact@v4
         with:
@@ -173,6 +190,13 @@ jobs:
           path: build/app/outputs/flutter-apk
           run-id: ${{ inputs.reuse_android_run || github.run_id }}
           github-token: ${{ github.token }}
+      - name: Download previous-source upgrade fixture
+        uses: actions/download-artifact@v4
+        with:
+          name: wird-upgrade-baseline
+          path: build/upgrade-baseline
+          run-id: ${{ inputs.reuse_android_run || github.run_id }}
+          github-token: ${{ github.token }}
       - name: Android emulator offline native smoke test
         env:
           WIRD_READER_ONLY: ${{ inputs.reader_only && !inputs.build_android && inputs.reuse_android_run != '' && 'true' || 'false' }}
@@ -196,100 +220,3 @@ jobs:
           path: verification/device/
           retention-days: 14
           if-no-files-found: warn
-  review-assets:
-    needs: [android, android-device, ios]
-    if: always() && (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && github.ref == 'refs/heads/redesign/ivory-settings-integration-20261024' && (needs.android.result == 'success' || (needs.android.result == 'skipped' && inputs.reuse_android_run != '')) && (needs['android-device'].result == 'success' || needs['android-device'].result == 'failure')
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    permissions:
-      contents: write
-      actions: read
-    steps:
-      - uses: actions/checkout@v4
-      - name: Block cloud metadata
-        run: bash tool/ci/block_metadata.sh
-      - uses: actions/download-artifact@v4
-        with:
-          name: wird-android-verification
-          path: reviewed-output
-          run-id: ${{ inputs.reuse_android_run || github.run_id }}
-          github-token: ${{ github.token }}
-      - uses: actions/download-artifact@v4
-        with:
-          name: wird-android-device-review
-          path: reviewed-native
-      - uses: actions/download-artifact@v4
-        if: needs.ios.result == 'success' || inputs.build_ios || inputs.reuse_ios_run != ''
-        continue-on-error: true
-        with:
-          name: wird-ios-verification
-          path: reviewed-ios
-          run-id: ${{ inputs.reuse_ios_run || github.run_id }}
-          github-token: ${{ github.token }}
-      - name: Preserve verified native artwork and visual review images
-        env:
-          WIRD_COPY_FORMATTED: ${{ needs.android.result == 'success' && 'true' || 'false' }}
-        shell: python
-        run: |
-          import pathlib, shutil, os
-          root = pathlib.Path('reviewed-output')
-          patterns = ['assets/brand/wird_wordmark.png', 'android/app/src/main/res/mipmap-*/ic_launcher.png',
-                      'android/app/src/main/res/drawable-nodpi/wird*.png',
-                      'ios/Runner/Assets.xcassets/AppIcon.appiconset/*.png',
-                      'ios/Runner/Assets.xcassets/LaunchImage.imageset/*.png']
-          count = 0
-          for pattern in patterns:
-              for source in root.glob(pattern):
-                  target = pathlib.Path(source.relative_to(root))
-                  assert source.is_file() and not source.is_symlink()
-                  target.parent.mkdir(parents=True, exist_ok=True)
-                  shutil.copyfile(source, target)
-                  count += 1
-          assert count >= 20, 'Missing native artwork'
-          for source in (root / 'verification/screenshots').glob('*.png'):
-              target = pathlib.Path('docs/review-images') / source.name
-              target.parent.mkdir(parents=True, exist_ok=True)
-              shutil.copyfile(source, target)
-          assert pathlib.Path('docs/review-images/home-ar-430.png').is_file()
-          for label in ['ivory-before', 'ivory-after']:
-              destination = pathlib.Path('docs/review-images') / label
-              destination.mkdir(parents=True, exist_ok=True)
-              for source in (root / 'verification' / label).glob('*'):
-                  if source.suffix in ['.png', '.json']:
-                      shutil.copyfile(source, destination / source.name)
-          shutil.copyfile(root / 'verification/midnight-exact-regression.json',
-                          pathlib.Path('docs/review-images/midnight-exact-regression.json'))
-          if os.environ['WIRD_COPY_FORMATTED'] == 'true':
-            for name in ['lib/settings_ui.dart', 'lib/feature_panels.dart', 'lib/ui_strings.dart',
-                         'lib/reading_ui.dart', 'lib/tasbih_ui.dart', 'test/tasbih_premium_test.dart', 'test/reading_premium_test.dart',
-                         'test/settings_premium_test.dart', 'test/redesign_test.dart']:
-                source = root / 'verification/settings-source' / (name + '.txt')
-                assert source.is_file() and not source.is_symlink(), 'Missing tested formatted Settings source'
-                shutil.copyfile(source, pathlib.Path(name))
-          for folder, label in [('reviewed-native', 'android-native'),
-                                ('reviewed-ios/verification/ios-device', 'ios-native')]:
-              destination = pathlib.Path('docs/review-images') / label
-              destination.mkdir(parents=True, exist_ok=True)
-              for old in destination.iterdir():
-                  if old.suffix == '.png' or old.name in ['startup.mp4', 'startup-timeline.json', 'tasbih-interactions.mp4', 'tasbih-interactions.json', 'appearance-interactions.json']:
-                      old.unlink()
-              for source in pathlib.Path(folder).glob('*'):
-                  if source.suffix != '.png' and source.name not in ['startup.mp4', 'startup-timeline.json', 'tasbih-interactions.mp4', 'tasbih-interactions.json', 'appearance-interactions.json']:
-                      continue
-                  assert source.is_file() and not source.is_symlink()
-                  target = pathlib.Path('docs/review-images') / label / source.name
-                  target.parent.mkdir(parents=True, exist_ok=True)
-                  shutil.copyfile(source, target)
-      - name: Commit reviewed outputs only on the unchanged review branch
-        run: |
-          test "$(git ls-remote origin refs/heads/redesign/ivory-settings-integration-20261024 | cut -f1)" = "$GITHUB_SHA"
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A -- lib/tasbih_ui.dart test/tasbih_premium_test.dart lib/reading_ui.dart test/reading_premium_test.dart lib/settings_ui.dart lib/feature_panels.dart lib/ui_strings.dart test/settings_premium_test.dart test/redesign_test.dart assets/brand/wird_wordmark.png android/app/src/main/res/mipmap-*/ic_launcher.png android/app/src/main/res/drawable-nodpi/wird*.png ios/Runner/Assets.xcassets/AppIcon.appiconset/*.png ios/Runner/Assets.xcassets/LaunchImage.imageset/*.png docs/review-images/
-          if ! git diff --cached --quiet; then
-            git commit -m 'Preserve actual native captures and generated branding'
-            git push origin HEAD:redesign/ivory-settings-integration-20261024
-          fi
-
-
-
