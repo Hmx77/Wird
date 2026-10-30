@@ -97,7 +97,10 @@ Future<void> verifyHomePolish(WidgetTester t, {required int mode,
     final reader = t.widget<ReaderPage>(find.byType(ReaderPage));
     expect(reader.section, section);
     expect(t.takeException(), isNull);
-    await t.pageBack(); await t.pumpAndSettle();
+    final back = find.byType(BackButton);
+    expect(back.hitTestable(), findsOneWidget);
+    await t.tap(back); await t.pumpAndSettle();
+    expect(find.byType(ReaderPage), findsNothing);
     navigation(0);
   }
   for (var i = 1; i < 4; i++) {

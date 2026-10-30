@@ -56,7 +56,7 @@ void main() {
       expect(tester.widget<Icon>(arrow).textDirection, TextDirection.ltr,
         reason: 'Explicit icon direction prevents RTL auto-mirroring twice');
       final shortcut = tester.getRect(find.byKey(const Key('home-all')));
-      final navigation = tester.getRect(find.byType(NavigationBar));
+      final navigation = tester.getRect(find.byKey(const Key('bottom-navigation-surface')));
       expect(shortcut.bottom, lessThanOrEqualTo(navigation.top),
         reason: 'All four normal-size shortcuts must be fully above bottom navigation');
       for(final section in DhikrSection.values) {
